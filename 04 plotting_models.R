@@ -64,7 +64,8 @@ VIP_fiber_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("sol"
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   ggtitle("Fresh")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_pigments_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("chlA","chlB","car"),],
                                 aes(x=wavelength,y=value,color=variable))+
@@ -74,7 +75,8 @@ VIP_pigments_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("c
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_other_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("C","N","LMA","LDMC","EWT"),],
                              aes(x=wavelength,y=value,color=variable))+
@@ -84,7 +86,8 @@ VIP_other_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("C","
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP1_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("Al","Ca","Cu","Fe","K"),],
                             aes(x=wavelength,y=value,color=variable))+
@@ -94,7 +97,8 @@ VIP_ICP1_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("Al","
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP2_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("Mg","Mn","Na","P","Zn"),],
                             aes(x=wavelength,y=value,color=variable))+
@@ -102,7 +106,8 @@ VIP_ICP2_fresh_plot<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("Mg","
   theme(text=element_text(size=20))+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 pdf("Manuscript/FigS8.pdf",width=8,height=14)
 VIP_fiber_fresh_plot+VIP_pigments_fresh_plot+
@@ -121,7 +126,8 @@ VIP_fiber_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   ggtitle("Pressed")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_pigments_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("chlA","chlB","car"),],
                                 aes(x=wavelength,y=value,color=variable))+
@@ -131,7 +137,8 @@ VIP_pigments_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_other_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("C","N","LMA","LDMC","EWT"),],
                              aes(x=wavelength,y=value,color=variable))+
@@ -141,7 +148,8 @@ VIP_other_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP1_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("Al","Ca","Cu","Fe","K"),],
                             aes(x=wavelength,y=value,color=variable))+
@@ -151,7 +159,8 @@ VIP_ICP1_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c(
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP2_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("Mg","Mn","Na","P","Zn"),],
                             aes(x=wavelength,y=value,color=variable))+
@@ -159,7 +168,8 @@ VIP_ICP2_pressed_plot<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c(
   theme(text=element_text(size=20))+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 pdf("Manuscript/FigS9.pdf",width=8,height=14)
 VIP_fiber_pressed_plot+VIP_pigments_pressed_plot+
@@ -178,7 +188,8 @@ VIP_fiber_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("s
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   ggtitle("Ground")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_pigments_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("chlA","chlB","car"),],
                                   aes(x=wavelength,y=value,color=variable))+
@@ -188,7 +199,8 @@ VIP_pigments_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_other_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("C","N","LMA","LDMC","EWT"),],
                                aes(x=wavelength,y=value,color=variable))+
@@ -198,7 +210,8 @@ VIP_other_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("C
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP1_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("Al","Ca","Cu","Fe","K"),],
                               aes(x=wavelength,y=value,color=variable))+
@@ -208,7 +221,8 @@ VIP_ICP1_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("Al
         axis.text.x = element_blank())+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 VIP_ICP2_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("Mg","Mn","Na","P","Zn"),],
                               aes(x=wavelength,y=value,color=variable))+
@@ -216,7 +230,8 @@ VIP_ICP2_ground_plot<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("Mg
   theme(text=element_text(size=20))+
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
-  geom_hline(yintercept=0.8,linetype="dashed",size=2)
+  geom_hline(yintercept=0.8,linetype="dashed",size=2)+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))
 
 pdf("Manuscript/FigS10.pdf",width=8,height=14)
 VIP_fiber_ground_plot+VIP_pigments_ground_plot+
@@ -236,6 +251,7 @@ VIP_ms1_fresh<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("LMA","EWT",
   scale_color_manual(values=focal_palette)+
   ggtitle("Fresh")+
   coord_cartesian(ylim=c(0,3.5))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)+
   guides(color=F)
 
@@ -246,6 +262,7 @@ VIP_ms2_fresh<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("N","K","Mn"
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
   coord_cartesian(ylim=c(0,3))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)+
   guides(color=F)
 
@@ -261,6 +278,7 @@ VIP_ms1_pressed<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("LMA",
   scale_color_manual(values=focal_palette)+
   ggtitle("Pressed")+
   coord_cartesian(ylim=c(0,3.5))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)+
   guides(color=F)
 
@@ -273,6 +291,7 @@ VIP_ms2_pressed<-ggplot(VIP_pressed_long[VIP_pressed_long$variable %in% c("N","K
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
   coord_cartesian(ylim=c(0,3))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)+
   guides(color=F)
 
@@ -289,6 +308,7 @@ VIP_ms1_ground<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("LMA","EW
                      labels=c("LMA","EWT","Cell","Chl a"))+
   ggtitle("Ground")+
   coord_cartesian(ylim=c(0,3.5))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)
 
 VIP_ms2_ground<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("N","K","Mn"),],
@@ -300,6 +320,7 @@ VIP_ms2_ground<-ggplot(VIP_ground_long[VIP_ground_long$variable %in% c("N","K","
   labs(y="VIP",x="Wavelength (nm)",color = "Trait")+
   scale_color_manual(values=focal_palette)+
   coord_cartesian(ylim=c(0,3))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
   geom_hline(yintercept=0.8,linetype="dashed",size=1.5)
 
 pdf("Manuscript/Fig4.pdf",width=15,height=7)
@@ -333,38 +354,38 @@ all.solubles<-c(fresh_jack_df_list$solubles$Measured,
 solubles_upper<-max(all.solubles,na.rm=T)+3
 solubles_lower<-min(all.solubles,na.rm=T)-3
 
-all.hemicellulose<-c(fresh_jack_df_list$hemicellulose$Measured,
-                fresh_jack_df_list$hemicellulose$pred_mean,
-                pressed_jack_df_list$hemicellulose$pred_mean,
-                ground_jack_df_list$hemicellulose$pred_mean)
+all.hemicellulose<-c(fresh_jack_df_list$hemi$Measured,
+                fresh_jack_df_list$hemi$pred_mean,
+                pressed_jack_df_list$hemi$pred_mean,
+                ground_jack_df_list$hemi$pred_mean)
 hemicellulose_upper<-max(all.hemicellulose,na.rm=T)+3
 hemicellulose_lower<-min(all.hemicellulose,na.rm=T)-3
 
-all.cellulose<-c(fresh_jack_df_list$cellulose$Measured,
-                     fresh_jack_df_list$cellulose$pred_mean,
-                     pressed_jack_df_list$cellulose$pred_mean,
-                     ground_jack_df_list$cellulose$pred_mean)
+all.cellulose<-c(fresh_jack_df_list$cell$Measured,
+                     fresh_jack_df_list$cell$pred_mean,
+                     pressed_jack_df_list$cell$pred_mean,
+                     ground_jack_df_list$cell$pred_mean)
 cellulose_upper<-max(all.cellulose,na.rm=T)+2
 cellulose_lower<-min(all.cellulose,na.rm=T)-2
 
-all.lignin<-c(fresh_jack_df_list$lignin$Measured,
-                     fresh_jack_df_list$lignin$pred_mean,
-                     pressed_jack_df_list$lignin$pred_mean,
-                     ground_jack_df_list$lignin$pred_mean)
+all.lignin<-c(fresh_jack_df_list$lign$Measured,
+                     fresh_jack_df_list$lign$pred_mean,
+                     pressed_jack_df_list$lign$pred_mean,
+                     ground_jack_df_list$lign$pred_mean)
 lignin_upper<-max(all.lignin,na.rm=T)+2
 lignin_lower<-min(all.lignin,na.rm=T)-2
 
-all.perN<-c(fresh_jack_df_list$perN$Measured,
-            fresh_jack_df_list$perN$pred_mean,
-            pressed_jack_df_list$perN$pred_mean,
-            ground_jack_df_list$perN$pred_mean)
+all.perN<-c(fresh_jack_df_list$N$Measured,
+            fresh_jack_df_list$N$pred_mean,
+            pressed_jack_df_list$N$pred_mean,
+            ground_jack_df_list$N$pred_mean)
 perN_upper<-max(all.perN,na.rm=T)+0.2
 perN_lower<-min(all.perN,na.rm=T)-0.2
 
-all.perC<-c(fresh_jack_df_list$perC$Measured,
-                     fresh_jack_df_list$perC$pred_mean,
-                     pressed_jack_df_list$perC$pred_mean,
-                     ground_jack_df_list$perC$pred_mean)
+all.perC<-c(fresh_jack_df_list$C$Measured,
+                     fresh_jack_df_list$C$pred_mean,
+                     pressed_jack_df_list$C$pred_mean,
+                     ground_jack_df_list$C$pred_mean)
 perC_upper<-max(all.perC,na.rm=T)+2
 perC_lower<-min(all.perC,na.rm=T)-2
 
@@ -497,7 +518,7 @@ solubles_fresh_val_plot<-ggplot(fresh_jack_df_list$solubles,
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Fresh-leaf spectra")+guides(color=F)
 
-hemicellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$hemicellulose,
+hemicellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$hemi,
                                      aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -511,7 +532,7 @@ hemicellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$hemicellulose,
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
-cellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$cellulose,
+cellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$cell,
                                  aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -525,7 +546,7 @@ cellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$cellulose,
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
-lignin_fresh_val_plot<-ggplot(fresh_jack_df_list$lignin,
+lignin_fresh_val_plot<-ggplot(fresh_jack_df_list$lign,
                               aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -539,7 +560,7 @@ lignin_fresh_val_plot<-ggplot(fresh_jack_df_list$lignin,
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=F)
 
-perC_fresh_val_plot<-ggplot(fresh_jack_df_list$perC,
+perC_fresh_val_plot<-ggplot(fresh_jack_df_list$C,
                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -553,7 +574,7 @@ perC_fresh_val_plot<-ggplot(fresh_jack_df_list$perC,
   labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
   ggtitle("Fresh-leaf spectra")+guides(color=F)
 
-perN_fresh_val_plot<-ggplot(fresh_jack_df_list$perN,
+perN_fresh_val_plot<-ggplot(fresh_jack_df_list$N,
                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -809,7 +830,7 @@ solubles_pressed_val_plot<-ggplot(pressed_jack_df_list$solubles,
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Pressed-leaf spectra")+guides(color=F)
 
-hemicellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$hemicellulose,
+hemicellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$hemi,
                                        aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -823,7 +844,7 @@ hemicellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$hemicellulose,
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
-cellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$cellulose,
+cellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$cell,
                                    aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -837,7 +858,7 @@ cellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$cellulose,
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
-lignin_pressed_val_plot<-ggplot(pressed_jack_df_list$lignin,
+lignin_pressed_val_plot<-ggplot(pressed_jack_df_list$lign,
                                 aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -851,7 +872,7 @@ lignin_pressed_val_plot<-ggplot(pressed_jack_df_list$lignin,
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=F)
 
-perC_pressed_val_plot<-ggplot(pressed_jack_df_list$perC,
+perC_pressed_val_plot<-ggplot(pressed_jack_df_list$C,
                               aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -865,7 +886,7 @@ perC_pressed_val_plot<-ggplot(pressed_jack_df_list$perC,
   labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
   ggtitle("Pressed-leaf spectra")+guides(color=F)
 
-perN_pressed_val_plot<-ggplot(pressed_jack_df_list$perN,
+perN_pressed_val_plot<-ggplot(pressed_jack_df_list$N,
                               aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1121,7 +1142,7 @@ solubles_ground_val_plot<-ggplot(ground_jack_df_list$solubles,
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Ground-leaf spectra")+guides(color=F)
 
-hemicellulose_ground_val_plot<-ggplot(ground_jack_df_list$hemicellulose,
+hemicellulose_ground_val_plot<-ggplot(ground_jack_df_list$hemi,
                                       aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1135,7 +1156,7 @@ hemicellulose_ground_val_plot<-ggplot(ground_jack_df_list$hemicellulose,
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
-cellulose_ground_val_plot<-ggplot(ground_jack_df_list$cellulose,
+cellulose_ground_val_plot<-ggplot(ground_jack_df_list$cell,
                                   aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1149,7 +1170,7 @@ cellulose_ground_val_plot<-ggplot(ground_jack_df_list$cellulose,
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
-lignin_ground_val_plot<-ggplot(ground_jack_df_list$lignin,
+lignin_ground_val_plot<-ggplot(ground_jack_df_list$lign,
                                aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1163,7 +1184,7 @@ lignin_ground_val_plot<-ggplot(ground_jack_df_list$lignin,
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=guide_legend(title="Growth form"))
 
-perC_ground_val_plot<-ggplot(ground_jack_df_list$perC,
+perC_ground_val_plot<-ggplot(ground_jack_df_list$C,
                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1177,7 +1198,7 @@ perC_ground_val_plot<-ggplot(ground_jack_df_list$perC,
   labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
   ggtitle("Ground-leaf spectra")+guides(color=F)
 
-perN_ground_val_plot<-ggplot(ground_jack_df_list$perN,
+perN_ground_val_plot<-ggplot(ground_jack_df_list$N,
                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1546,7 +1567,7 @@ pdf("Manuscript/Fig2.pdf",width=16,height=20)
   plot_layout(guides="collect") & theme(legend.position = "bottom")
 dev.off()
 
-perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$perN,
+perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$N,
                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1575,7 +1596,7 @@ Mn_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$Mn,
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
-perN_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$perN,
+perN_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$N,
                               aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1604,7 +1625,7 @@ Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
-perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$perN,
+perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$N,
                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
