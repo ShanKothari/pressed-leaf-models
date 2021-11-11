@@ -1224,7 +1224,7 @@ fresh_val_perRMSE<-ggplot(perRMSE.long_fresh,aes(y=value,x=variable))+
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0,max(perRMSE.long_fresh$value)*1.1))
 
-pdf("Manuscript/FigS11.pdf",width=8,height=6)
+pdf("Manuscript/FigS11.pdf",width=8,height=6,onefile=F)
 egg::ggarrange(plots = list(fresh_val_R2,fresh_val_perRMSE),
                nrow=2,ncol=1)
 dev.off()
