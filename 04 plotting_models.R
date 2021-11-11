@@ -347,10 +347,10 @@ ground_jack_coef_list<-readRDS("SavedResults/ground_jack_coefs_list.rds")
 #######################################
 ## axis limits for validation plots
 
-all.solubles<-c(fresh_jack_df_list$solubles$Measured,
-                fresh_jack_df_list$solubles$pred_mean,
-                pressed_jack_df_list$solubles$pred_mean,
-                ground_jack_df_list$solubles$pred_mean)
+all.solubles<-c(fresh_jack_df_list$sol$Measured,
+                fresh_jack_df_list$sol$pred_mean,
+                pressed_jack_df_list$sol$pred_mean,
+                ground_jack_df_list$sol$pred_mean)
 solubles_upper<-max(all.solubles,na.rm=T)+3
 solubles_lower<-min(all.solubles,na.rm=T)-3
 
@@ -571,7 +571,7 @@ perC_fresh_val_plot<-ggplot(fresh_jack_df_list$C,
   coord_cartesian(xlim=c(perC_lower,perC_upper),ylim=c(perC_lower,perC_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
+  labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Fresh-leaf spectra")+guides(color=F)
 
 perN_fresh_val_plot<-ggplot(fresh_jack_df_list$N,
@@ -585,7 +585,7 @@ perN_fresh_val_plot<-ggplot(fresh_jack_df_list$N,
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 LMA_fresh_val_plot<-ggplot(fresh_jack_df_list$LMA,
@@ -883,7 +883,7 @@ perC_pressed_val_plot<-ggplot(pressed_jack_df_list$C,
   coord_cartesian(xlim=c(perC_lower,perC_upper),ylim=c(perC_lower,perC_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
+  labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Pressed-leaf spectra")+guides(color=F)
 
 perN_pressed_val_plot<-ggplot(pressed_jack_df_list$N,
@@ -897,7 +897,7 @@ perN_pressed_val_plot<-ggplot(pressed_jack_df_list$N,
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 LMA_pressed_val_plot<-ggplot(pressed_jack_df_list$LMA,
@@ -1195,7 +1195,7 @@ perC_ground_val_plot<-ggplot(ground_jack_df_list$C,
   coord_cartesian(xlim=c(perC_lower,perC_upper),ylim=c(perC_lower,perC_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured C"[mass]*" (%)"),x=expression("Predicted C"[mass]*" (%)"))+
+  labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Ground-leaf spectra")+guides(color=F)
 
 perN_ground_val_plot<-ggplot(ground_jack_df_list$N,
@@ -1209,7 +1209,7 @@ perN_ground_val_plot<-ggplot(ground_jack_df_list$N,
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 LMA_ground_val_plot<-ggplot(ground_jack_df_list$LMA,
@@ -1579,7 +1579,7 @@ perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
   ggtitle("Fresh-leaf spectra")+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 Mn_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$Mn,
@@ -1608,7 +1608,7 @@ perN_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
   ggtitle("Pressed-leaf spectra")+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
@@ -1637,7 +1637,7 @@ perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25))+
   ggtitle("Ground-leaf spectra")+
-  labs(y=expression("Measured N"[mass]*" (%)"),x=expression("Predicted N"[mass]*" (%)"))+
+  labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
 Mn_ground_val_plot_alt<-ggplot(ground_jack_df_list$Mn,
