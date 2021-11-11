@@ -1229,7 +1229,7 @@ ground_val_perRMSE<-ggplot(perRMSE.long_ground,aes(y=value,x=variable))+
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0,max(perRMSE.long_ground$value)*1.1))
 
-pdf("Manuscript/FigS13.pdf",width=8,height=6)
+pdf("Manuscript/FigS13.pdf",width=8,height=6,onefile=F)
 egg::ggarrange(plots = list(ground_val_R2,ground_val_perRMSE),
                nrow=2,ncol=1)
 dev.off()
