@@ -1146,32 +1146,40 @@ saveRDS(fresh_jack_df_list,"SavedResults/fresh_jack_df_list.rds")
 ####################################################
 ## violin plots
 
+fresh_val_summary<-data.frame(variable=names(fresh_jack_df_list),
+                                perRMSE=unlist(lapply(fresh_jack_df_list,
+                                                      function(x) percentRMSD(x$Measured,x$pred_mean,0.025,0.975))),
+                                R2=unlist(lapply(fresh_jack_df_list,
+                                                 function(x) summary(lm(Measured~pred_mean,data=x))$r.squared)))
+
 R2.df_fresh<-data.frame(LMA=unlist(lapply(LMA_jack_stats_fresh,function(x) x[["R2"]])),
                         LDMC=unlist(lapply(LDMC_jack_stats_fresh,function(x) x[["R2"]])),
                         EWT=unlist(lapply(EWT_jack_stats_fresh,function(x) x[["R2"]])),
                         sol=unlist(lapply(solubles_jack_stats_fresh,function(x) x[["R2"]])),
-                          hemi=unlist(lapply(hemicellulose_jack_stats_fresh,function(x) x[["R2"]])),
-                          cell=unlist(lapply(cellulose_jack_stats_fresh,function(x) x[["R2"]])),
-                          lign=unlist(lapply(lignin_jack_stats_fresh,function(x) x[["R2"]])),
-                          C=unlist(lapply(perC_jack_stats_fresh,function(x) x[["R2"]])),
-                          N=unlist(lapply(perN_jack_stats_fresh,function(x) x[["R2"]])),
-                          chlA=unlist(lapply(chlA_jack_stats_fresh,function(x) x[["R2"]])),
-                          chlB=unlist(lapply(chlB_jack_stats_fresh,function(x) x[["R2"]])),
-                          car=unlist(lapply(car_jack_stats_fresh,function(x) x[["R2"]])),
-                          Al=unlist(lapply(Al_jack_stats_fresh,function(x) x[["R2"]])),
-                          Ca=unlist(lapply(Ca_jack_stats_fresh,function(x) x[["R2"]])),
-                          Cu=unlist(lapply(Cu_jack_stats_fresh,function(x) x[["R2"]])),
-                          Fe=unlist(lapply(Fe_jack_stats_fresh,function(x) x[["R2"]])),
-                          K=unlist(lapply(K_jack_stats_fresh,function(x) x[["R2"]])),
-                          Mg=unlist(lapply(Mg_jack_stats_fresh,function(x) x[["R2"]])),
-                          Mn=unlist(lapply(Mn_jack_stats_fresh,function(x) x[["R2"]])),
-                          Na=unlist(lapply(Na_jack_stats_fresh,function(x) x[["R2"]])),
-                          P=unlist(lapply(P_jack_stats_fresh,function(x) x[["R2"]])),
-                          Zn=unlist(lapply(Zn_jack_stats_fresh,function(x) x[["R2"]])))
+                        hemi=unlist(lapply(hemicellulose_jack_stats_fresh,function(x) x[["R2"]])),
+                        cell=unlist(lapply(cellulose_jack_stats_fresh,function(x) x[["R2"]])),
+                        lign=unlist(lapply(lignin_jack_stats_fresh,function(x) x[["R2"]])),
+                        C=unlist(lapply(perC_jack_stats_fresh,function(x) x[["R2"]])),
+                        N=unlist(lapply(perN_jack_stats_fresh,function(x) x[["R2"]])),
+                        chlA=unlist(lapply(chlA_jack_stats_fresh,function(x) x[["R2"]])),
+                        chlB=unlist(lapply(chlB_jack_stats_fresh,function(x) x[["R2"]])),
+                        car=unlist(lapply(car_jack_stats_fresh,function(x) x[["R2"]])),
+                        Al=unlist(lapply(Al_jack_stats_fresh,function(x) x[["R2"]])),
+                        Ca=unlist(lapply(Ca_jack_stats_fresh,function(x) x[["R2"]])),
+                        Cu=unlist(lapply(Cu_jack_stats_fresh,function(x) x[["R2"]])),
+                        Fe=unlist(lapply(Fe_jack_stats_fresh,function(x) x[["R2"]])),
+                        K=unlist(lapply(K_jack_stats_fresh,function(x) x[["R2"]])),
+                        Mg=unlist(lapply(Mg_jack_stats_fresh,function(x) x[["R2"]])),
+                        Mn=unlist(lapply(Mn_jack_stats_fresh,function(x) x[["R2"]])),
+                        Na=unlist(lapply(Na_jack_stats_fresh,function(x) x[["R2"]])),
+                        P=unlist(lapply(P_jack_stats_fresh,function(x) x[["R2"]])),
+                        Zn=unlist(lapply(Zn_jack_stats_fresh,function(x) x[["R2"]])))
 
 R2.long_fresh<-melt(R2.df_fresh)
 fresh_val_R2<-ggplot(R2.long_fresh,aes(y=value,x=variable))+
   geom_violin()+
+  geom_point(data=fresh_val_summary,
+             aes(x=variable,y=R2),color="red",size=2)+
   theme_bw()+
   theme(text = element_text(size=20),
         axis.title.x = element_blank(),
@@ -1184,28 +1192,31 @@ perRMSE.df_fresh<-data.frame(LMA=unlist(lapply(LMA_jack_stats_fresh,function(x) 
                              LDMC=unlist(lapply(LDMC_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
                              EWT=unlist(lapply(EWT_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
                              sol=unlist(lapply(solubles_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               hemi=unlist(lapply(hemicellulose_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               cell=unlist(lapply(cellulose_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               lign=unlist(lapply(lignin_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               C=unlist(lapply(perC_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               N=unlist(lapply(perN_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               chlA=unlist(lapply(chlA_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               chlB=unlist(lapply(chlB_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               car=unlist(lapply(car_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Al=unlist(lapply(Al_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Ca=unlist(lapply(Ca_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Cu=unlist(lapply(Cu_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Fe=unlist(lapply(Fe_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               K=unlist(lapply(K_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Mg=unlist(lapply(Mg_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Mn=unlist(lapply(Mn_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Na=unlist(lapply(Na_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               P=unlist(lapply(P_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
-                               Zn=unlist(lapply(Zn_jack_stats_fresh,function(x) 100*x[["perRMSE"]])))
+                             hemi=unlist(lapply(hemicellulose_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             cell=unlist(lapply(cellulose_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             lign=unlist(lapply(lignin_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             C=unlist(lapply(perC_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             N=unlist(lapply(perN_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             chlA=unlist(lapply(chlA_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             chlB=unlist(lapply(chlB_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             car=unlist(lapply(car_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Al=unlist(lapply(Al_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Ca=unlist(lapply(Ca_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Cu=unlist(lapply(Cu_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Fe=unlist(lapply(Fe_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             K=unlist(lapply(K_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Mg=unlist(lapply(Mg_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Mn=unlist(lapply(Mn_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Na=unlist(lapply(Na_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             P=unlist(lapply(P_jack_stats_fresh,function(x) 100*x[["perRMSE"]])),
+                             Zn=unlist(lapply(Zn_jack_stats_fresh,function(x) 100*x[["perRMSE"]])))
 
 perRMSE.long_fresh<-melt(perRMSE.df_fresh)
 fresh_val_perRMSE<-ggplot(perRMSE.long_fresh,aes(y=value,x=variable))+
-  geom_violin()+theme_bw()+
+  geom_violin()+
+  geom_point(data=fresh_val_summary,
+             aes(x=variable,y=perRMSE*100),color="red",size=2)+
+  theme_bw()+
   theme(text = element_text(size=20),
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5))+

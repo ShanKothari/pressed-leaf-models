@@ -1103,8 +1103,8 @@ Zn_jack_df_ground<-data.frame(pred_mean=Zn_jack_stat_ground[,1],
 ground_jack_coef_list<-list(LMA=LMA_jack_coefs_ground,
                              LDMC=LDMC_jack_coefs_ground,
                              EWT=EWT_jack_coefs_ground,
-                             perC=perC_jack_coefs_ground,
-                             perN=perN_jack_coefs_ground,
+                             C=perC_jack_coefs_ground,
+                             N=perN_jack_coefs_ground,
                              sol=solubles_jack_coefs_ground,
                              hemi=hemicellulose_jack_coefs_ground,
                              cell=cellulose_jack_coefs_ground,
@@ -1127,8 +1127,8 @@ saveRDS(ground_jack_coef_list,"SavedResults/ground_jack_coefs_list.rds")
 ground_jack_df_list<-list(LMA=LMA_jack_df_ground,
                            LDMC=LDMC_jack_df_ground,
                            EWT=EWT_jack_df_ground,
-                           perC=perC_jack_df_ground,
-                           perN=perN_jack_df_ground,
+                           C=perC_jack_df_ground,
+                           N=perN_jack_df_ground,
                            sol=solubles_jack_df_ground,
                            hemi=hemicellulose_jack_df_ground,
                            cell=cellulose_jack_df_ground,
@@ -1150,6 +1150,12 @@ saveRDS(ground_jack_df_list,"SavedResults/ground_jack_df_list.rds")
 
 ######################################
 ## violin plots
+
+ground_val_summary<-data.frame(variable=names(ground_jack_df_list),
+                                perRMSE=unlist(lapply(ground_jack_df_list,
+                                                      function(x) percentRMSD(x$Measured,x$pred_mean,0.025,0.975))),
+                                R2=unlist(lapply(ground_jack_df_list,
+                                                 function(x) summary(lm(Measured~pred_mean,data=x))$r.squared)))
 
 R2.df_ground<-data.frame(LMA=unlist(lapply(LMA_jack_stats_ground,function(x) x[["R2"]])),
                          LDMC=unlist(lapply(LDMC_jack_stats_ground,function(x) x[["R2"]])),
@@ -1180,6 +1186,8 @@ R2.df_ground<-data.frame(LMA=unlist(lapply(LMA_jack_stats_ground,function(x) x[[
 R2.long_ground<-melt(R2.df_ground)
 ground_val_R2<-ggplot(R2.long_ground,aes(y=value,x=variable))+
   geom_violin()+
+  geom_point(data=ground_val_summary,
+             aes(x=variable,y=R2),color="red",size=2)+
   theme_bw()+
   theme(text = element_text(size=20),
         axis.title.x = element_blank(),
@@ -1213,7 +1221,10 @@ perRMSE.df_ground<-data.frame(LMA=unlist(lapply(LMA_jack_stats_ground,function(x
 
 perRMSE.long_ground<-melt(perRMSE.df_ground)
 ground_val_perRMSE<-ggplot(perRMSE.long_ground,aes(y=value,x=variable))+
-  geom_violin()+theme_bw()+
+  geom_violin()+
+  geom_point(data=ground_val_summary,
+             aes(x=variable,y=perRMSE*100),color="red",size=2)+
+  theme_bw()+
   theme(text = element_text(size=20),
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5))+
