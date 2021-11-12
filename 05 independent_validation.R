@@ -146,22 +146,22 @@ meta(pressed_spec_MN_RWC_agg)$EWT_pred_1300<-rowMeans(EWT_preds_1300)
 meta(pressed_spec_MN_RWC_agg)$EWT_1300_lower<-apply(EWT_preds_1300,1,quantile,probs=0.025)
 meta(pressed_spec_MN_RWC_agg)$EWT_1300_upper<-apply(EWT_preds_1300,1,quantile,probs=0.975)
 
-C_preds<-apply.coefs(pressed_jack_coef_list$perC,as.matrix(pressed_spec_MN_agg))
+C_preds<-apply.coefs(pressed_jack_coef_list$C,as.matrix(pressed_spec_MN_agg))
 meta(pressed_spec_MN_agg)$C_pred<-rowMeans(C_preds)
 meta(pressed_spec_MN_agg)$C_lower<-apply(C_preds,1,quantile,probs=0.025)
 meta(pressed_spec_MN_agg)$C_upper<-apply(C_preds,1,quantile,probs=0.975)
 
-N_preds<-apply.coefs(pressed_jack_coef_list$perN,as.matrix(pressed_spec_MN_agg))
+N_preds<-apply.coefs(pressed_jack_coef_list$N,as.matrix(pressed_spec_MN_agg))
 meta(pressed_spec_MN_agg)$N_pred<-rowMeans(N_preds)
 meta(pressed_spec_MN_agg)$N_lower<-apply(N_preds,1,quantile,probs=0.025)
 meta(pressed_spec_MN_agg)$N_upper<-apply(N_preds,1,quantile,probs=0.975)
 
-C_preds_1300<-apply.coefs(pressed_1300_jack_coef_list$perC,as.matrix(pressed_spec_MN_agg[,1300:2400]))
+C_preds_1300<-apply.coefs(pressed_1300_jack_coef_list$C,as.matrix(pressed_spec_MN_agg[,1300:2400]))
 meta(pressed_spec_MN_agg)$C_pred_1300<-rowMeans(C_preds_1300)
 meta(pressed_spec_MN_agg)$C_1300_lower<-apply(C_preds_1300,1,quantile,probs=0.025)
 meta(pressed_spec_MN_agg)$C_1300_upper<-apply(C_preds_1300,1,quantile,probs=0.975)
 
-N_preds_1300<-apply.coefs(pressed_1300_jack_coef_list$perN,as.matrix(pressed_spec_MN_agg[,1300:2400]))
+N_preds_1300<-apply.coefs(pressed_1300_jack_coef_list$N,as.matrix(pressed_spec_MN_agg[,1300:2400]))
 meta(pressed_spec_MN_agg)$N_pred_1300<-rowMeans(N_preds_1300)
 meta(pressed_spec_MN_agg)$N_1300_lower<-apply(N_preds_1300,1,quantile,probs=0.025)
 meta(pressed_spec_MN_agg)$N_1300_upper<-apply(N_preds_1300,1,quantile,probs=0.975)
@@ -171,7 +171,7 @@ N_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_errorbarh(aes(y=N,xmin=N_lower,xmax=N_upper),
                color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(-1,5),ylim=c(-1,5))+
+  coord_cartesian(xlim=c(-1,5.2),ylim=c(-1,5.2))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
@@ -183,7 +183,7 @@ N_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_errorbarh(aes(y=N,xmin=N_1300_lower,xmax=N_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(-1,5),ylim=c(-1,5))+
+  coord_cartesian(xlim=c(-1,5.2),ylim=c(-1,5.2))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
@@ -280,7 +280,7 @@ LDMC_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_errorbarh(aes(y=LDMC,xmin=LDMC_1300_lower,xmax=LDMC_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(100,700),ylim=c(100,700))+
+  coord_cartesian(xlim=c(100,600),ylim=c(100,600))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
@@ -295,7 +295,7 @@ pdf("Manuscript/Fig5.pdf",width=9,height=12)
   theme(legend.position = 'bottom')
 dev.off()
 
-pdf("Manuscript/FigS2.pdf",width=9,height=12)
+pdf("Manuscript/FigS14.pdf",width=9,height=12)
 ((LMA_1300_indval_plot/LDMC_1300_indval_plot/EWT_1300_indval_plot)|
     (N_1300_indval_plot/C_1300_indval_plot/plot_spacer()))+
   plot_layout(guides = "collect") &
