@@ -1567,6 +1567,13 @@ pdf("Manuscript/Fig2.pdf",width=16,height=20)
   plot_layout(guides="collect") & theme(legend.position = "bottom")
 dev.off()
 
+# pdf("Manuscript/Fig2.pdf",width=16,height=20)
+# (LMA_fresh_val_plot / EWT_fresh_val_plot / cellulose_fresh_val_plot / chlA_fresh_val_plot_alt)|
+#   (LMA_pressed_val_plot / EWT_pressed_val_plot / cellulose_pressed_val_plot / chlA_pressed_val_plot_alt)|
+#   (LMA_ground_val_plot / EWT_ground_val_plot_alt / cellulose_ground_val_plot / chlA_ground_val_plot_alt) &
+#   plot_layout(guides="collect") & theme(legend.position = "bottom")
+# dev.off()
+
 perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$N,
                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
@@ -1577,9 +1584,25 @@ perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$N,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.8, 0.25))+
+        legend.position = c(0.8, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   ggtitle("Fresh-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
+  guides(color=F)
+
+K_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$K,
+                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  theme_bw()+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="darkslategrey",alpha=0.7)+
+  geom_point(size=2)+
+  geom_smooth(method="lm",se=F)+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(K_lower,K_upper),ylim=c(K_lower,K_upper))+
+  theme(text = element_text(size=20),
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
+  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mn_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$Mn,
@@ -1592,7 +1615,8 @@ Mn_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$Mn,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(Mn_lower,Mn_upper),ylim=c(Mn_lower,Mn_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.85, 0.25))+
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1606,9 +1630,25 @@ perN_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$N,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.8, 0.25))+
+        legend.position = c(0.8, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   ggtitle("Pressed-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
+  guides(color=F)
+
+K_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$K,
+                               aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  theme_bw()+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="darkslategrey",alpha=0.7)+
+  geom_point(size=2)+
+  geom_smooth(method="lm",se=F)+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(K_lower,K_upper),ylim=c(K_lower,K_upper))+
+  theme(text = element_text(size=20),
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
+  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
@@ -1621,7 +1661,8 @@ Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(Mn_lower,Mn_upper),ylim=c(Mn_lower,Mn_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.85, 0.25))+
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1635,9 +1676,25 @@ perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$N,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(perN_lower,perN_upper),ylim=c(perN_lower,perN_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.8, 0.25))+
+        legend.position = c(0.8, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   ggtitle("Ground-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
+  guides(color=F)
+
+K_ground_val_plot_alt<-ggplot(ground_jack_df_list$K,
+                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  theme_bw()+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="darkslategrey",alpha=0.7)+
+  geom_point(size=2)+
+  geom_smooth(method="lm",se=F)+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(K_lower,K_upper),ylim=c(K_lower,K_upper))+
+  theme(text = element_text(size=20),
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
+  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mn_ground_val_plot_alt<-ggplot(ground_jack_df_list$Mn,
@@ -1650,14 +1707,14 @@ Mn_ground_val_plot_alt<-ggplot(ground_jack_df_list$Mn,
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
   coord_cartesian(xlim=c(Mn_lower,Mn_upper),ylim=c(Mn_lower,Mn_upper))+
   theme(text = element_text(size=20),
-        legend.position = c(0.85, 0.25))+
-  ggtitle("Ground-leaf spectra")+
+        legend.position = c(0.85, 0.25),
+        plot.margin=unit(c(0,0.2,0,0),"in"))+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
 pdf("Manuscript/Fig3.pdf",width=16,height=15)
 (perN_fresh_val_plot_alt + perN_pressed_val_plot_alt + perN_ground_val_plot_alt) /
-  (K_fresh_val_plot + K_pressed_val_plot + K_ground_val_plot) /
+  (K_fresh_val_plot_alt + K_pressed_val_plot_alt + K_ground_val_plot_alt) /
   (Mn_fresh_val_plot_alt + Mn_pressed_val_plot_alt + Mn_ground_val_plot_alt) &
   plot_layout(guides="collect") & theme(legend.position = "bottom")
 dev.off()
