@@ -504,7 +504,7 @@ Zn_lower<-min(all.Zn,na.rm=T)-0.1
 #######################################
 ## plotting
 
-solubles_fresh_val_plot<-ggplot(fresh_jack_df_list$solubles,
+solubles_fresh_val_plot<-ggplot(fresh_jack_df_list$sol,
                                 aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -816,7 +816,7 @@ Zn_fresh_val_plot<-ggplot(fresh_jack_df_list$Zn,
   labs(y=expression("Measured Zn (mg g"^-1*")"),x=expression("Predicted Zn (mg g"^-1*")"))+
   guides(color=F)
 
-solubles_pressed_val_plot<-ggplot(pressed_jack_df_list$solubles,
+solubles_pressed_val_plot<-ggplot(pressed_jack_df_list$sol,
                                   aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1128,7 +1128,7 @@ Zn_pressed_val_plot<-ggplot(pressed_jack_df_list$Zn,
   labs(y=expression("Measured Zn (mg g"^-1*")"),x=expression("Predicted Zn (mg g"^-1*")"))+
   guides(color=F)
 
-solubles_ground_val_plot<-ggplot(ground_jack_df_list$solubles,
+solubles_ground_val_plot<-ggplot(ground_jack_df_list$sol,
                                  aes(y=Measured,x=pred_mean,color=GrowthForm))+
   theme_bw()+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -1728,6 +1728,7 @@ dev.off()
 ## with(lignin_fresh_pred,RMSD(measured,val_pred)/(max(measured$Measured,na.rm=T)-min(measured$Measured,na.rm=T)))
 
 ## validation R2, RMSE, and %RMSE
-summary(lm(Measured~pred_mean,data=fresh_jack_df_list$solubles))
-with(fresh_jack_df_list$solubles,RMSD(Measured,pred_mean))
-with(fresh_jack_df_list$solubles,percentRMSD(Measured,pred_mean,0.025,0.975))
+unlist(lapply(fresh_jack_df_list,function(x) x$ncomp[1]))
+unlist(lapply(fresh_jack_df_list,function(x) summary(lm(Measured~pred_mean,data=x))$r.squared))
+unlist(lapply(fresh_jack_df_list,function(x) RMSD(x$Measured,x$pred_mean)))
+unlist(lapply(fresh_jack_df_list,function(x) percentRMSD(x$Measured,x$pred_mean,0.025,0.975)))*100
