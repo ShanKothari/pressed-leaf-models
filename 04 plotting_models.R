@@ -642,7 +642,8 @@ chlA_fresh_val_plot<-ggplot(fresh_jack_df_list$chlA,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
   ggtitle("Fresh-leaf spectra")+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
 
 chlB_fresh_val_plot<-ggplot(fresh_jack_df_list$chlB,
@@ -656,7 +657,8 @@ chlB_fresh_val_plot<-ggplot(fresh_jack_df_list$chlB,
   coord_cartesian(xlim=c(chlB_lower,chlB_upper),ylim=c(chlB_lower,chlB_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl b (mg g"^-1*")"),x=expression("Predicted Chl b (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
 
 car_fresh_val_plot<-ggplot(fresh_jack_df_list$car,
@@ -954,7 +956,8 @@ chlA_pressed_val_plot<-ggplot(pressed_jack_df_list$chlA,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
   ggtitle("Pressed-leaf spectra")+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
 
 chlB_pressed_val_plot<-ggplot(pressed_jack_df_list$chlB,
@@ -968,7 +971,8 @@ chlB_pressed_val_plot<-ggplot(pressed_jack_df_list$chlB,
   coord_cartesian(xlim=c(chlB_lower,chlB_upper),ylim=c(chlB_lower,chlB_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl b (mg g"^-1*")"),x=expression("Predicted Chl b (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
 
 car_pressed_val_plot<-ggplot(pressed_jack_df_list$car,
@@ -1266,7 +1270,8 @@ chlA_ground_val_plot<-ggplot(ground_jack_df_list$chlA,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
   ggtitle("Ground-leaf spectra")+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
 
 chlB_ground_val_plot<-ggplot(ground_jack_df_list$chlB,
@@ -1280,7 +1285,8 @@ chlB_ground_val_plot<-ggplot(ground_jack_df_list$chlB,
   coord_cartesian(xlim=c(chlB_lower,chlB_upper),ylim=c(chlB_lower,chlB_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl b (mg g"^-1*")"),x=expression("Predicted Chl b (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
 
 car_ground_val_plot<-ggplot(ground_jack_df_list$car,
@@ -1338,7 +1344,7 @@ Cu_ground_val_plot<-ggplot(ground_jack_df_list$Cu,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
   labs(y=expression("Measured Cu (mg g"^-1*")"),x=expression("Predicted Cu (mg g"^-1*")"))+
-  guides(color=F)
+  guides(color=guide_legend(title="Growth form"))
 
 Fe_ground_val_plot<-ggplot(ground_jack_df_list$Fe,
                            aes(y=Measured,x=pred_mean,color=GrowthForm))+
@@ -1514,7 +1520,8 @@ chlA_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$chlA,
   coord_cartesian(xlim=c(chlA_lower,chlA_upper),ylim=c(chlA_lower,chlA_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
 
 chlA_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$chlA,
@@ -1528,7 +1535,8 @@ chlA_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$chlA,
   coord_cartesian(xlim=c(chlA_lower,chlA_upper),ylim=c(chlA_lower,chlA_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
 
 EWT_ground_val_plot_alt<-ggplot(ground_jack_df_list$EWT,
@@ -1556,7 +1564,8 @@ chlA_ground_val_plot_alt<-ggplot(ground_jack_df_list$chlA,
   coord_cartesian(xlim=c(chlA_lower,chlA_upper),ylim=c(chlA_lower,chlA_upper))+
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25))+
-  labs(y=expression("Measured Chl a (mg g"^-1*")"),x=expression("Predicted Chl a (mg g"^-1*")"))+
+  labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
+       x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
 pdf("Manuscript/Fig2.pdf",width=16,height=20)
