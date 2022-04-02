@@ -5,6 +5,9 @@ library(dplyr)
 library(signal)
 library(patchwork)
 library(stringr)
+library(reshape2)
+library(RColorBrewer)
+library(geomtextpath)
 
 ########################################
 ## process ground spectra
@@ -85,7 +88,7 @@ fresh_spec_EL_agg<-fresh_spec_EL_agg[-which(meta(fresh_spec_EL_agg)$ID %in% bad_
 ground_spec_EL_agg<-ground_spec_EL_agg[-which(meta(ground_spec_EL_agg)$ID %in% bad_spectra)]
 pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% bad_spectra)]
 
-## remove spectra in only one project
+## remove spectra only found at one stage
 unique_spectra<-union(union(setdiff(meta(fresh_spec_EL_agg)$ID,union(meta(ground_spec_EL_agg)$ID,meta(pressed_spec_all)$ID)),
                             setdiff(meta(ground_spec_EL_agg)$ID,union(meta(fresh_spec_EL_agg)$ID,meta(pressed_spec_all)$ID))),
                       setdiff(meta(pressed_spec_all)$ID,union(meta(ground_spec_EL_agg)$ID,meta(fresh_spec_EL_agg)$ID)))
@@ -125,12 +128,6 @@ sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
                     Discoloration=summary_Dessain$Discoloration,
                     Stage=NA)
 
-# sMN_sub<-data.frame(ID=meta(pressed_spec_MN_agg)$ID,
-#                     Species=sp_vec,
-#                     Project="Minnesota",
-#                     Stage=NA)
-
-# summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub,sMN_sub))
 summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub))
 
 vascan<-read.csv("ELSummary_7_9_2020/vascan.csv")
@@ -143,6 +140,9 @@ summary_all$GrowthForm[summary_all$Species=="Salix Linnaeus"]<-"shrub"
 summary_all$GrowthForm[summary_all$Species=="Agonis flexuosa (Willd.) Sweet"]<-"tree"
 summary_all$GrowthForm[summary_all$Species=="Amelanchier laevis Wiegand"]<-"tree"
 summary_all$GrowthForm[summary_all$Species=="Calamagrostis canadensis Michaux Palisot de Beauvois"]<-"herb"
+
+## all tree species here in the CABO dataset are broadleaf
+levels(summary_all$GrowthForm)[levels(summary_all$GrowthForm)=="tree"]<-"broadleaf"
 
 meta(fresh_spec_EL_agg)$Species<-
   summary_all$Species[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
@@ -202,41 +202,8 @@ SLA_other<-data.frame(ID=SLA_other$sample_id,
                       Thickness=NA)
 SLA_other$ID<-as.character(SLA_other$ID)
 
-# RWC_MN<-read.csv("JCBdata/Traits/Relative Water Content -- Trait-Spectra Models 2018 - Sheet1.csv")
-# RWC_MN$subID<-apply(RWC_MN[,c("Plot","Species","Identifier","Layer")],1,paste,collapse="_")
-# RWC_MN$subID<-toupper(sub("_$","",RWC_MN$subID))
-# RWC_MN$ID<-sapply(RWC_MN$subID,function(x) paste(x,"RWC",sep="_"))
-# 
-# DryWeights_MN<-read.csv("JCBdata/Traits/Dry Mass -- Trait-Spectra Models 2018 - Sheet1.csv")
-# levels(DryWeights_MN$Purpose)[levels(DryWeights_MN$Purpose)=="pigments"]<-"PIG"
-# DryWeights_MN$ID<-apply(DryWeights_MN[,c("Plot","Species","Identifier","Layer","Purpose")],1,paste,collapse="_")
-# DryWeights_MN$ID<-toupper(sub("__","_",DryWeights_MN$ID))
-# DryWeights_MN$ID<-toupper(sub("_$","",DryWeights_MN$ID))
-# 
-# Thickness_MN<-read.csv("JCBdata/Traits/Leaf Thickness -- Trait-Spectra Models 2018 - Sheet1.csv")
-# levels(Thickness_MN$Purpose)[levels(Thickness_MN$Purpose)=="pigments"]<-"PIG"
-# Thickness_MN$ID<-apply(Thickness_MN[,c("Plot","Species","Identifier","Layer","Purpose")],1,paste,collapse="_")
-# Thickness_MN$ID<-toupper(sub("__","_",Thickness_MN$ID))
-# Thickness_MN$ID<-toupper(sub("_$","",Thickness_MN$ID))
-# Thickness_MN$mean.thickness<-rowMeans(subset(Thickness_MN,select=c(Thickness.1..mm.,Thickness.2..mm.,Thickness.3..mm.)),na.rm=T)
-# 
-# ## note: does not actually include leaf area yet!
-# SLA_MN<-data.frame(ID=meta(pressed_spec_MN_agg)$ID,
-#                    SLA=NA,
-#                    totalwetmass=RWC_MN$Total.wet.mass..g.[match(meta(pressed_spec_MN_agg)$ID,RWC_MN$ID)],
-#                    petiolewetmass=RWC_MN$Wet.mass.petiole.rachis..g.[match(meta(pressed_spec_MN_agg)$ID,RWC_MN$ID)],
-#                    drymass=DryWeights_MN$Total.dry.mass..g.[match(meta(pressed_spec_MN_agg)$ID,DryWeights_MN$ID)],
-#                    Thickness=Thickness_MN$mean.thickness[match(meta(pressed_spec_MN_agg)$ID,Thickness_MN$ID)])
-# SLA_MN$petiolewetmass[is.na(SLA_MN$petiolewetmass)]<-0
-# ## here I assume that total wet mass INCLUDES petioles -- need to double-check
-# SLA_MN$LDMC<-1000*SLA_MN$drymass/(SLA_MN$totalwetmass-SLA_MN$petiolewetmass)
-# SLA_MN$totalwetmass<-NULL
-# SLA_MN$petiolewetmass<-NULL
-# SLA_MN$drymass<-NULL
-
-# SLA_all<-do.call(rbind,args=list(SLA_Dessain,SLA_other,SLA_MN))
 SLA_all<-do.call(rbind,args=list(SLA_Dessain,SLA_other))
-## temporary data quality issues
+## flagged bad data points
 SLA_all$SLA[SLA_all$ID==13404937]<-NA
 SLA_all$LDMC[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 
@@ -245,21 +212,21 @@ meta(fresh_spec_EL_agg)$SLA<-
 meta(fresh_spec_EL_agg)$LDMC<-
   SLA_all$LDMC[match(meta(fresh_spec_EL_agg)$ID,SLA_all$ID)]
 meta(fresh_spec_EL_agg)$LMA<-1/meta(fresh_spec_EL_agg)$SLA
-meta(fresh_spec_EL_agg)$EWT<-with(meta(fresh_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1))
+meta(fresh_spec_EL_agg)$EWT<-with(meta(fresh_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
 
 meta(pressed_spec_all)$SLA<-
   SLA_all$SLA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LMA<-1/meta(pressed_spec_all)$SLA
-meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*(1/SLA*0.1))
+meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
 
 meta(ground_spec_EL_agg)$SLA<-
   SLA_all$SLA[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
 meta(ground_spec_EL_agg)$LDMC<-
   SLA_all$LDMC[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
 meta(ground_spec_EL_agg)$LMA<-1/meta(ground_spec_EL_agg)$SLA
-meta(ground_spec_EL_agg)$EWT<-with(meta(ground_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1))
+meta(ground_spec_EL_agg)$EWT<-with(meta(ground_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
 
 ############################################
 ## read in C/N
@@ -570,9 +537,11 @@ fresh_spec_plot<-ggplot()+
               alpha = 0.5,fill = "blue")+
   geom_line(aes(x=400:2400,y=as.matrix(fresh_quantiles)[3,]),size=1,color="black")+
   geom_line(aes(x=400:2400,y=fresh_CV),size=1,color="red")+
+  geom_label(aes(x=400,y=0.93),hjust=0,label.size=NA,
+             label="Fresh-leaf spectra",size=6,fill="white")+
   theme_bw()+
   theme(text = element_text(size=20),
-        panel.grid.major = element_blank(),
+#        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
@@ -580,7 +549,7 @@ fresh_spec_plot<-ggplot()+
   labs(x="Wavelength (nm)",y="Reflectance (or CV)")+
   scale_y_continuous(expand = c(0, 0),limits=c(0,1))+
   scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
-  ggtitle("Fresh-leaf spectra")+labs(tag = "A")
+  labs(tag = "A")
 
 pressed_spec_plot<-ggplot()+
   geom_ribbon(aes(x=400:2400,
@@ -593,9 +562,11 @@ pressed_spec_plot<-ggplot()+
               alpha = 0.5,fill = "blue")+
   geom_line(aes(x=400:2400,y=as.matrix(pressed_quantiles)[3,]),size=1,color="black")+
   geom_line(aes(x=400:2400,y=pressed_CV),size=1,color="red")+
+  geom_label(aes(x=400,y=0.93),hjust=0,label.size=NA,
+             label="Pressed-leaf spectra",size=6,fill="white")+
   theme_bw()+
   theme(text = element_text(size=20),
-        panel.grid.major = element_blank(),
+#        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
@@ -603,7 +574,7 @@ pressed_spec_plot<-ggplot()+
   labs(x="Wavelength (nm)",y="Reflectance (or CV)")+
   scale_y_continuous(expand = c(0, 0),limits=c(0,1))+
   scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
-  ggtitle("Pressed-leaf spectra")+labs(tag = "B")
+  labs(tag = "B")
 
 ground_spec_plot<-ggplot()+
   geom_ribbon(aes(x=400:2400,
@@ -616,16 +587,75 @@ ground_spec_plot<-ggplot()+
               alpha = 0.5,fill = "blue")+
   geom_line(aes(x=400:2400,y=as.matrix(ground_quantiles)[3,]),size=1,color="black")+
   geom_line(aes(x=400:2400,y=ground_CV),size=1,color="red")+
+  geom_label(aes(x=400,y=0.93),hjust=0,label.size=NA,
+           label="Ground-leaf spectra",size=6,fill="white")+
+  theme_bw()+
+  theme(text = element_text(size=20),
+#        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        plot.margin=unit(c(0,0.1,0.1,0),"in"))+
+  labs(x="Wavelength (nm)",y="Reflectance (or CV)")+
+  scale_y_continuous(expand = c(0, 0),limits=c(0,1))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
+  labs(tag = "C")
+
+all_spec_plot<-ggplot()+
+  geom_textline(aes(x=400:2400,y=as.matrix(fresh_quantiles)[3,]),
+                linewidth=1,linetype="solid",label="Fresh",hjust=0.35,size=5)+
+  geom_textline(aes(x=400:2400,y=as.matrix(pressed_quantiles)[3,]),
+            linewidth=1,linetype="longdash",label="Pressed",hjust=0.45,size=5)+
+  geom_textline(aes(x=400:2400,y=as.matrix(ground_quantiles)[3,]),
+            linewidth=1,linetype="twodash",label="Ground",hjust=0.45,size=5)+
+  theme_bw()+
+  theme(text = element_text(size=20),
+#        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.margin=unit(c(0,0.1,0,0),"in"))+
+  labs(x="Wavelength (nm)",y="Reflectance")+
+  scale_y_continuous(expand = c(0, 0),limits=c(0,1))+
+  scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
+  labs(tag = "D")
+
+pdf("Manuscript/Fig1.pdf",width=6,height=13)
+fresh_spec_plot+pressed_spec_plot+ground_spec_plot+all_spec_plot+
+  plot_layout(ncol = 1)
+dev.off()
+
+pressed_spec_disc<-aggregate(as.matrix(pressed_spec_all),
+                             by=list(as.factor(meta(pressed_spec_all)$Discoloration)),
+                             FUN=mean)
+pressed_spec_disc_long<-melt(data = pressed_spec_disc,id.vars = "Group.1")
+pressed_spec_disc_long$variable<-as.numeric(as.character(pressed_spec_disc_long$variable))
+
+focal_palette=palette(brewer.pal(8,name="Set2")[c(3,4,5,6,8)])
+
+pressed_disc_plot<-ggplot(pressed_spec_disc_long,
+                          aes(x=variable,y=value,color=Group.1))+
+  geom_line(size=1)+
   theme_bw()+
   theme(text = element_text(size=20),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        plot.margin=unit(c(0,0.1,0,0),"in"))+
-  labs(x="Wavelength (nm)",y="Reflectance (or CV)")+
+        plot.margin=unit(c(0.1,0.1,0,0.1),"in"),
+        legend.position = c(0.8,0.75))+
+  labs(x="Wavelength (nm)",y="Reflectance",tag="A")+
   scale_y_continuous(expand = c(0, 0),limits=c(0,1))+
   scale_x_continuous(expand = c(0, 0),limits=c(390,2410))+
-  ggtitle("Ground-leaf spectra")+labs(tag = "C")
+  guides(color=guide_legend(title="Discoloration"))+
+  scale_color_manual(values=focal_palette)
 
-pdf("Manuscript/Fig1.pdf",width=6,height=12)
-fresh_spec_plot+pressed_spec_plot+ground_spec_plot+plot_layout(ncol = 1)
+disc_hist<-ggplot(meta(pressed_spec_all),
+                  aes(x=as.factor(Discoloration)))+
+  geom_bar()+
+  theme_bw()+
+  theme(text = element_text(size=20),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.margin=unit(c(0.1,0.1,0,0.1),"in"))+
+  labs(x="Discoloration",y="Count",tag="B")
+
+pdf("Manuscript/disc_spec.pdf",width=7,height=10)
+pressed_disc_plot+disc_hist+plot_layout(ncol=1)
 dev.off()
