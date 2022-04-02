@@ -603,7 +603,7 @@ ground_spec_plot<-ggplot()+
 
 all_spec_plot<-ggplot()+
   geom_textline(aes(x=400:2400,y=as.matrix(fresh_quantiles)[3,]),
-                linewidth=1,linetype="solid",label="Fresh",hjust=0.35,size=5)+
+                linewidth=1,linetype="solid",label="Fresh",hjust=0.40,size=5)+
   geom_textline(aes(x=400:2400,y=as.matrix(pressed_quantiles)[3,]),
             linewidth=1,linetype="longdash",label="Pressed",hjust=0.45,size=5)+
   geom_textline(aes(x=400:2400,y=as.matrix(ground_quantiles)[3,]),
