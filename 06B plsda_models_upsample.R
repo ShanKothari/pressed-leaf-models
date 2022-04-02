@@ -64,7 +64,7 @@ ctrl2 <- trainControl(method = "repeatedcv", repeats = 10, number=10,
 ## to the optimal # for the downsampling PLS-DA
 
 plsFit_fresh1 <- train(fresh_spec_EL_common_train, fresh_spec_EL_class_train,
-                      method = "pls", tuneLength = 40,
+                      method = "pls", tuneLength = 50,
                       trControl = ctrl1,probMethod="softmax")
 
 plsFit_fresh2 <- train(fresh_spec_EL_common_train, fresh_spec_EL_class_train,
@@ -130,7 +130,7 @@ ctrl2 <- trainControl(method = "repeatedcv", repeats = 10, number=10,
                       summaryFunction = multiClassSummary, sampling="up")
 
 plsFit_pressed1 <- train(pressed_spec_EL_common_train, pressed_spec_EL_class_train,
-                       method = "pls", tuneLength = 40,
+                       method = "pls", tuneLength = 50,
                        trControl = ctrl1,probMethod="softmax")
 
 plsFit_pressed2 <- train(pressed_spec_EL_common_train, pressed_spec_EL_class_train,
@@ -195,7 +195,7 @@ ctrl2 <- trainControl(method = "repeatedcv", repeats = 10, number=10,
                       summaryFunction = multiClassSummary, sampling="up")
 
 plsFit_ground1 <- train(ground_spec_EL_common_train, ground_spec_EL_class_train,
-                       method = "pls", tuneLength = 40,
+                       method = "pls", tuneLength = 50,
                        trControl = ctrl1,probMethod="softmax")
 
 plsFit_ground2 <- train(ground_spec_EL_common_train, ground_spec_EL_class_train,
