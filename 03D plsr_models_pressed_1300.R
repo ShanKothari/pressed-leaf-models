@@ -157,7 +157,7 @@ ggplot(EWT_pressed_1300_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
   theme_bw()+
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
-  coord_cartesian(xlim=c(0,0.03),ylim=c(0,0.03))+
+  coord_cartesian(xlim=c(0,0.3),ylim=c(0,0.3))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.2))+
   labs(x="Predicted",y="Measured")+

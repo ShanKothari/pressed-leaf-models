@@ -155,7 +155,7 @@ ggplot(EWT_pressed_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
   theme_bw()+
   geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
-  coord_cartesian(xlim=c(0,0.03),ylim=c(0,0.03))+
+  coord_cartesian(xlim=c(0,0.3),ylim=c(0,0.3))+
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.2))+
   labs(x="Predicted",y="Measured")+
@@ -1325,7 +1325,7 @@ pressed_val_perRMSE<-ggplot(perRMSE.long_pressed,aes(y=value,x=variable))+
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0,max(perRMSE.long_pressed$value)*1.1))
 
-pdf("Manuscript/FigS12.pdf",width=8,height=6,onefile=F)
+pdf("Manuscript/FigS14.pdf",width=8,height=6,onefile=F)
 egg::ggarrange(plots = list(pressed_val_R2,pressed_val_perRMSE),
                nrow=2,ncol=1)
 dev.off()
