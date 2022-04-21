@@ -80,7 +80,7 @@ perN_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[perN_fresh_valid
                             Species=meta(fresh_spec_EL_agg_train)$Species[perN_fresh_valid],
                             Project=meta(fresh_spec_EL_agg_train)$Project[perN_fresh_valid],
                             Stage=meta(fresh_spec_EL_agg_train)$Stage[perN_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[perC_fresh_valid],
+                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[perN_fresh_valid],
                             measured=meta(fresh_spec_EL_agg_train)$N[perN_fresh_valid],
                             val_pred=perN_fresh$validation$pred[,,ncomp_perN_fresh])
 ggplot(perN_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
