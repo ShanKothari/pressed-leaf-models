@@ -5,6 +5,7 @@ library(dplyr)
 library(signal)
 library(patchwork)
 library(stringr)
+library(RColorBrewer)
 
 #########################################
 ## define functions
@@ -102,7 +103,7 @@ meta(pressed_spec_MN_RWC_agg)$LDMC<-with(meta(pressed_spec_MN_RWC_agg),dry_mass/
 area_all<-read.csv("Traits/JCBdata/LeafArea/area_all.csv")
 meta(pressed_spec_MN_RWC_agg)$area<-area_all$area[match(toupper(meta(pressed_spec_MN_RWC_agg)$ID),toupper(area_all$TrueID))]
 meta(pressed_spec_MN_RWC_agg)$LMA<-with(meta(pressed_spec_MN_RWC_agg),dry_mass/area)*10
-meta(pressed_spec_MN_RWC_agg)$EWT<-with(meta(pressed_spec_MN_RWC_agg),(1/(LDMC/1000)-1)*LMA)/10
+meta(pressed_spec_MN_RWC_agg)$EWT<-with(meta(pressed_spec_MN_RWC_agg),(1/(LDMC/1000)-1)*LMA)
 
 CN<-read.csv("Traits/JCBdata/ElementalAnalysis/SummaryTables/fullsummarytable.csv")
 CN$SampleID<-gsub(pattern=" ",replacement="_",x = CN$SampleID)
@@ -166,6 +167,11 @@ meta(pressed_spec_MN_agg)$N_pred_1300<-rowMeans(N_preds_1300)
 meta(pressed_spec_MN_agg)$N_1300_lower<-apply(N_preds_1300,1,quantile,probs=0.025)
 meta(pressed_spec_MN_agg)$N_1300_upper<-apply(N_preds_1300,1,quantile,probs=0.975)
 
+#######################################
+## plot figures
+
+focal_palette=palette(brewer.pal(8,name="Set2")[c(5,4,3,6,8,1,2)])
+
 N_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
        aes(x=N_pred,y=N,color=functional.group))+
   geom_errorbarh(aes(y=N,xmin=N_lower,xmax=N_upper),
@@ -175,6 +181,7 @@ N_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted N (%)",y="Measured N (%)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -187,6 +194,7 @@ N_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted N (%)",y="Measured N (%)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -199,6 +207,7 @@ LMA_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(y=expression("Measured LMA (kg m"^-2*")"),x=expression("Predicted LMA (kg m"^-2*")"))+
   guides(color=guide_legend(title="Functional group"))
 
@@ -211,6 +220,7 @@ LMA_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(y=expression("Measured LMA (kg m"^-2*")"),x=expression("Predicted LMA (kg m"^-2*")"))+
   guides(color=guide_legend(title="Functional group"))
 
@@ -219,10 +229,11 @@ EWT_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_errorbarh(aes(y=EWT,xmin=EWT_lower,xmax=EWT_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(0,0.04),ylim=c(0,0.04))+
+  coord_cartesian(xlim=c(0,0.4),ylim=c(0,0.4))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted EWT (cm)",y="Measured EWT (cm)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -231,10 +242,11 @@ EWT_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_errorbarh(aes(y=EWT,xmin=EWT_1300_lower,xmax=EWT_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(0,0.04),ylim=c(0,0.04))+
+  coord_cartesian(xlim=c(0,0.4),ylim=c(0,0.4))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted EWT (cm)",y="Measured EWT (cm)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -247,6 +259,7 @@ C_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted C (%)",y="Measured C (%)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -259,6 +272,7 @@ C_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x="Predicted C (%)",y="Measured C (%)")+
   guides(color=guide_legend(title="Functional group"))
 
@@ -267,10 +281,11 @@ LDMC_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_errorbarh(aes(y=LDMC,xmin=LDMC_lower,xmax=LDMC_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(100,600),ylim=c(100,600))+
+  coord_cartesian(xlim=c(0,550),ylim=c(0,550))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x=expression("Predicted LDMC (mg g"^-1*")"),
        y=expression("Measured LDMC (mg g"^-1*")"))+
   guides(color=guide_legend(title="Functional group"))
@@ -280,10 +295,11 @@ LDMC_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   geom_errorbarh(aes(y=LDMC,xmin=LDMC_1300_lower,xmax=LDMC_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
-  coord_cartesian(xlim=c(100,600),ylim=c(100,600))+
+  coord_cartesian(xlim=c(0,550),ylim=c(0,550))+
   geom_abline(slope=1,intercept=0,size=2,linetype="dashed")+
   theme_bw()+
   theme(text=element_text(size=20))+
+  scale_color_manual(values=focal_palette[c(1,5,3)])+
   labs(x=expression("Predicted LDMC (mg g"^-1*")"),
        y=expression("Measured LDMC (mg g"^-1*")"))+
   guides(color=guide_legend(title="Functional group"))
@@ -295,9 +311,19 @@ pdf("Manuscript/Fig5.pdf",width=9,height=12)
   theme(legend.position = 'bottom')
 dev.off()
 
-pdf("Manuscript/FigS14.pdf",width=9,height=12)
+pdf("Manuscript/FigS19.pdf",width=9,height=12)
 ((LMA_1300_indval_plot/LDMC_1300_indval_plot/EWT_1300_indval_plot)|
     (N_1300_indval_plot/C_1300_indval_plot/plot_spacer()))+
   plot_layout(guides = "collect") &
   theme(legend.position = 'bottom')
 dev.off()
+
+pressed_spec_MN_agg_nc<-pressed_spec_MN_agg[meta(pressed_spec_MN_agg)$functional.group!="conifer",]
+pressed_spec_MN_RWC_agg_nc<-pressed_spec_MN_RWC_agg[meta(pressed_spec_MN_RWC_agg)$functional.group!="conifer",]
+
+summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg)))
+summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg_nc)))
+with(meta(pressed_spec_MN_RWC_agg),RMSD(EWT,EWT_pred_1300))
+with(meta(pressed_spec_MN_RWC_agg_nc),RMSD(EWT,EWT_pred_1300))
+with(meta(pressed_spec_MN_RWC_agg),percentRMSD(EWT,EWT_pred_1300,0.025,0.975))
+with(meta(pressed_spec_MN_RWC_agg_nc),percentRMSD(EWT,EWT_pred_1300,0.025,0.975))
