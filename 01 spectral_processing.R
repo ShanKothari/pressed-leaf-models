@@ -212,21 +212,21 @@ meta(fresh_spec_EL_agg)$SLA<-
 meta(fresh_spec_EL_agg)$LDMC<-
   SLA_all$LDMC[match(meta(fresh_spec_EL_agg)$ID,SLA_all$ID)]
 meta(fresh_spec_EL_agg)$LMA<-1/meta(fresh_spec_EL_agg)$SLA
-meta(fresh_spec_EL_agg)$EWT<-with(meta(fresh_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
+meta(fresh_spec_EL_agg)$EWT<-with(meta(fresh_spec_EL_agg),(1/(LDMC/1000)-1)*LMA)
 
 meta(pressed_spec_all)$SLA<-
   SLA_all$SLA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LMA<-1/meta(pressed_spec_all)$SLA
-meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
+meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*LMA)
 
 meta(ground_spec_EL_agg)$SLA<-
   SLA_all$SLA[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
 meta(ground_spec_EL_agg)$LDMC<-
   SLA_all$LDMC[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
 meta(ground_spec_EL_agg)$LMA<-1/meta(ground_spec_EL_agg)$SLA
-meta(ground_spec_EL_agg)$EWT<-with(meta(ground_spec_EL_agg),(1/(LDMC/1000)-1)*(1/SLA*0.1)*10)
+meta(ground_spec_EL_agg)$EWT<-with(meta(ground_spec_EL_agg),(1/(LDMC/1000)-1)*LMA)
 
 ############################################
 ## read in C/N
@@ -485,6 +485,49 @@ meta(ground_spec_EL_agg)$P<-
   ICP_all$P[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
 meta(ground_spec_EL_agg)$Zn<-
   ICP_all$Zn[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
+
+#####################################
+## mass based traits
+
+meta(fresh_spec_EL_agg)$N_area<-meta(fresh_spec_EL_agg)$N*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$C_area<-meta(fresh_spec_EL_agg)$C*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$solubles_area<-meta(fresh_spec_EL_agg)$solubles*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$hemicellulose_area<-meta(fresh_spec_EL_agg)$hemicellulose*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$cellulose_area<-meta(fresh_spec_EL_agg)$cellulose*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$lignin_area<-meta(fresh_spec_EL_agg)$lignin*meta(fresh_spec_EL_agg)$LMA/1000
+meta(fresh_spec_EL_agg)$chlA_area<-meta(fresh_spec_EL_agg)$chlA*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$chlB_area<-meta(fresh_spec_EL_agg)$chlB*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$car_area<-meta(fresh_spec_EL_agg)$car*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Al_area<-meta(fresh_spec_EL_agg)$Al*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Ca_area<-meta(fresh_spec_EL_agg)$Ca*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Cu_area<-meta(fresh_spec_EL_agg)$Cu*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Fe_area<-meta(fresh_spec_EL_agg)$Fe*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$K_area<-meta(fresh_spec_EL_agg)$K*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Mg_area<-meta(fresh_spec_EL_agg)$Mg*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Mn_area<-meta(fresh_spec_EL_agg)$Mn*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Na_area<-meta(fresh_spec_EL_agg)$Na*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$P_area<-meta(fresh_spec_EL_agg)$P*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_EL_agg)$Zn_area<-meta(fresh_spec_EL_agg)$Zn*meta(fresh_spec_EL_agg)$LMA/10000
+
+meta(pressed_spec_all)$N_area<-meta(pressed_spec_all)$N*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$C_area<-meta(pressed_spec_all)$C*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$solubles_area<-meta(pressed_spec_all)$solubles*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$hemicellulose_area<-meta(pressed_spec_all)$hemicellulose*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$cellulose_area<-meta(pressed_spec_all)$cellulose*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$lignin_area<-meta(pressed_spec_all)$lignin*meta(pressed_spec_all)$LMA/1000
+meta(pressed_spec_all)$chlA_area<-meta(pressed_spec_all)$chlA*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$chlB_area<-meta(pressed_spec_all)$chlB*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$car_area<-meta(pressed_spec_all)$car*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Al_area<-meta(pressed_spec_all)$Al*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Ca_area<-meta(pressed_spec_all)$Ca*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Cu_area<-meta(pressed_spec_all)$Cu*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Fe_area<-meta(pressed_spec_all)$Fe*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$K_area<-meta(pressed_spec_all)$K*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Mg_area<-meta(pressed_spec_all)$Mg*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Mn_area<-meta(pressed_spec_all)$Mn*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Na_area<-meta(pressed_spec_all)$Na*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$P_area<-meta(pressed_spec_all)$P*meta(pressed_spec_all)$LMA/10000
+meta(pressed_spec_all)$Zn_area<-meta(pressed_spec_all)$Zn*meta(pressed_spec_all)$LMA/10000
 
 #####################################
 ## Indices for discoloration analyses
