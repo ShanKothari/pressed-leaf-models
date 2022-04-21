@@ -335,17 +335,25 @@ dev.off()
 fresh_jack_df_list<-readRDS("SavedResults/fresh_jack_df_list.rds")
 fresh_jack_coef_list<-readRDS("SavedResults/fresh_jack_coefs_list.rds")
 
+fresh_area_jack_df_list<-readRDS("SavedResults/fresh_area_jack_df_list.rds")
+fresh_area_jack_coef_list<-readRDS("SavedResults/fresh_area_jack_coefs_list.rds")
+
 pressed_jack_df_list<-readRDS("SavedResults/pressed_jack_df_list.rds")
 pressed_jack_coef_list<-readRDS("SavedResults/pressed_jack_coefs_list.rds")
 
 pressed_1300_jack_df_list<-readRDS("SavedResults/pressed_1300_jack_df_list.rds")
 pressed_1300_jack_coef_list<-readRDS("SavedResults/pressed_1300_jack_coefs_list.rds")
 
+pressed_area_jack_df_list<-readRDS("SavedResults/pressed_area_jack_df_list.rds")
+pressed_area_jack_coef_list<-readRDS("SavedResults/pressed_area_jack_coefs_list.rds")
+
 ground_jack_df_list<-readRDS("SavedResults/ground_jack_df_list.rds")
 ground_jack_coef_list<-readRDS("SavedResults/ground_jack_coefs_list.rds")
 
 #######################################
 ## axis limits for validation plots
+
+focal_palette=palette(brewer.pal(8,name="Set2")[c(3,4,5,6,8,1,2)])
 
 all.solubles<-c(fresh_jack_df_list$sol$Measured,
                 fresh_jack_df_list$sol$pred_mean,
@@ -407,8 +415,8 @@ all.EWT<-c(fresh_jack_df_list$EWT$Measured,
             fresh_jack_df_list$EWT$pred_mean,
             pressed_jack_df_list$EWT$pred_mean,
             ground_jack_df_list$EWT$pred_mean)
-EWT_upper<-max(all.EWT,na.rm=T)+0.002
-EWT_lower<-min(all.EWT,na.rm=T)-0.002
+EWT_upper<-max(all.EWT,na.rm=T)+0.02
+EWT_lower<-min(all.EWT,na.rm=T)-0.02
 
 all.chlA<-c(fresh_jack_df_list$chlA$Measured,
             fresh_jack_df_list$chlA$pred_mean,
@@ -516,6 +524,7 @@ solubles_fresh_val_plot<-ggplot(fresh_jack_df_list$sol,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Fresh-leaf spectra")+guides(color=F)
 
@@ -531,6 +540,7 @@ hemicellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$hemi,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
@@ -546,6 +556,7 @@ cellulose_fresh_val_plot<-ggplot(fresh_jack_df_list$cell,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
@@ -561,6 +572,7 @@ lignin_fresh_val_plot<-ggplot(fresh_jack_df_list$lign,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=F)
 
@@ -576,6 +588,7 @@ perC_fresh_val_plot<-ggplot(fresh_jack_df_list$C,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Fresh-leaf spectra")+guides(color=F)
 
@@ -591,6 +604,7 @@ perN_fresh_val_plot<-ggplot(fresh_jack_df_list$N,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.8, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
@@ -605,6 +619,7 @@ LMA_fresh_val_plot<-ggplot(fresh_jack_df_list$LMA,
   coord_cartesian(xlim=c(LMA_lower,LMA_upper),ylim=c(LMA_lower,LMA_upper))+
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y=expression("Measured LMA (kg m"^-2*")"),x=expression("Predicted LMA (kg m"^-2*")"))+
   guides(color=F)
@@ -621,6 +636,7 @@ LDMC_fresh_val_plot<-ggplot(fresh_jack_df_list$LDMC,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured LDMC (mg g"^-1*")"),x=expression("Predicted LDMC (mg g"^-1*")"))+
   guides(color=F)
 
@@ -636,6 +652,7 @@ EWT_fresh_val_plot<-ggplot(fresh_jack_df_list$EWT,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured EWT (mm)"),x=expression("Predicted EWT (mm)"))+
   guides(color=F)
 
@@ -651,6 +668,7 @@ chlA_fresh_val_plot<-ggplot(fresh_jack_df_list$chlA,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
@@ -668,6 +686,7 @@ chlB_fresh_val_plot<-ggplot(fresh_jack_df_list$chlB,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
@@ -684,6 +703,7 @@ car_fresh_val_plot<-ggplot(fresh_jack_df_list$car,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured carotenoids (mg g"^-1*")"),x=expression("Predicted carotenoids (mg g"^-1*")"))+
   guides(color=F)
 
@@ -699,6 +719,7 @@ Al_fresh_val_plot<-ggplot(fresh_jack_df_list$Al,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y=expression("Measured Al (mg g"^-1*")"),x=expression("Predicted Al (mg g"^-1*")"))+
   guides(color=F)
@@ -715,6 +736,7 @@ Ca_fresh_val_plot<-ggplot(fresh_jack_df_list$Ca,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Ca (mg g"^-1*")"),x=expression("Predicted Ca (mg g"^-1*")"))+
   guides(color=F)
 
@@ -730,6 +752,7 @@ Cu_fresh_val_plot<-ggplot(fresh_jack_df_list$Cu,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Cu (mg g"^-1*")"),x=expression("Predicted Cu (mg g"^-1*")"))+
   guides(color=F)
 
@@ -745,6 +768,7 @@ Fe_fresh_val_plot<-ggplot(fresh_jack_df_list$Fe,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y=expression("Measured Fe (mg g"^-1*")"),x=expression("Predicted Fe (mg g"^-1*")"))+
   guides(color=F)
@@ -761,6 +785,7 @@ K_fresh_val_plot<-ggplot(fresh_jack_df_list$K,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
@@ -776,6 +801,7 @@ Mg_fresh_val_plot<-ggplot(fresh_jack_df_list$Mg,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Mg (mg g"^-1*")"),x=expression("Predicted Mg (mg g"^-1*")"))+
   guides(color=F)
 
@@ -791,6 +817,7 @@ Mn_fresh_val_plot<-ggplot(fresh_jack_df_list$Mn,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
@@ -807,6 +834,7 @@ Na_fresh_val_plot<-ggplot(fresh_jack_df_list$Na,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Na (mg g"^-1*")"),x=expression("Predicted Na (mg g"^-1*")"))+
   guides(color=F)
 
@@ -822,6 +850,7 @@ P_fresh_val_plot<-ggplot(fresh_jack_df_list$P,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured P (mg g"^-1*")"),x=expression("Predicted P (mg g"^-1*")"))+
   guides(color=F)
 
@@ -837,6 +866,7 @@ Zn_fresh_val_plot<-ggplot(fresh_jack_df_list$Zn,
   theme(text = element_text(size=20),
         plot.margin=unit(c(0,0.3,0,0),"in"),
         legend.position = c(0.85, 0.25))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Zn (mg g"^-1*")"),x=expression("Predicted Zn (mg g"^-1*")"))+
   guides(color=F)
 
@@ -855,6 +885,7 @@ solubles_pressed_val_plot<-ggplot(pressed_jack_df_list$sol,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Pressed-leaf spectra")+guides(color=F)
 
@@ -872,6 +903,7 @@ hemicellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$hemi,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
@@ -889,6 +921,7 @@ cellulose_pressed_val_plot<-ggplot(pressed_jack_df_list$cell,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
@@ -906,6 +939,7 @@ lignin_pressed_val_plot<-ggplot(pressed_jack_df_list$lign,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=F)
 
@@ -923,6 +957,7 @@ perC_pressed_val_plot<-ggplot(pressed_jack_df_list$C,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Pressed-leaf spectra")+guides(color=F)
 
@@ -940,6 +975,7 @@ perN_pressed_val_plot<-ggplot(pressed_jack_df_list$N,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
@@ -956,6 +992,7 @@ LMA_pressed_val_plot<-ggplot(pressed_jack_df_list$LMA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y=expression("Measured LMA (kg m"^-2*")"),x=expression("Predicted LMA (kg m"^-2*")"))+
   guides(color=F)
@@ -974,6 +1011,7 @@ LDMC_pressed_val_plot<-ggplot(pressed_jack_df_list$LDMC,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured LDMC (mg g"^-1*")"),x=expression("Predicted LDMC (mg g"^-1*")"))+
   guides(color=F)
 
@@ -991,6 +1029,7 @@ EWT_pressed_val_plot<-ggplot(pressed_jack_df_list$EWT,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured EWT (mm)"),x=expression("Predicted EWT (mm)"))+
   guides(color=F)
 
@@ -1008,6 +1047,7 @@ chlA_pressed_val_plot<-ggplot(pressed_jack_df_list$chlA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
@@ -1027,6 +1067,7 @@ chlB_pressed_val_plot<-ggplot(pressed_jack_df_list$chlB,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
@@ -1045,6 +1086,7 @@ car_pressed_val_plot<-ggplot(pressed_jack_df_list$car,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured carotenoids (mg g"^-1*")"),x=expression("Predicted carotenoids (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1062,6 +1104,7 @@ Al_pressed_val_plot<-ggplot(pressed_jack_df_list$Al,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y=expression("Measured Al (mg g"^-1*")"),x=expression("Predicted Al (mg g"^-1*")"))+
   guides(color=F)
@@ -1080,7 +1123,9 @@ Ca_pressed_val_plot<-ggplot(pressed_jack_df_list$Ca,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Ca (mg g"^-1*")"),x=expression("Predicted Ca (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Ca (mg g"^-1*")"),
+       x=expression("Predicted Ca (mg g"^-1*")"))+
   guides(color=F)
 
 Cu_pressed_val_plot<-ggplot(pressed_jack_df_list$Cu,
@@ -1097,7 +1142,9 @@ Cu_pressed_val_plot<-ggplot(pressed_jack_df_list$Cu,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Cu (mg g"^-1*")"),x=expression("Predicted Cu (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Cu (mg g"^-1*")"),
+       x=expression("Predicted Cu (mg g"^-1*")"))+
   guides(color=F)
 
 Fe_pressed_val_plot<-ggplot(pressed_jack_df_list$Fe,
@@ -1114,6 +1161,7 @@ Fe_pressed_val_plot<-ggplot(pressed_jack_df_list$Fe,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y=expression("Measured Fe (mg g"^-1*")"),x=expression("Predicted Fe (mg g"^-1*")"))+
   guides(color=F)
@@ -1132,7 +1180,9 @@ K_pressed_val_plot<-ggplot(pressed_jack_df_list$K,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured K (mg g"^-1*")"),
+       x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mg_pressed_val_plot<-ggplot(pressed_jack_df_list$Mg,
@@ -1149,6 +1199,7 @@ Mg_pressed_val_plot<-ggplot(pressed_jack_df_list$Mg,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Mg (mg g"^-1*")"),x=expression("Predicted Mg (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1166,6 +1217,7 @@ Mn_pressed_val_plot<-ggplot(pressed_jack_df_list$Mn,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
@@ -1184,7 +1236,9 @@ Na_pressed_val_plot<-ggplot(pressed_jack_df_list$Na,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Na (mg g"^-1*")"),x=expression("Predicted Na (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Na (mg g"^-1*")"),
+       x=expression("Predicted Na (mg g"^-1*")"))+
   guides(color=F)
 
 P_pressed_val_plot<-ggplot(pressed_jack_df_list$P,
@@ -1201,7 +1255,9 @@ P_pressed_val_plot<-ggplot(pressed_jack_df_list$P,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured P (mg g"^-1*")"),x=expression("Predicted P (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured P (mg g"^-1*")"),
+       x=expression("Predicted P (mg g"^-1*")"))+
   guides(color=F)
 
 Zn_pressed_val_plot<-ggplot(pressed_jack_df_list$Zn,
@@ -1218,7 +1274,9 @@ Zn_pressed_val_plot<-ggplot(pressed_jack_df_list$Zn,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Zn (mg g"^-1*")"),x=expression("Predicted Zn (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Zn (mg g"^-1*")"),
+       x=expression("Predicted Zn (mg g"^-1*")"))+
   guides(color=F)
 
 solubles_ground_val_plot<-ggplot(ground_jack_df_list$sol,
@@ -1235,6 +1293,7 @@ solubles_ground_val_plot<-ggplot(ground_jack_df_list$sol,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured solubles (%)",x="Predicted solubles (%)")+
   ggtitle("Ground-leaf spectra")+guides(color=F)
 
@@ -1252,6 +1311,7 @@ hemicellulose_ground_val_plot<-ggplot(ground_jack_df_list$hemi,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured hemicellulose (%)",x="Predicted hemicellulose (%)")+
   guides(color=F)
 
@@ -1269,6 +1329,7 @@ cellulose_ground_val_plot<-ggplot(ground_jack_df_list$cell,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured cellulose (%)",x="Predicted cellulose (%)")+
   guides(color=F)
 
@@ -1286,6 +1347,7 @@ lignin_ground_val_plot<-ggplot(ground_jack_df_list$lign,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured lignin (%)",x="Predicted lignin (%)")+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1303,6 +1365,7 @@ perC_ground_val_plot<-ggplot(ground_jack_df_list$C,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured C (%)",x="Predicted C (%)")+
   ggtitle("Ground-leaf spectra")+guides(color=F)
 
@@ -1320,6 +1383,7 @@ perN_ground_val_plot<-ggplot(ground_jack_df_list$N,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
 
@@ -1336,8 +1400,10 @@ LMA_ground_val_plot<-ggplot(ground_jack_df_list$LMA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
-  labs(y=expression("Measured LMA (kg m"^-2*")"),x=expression("Predicted LMA (kg m"^-2*")"))+
+  labs(y=expression("Measured LMA (kg m"^-2*")"),
+       x=expression("Predicted LMA (kg m"^-2*")"))+
   guides(color=F)
 
 LDMC_ground_val_plot<-ggplot(ground_jack_df_list$LDMC,
@@ -1354,7 +1420,9 @@ LDMC_ground_val_plot<-ggplot(ground_jack_df_list$LDMC,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured LDMC (mg g"^-1*")"),x=expression("Predicted LDMC (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured LDMC (mg g"^-1*")"),
+       x=expression("Predicted LDMC (mg g"^-1*")"))+
   guides(color=F)
 
 EWT_ground_val_plot<-ggplot(ground_jack_df_list$EWT,
@@ -1371,7 +1439,9 @@ EWT_ground_val_plot<-ggplot(ground_jack_df_list$EWT,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured EWT (mm)"),x=expression("Predicted EWT (mm)"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured EWT (mm)"),
+       x=expression("Predicted EWT (mm)"))+
   guides(color=guide_legend(title="Growth form"))
 
 chlA_ground_val_plot<-ggplot(ground_jack_df_list$chlA,
@@ -1388,6 +1458,7 @@ chlA_ground_val_plot<-ggplot(ground_jack_df_list$chlA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
@@ -1407,6 +1478,7 @@ chlB_ground_val_plot<-ggplot(ground_jack_df_list$chlB,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("b")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("b")~"(mg g"^-1*")"))+
   guides(color=F)
@@ -1425,6 +1497,7 @@ car_ground_val_plot<-ggplot(ground_jack_df_list$car,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured carotenoids (mg g"^-1*")"),x=expression("Predicted carotenoids (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1442,6 +1515,7 @@ Al_ground_val_plot<-ggplot(ground_jack_df_list$Al,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
   labs(y=expression("Measured Al (mg g"^-1*")"),x=expression("Predicted Al (mg g"^-1*")"))+
   guides(color=F)
@@ -1460,6 +1534,7 @@ Ca_ground_val_plot<-ggplot(ground_jack_df_list$Ca,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Ca (mg g"^-1*")"),x=expression("Predicted Ca (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1477,6 +1552,7 @@ Cu_ground_val_plot<-ggplot(ground_jack_df_list$Cu,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Cu (mg g"^-1*")"),x=expression("Predicted Cu (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1494,6 +1570,7 @@ Fe_ground_val_plot<-ggplot(ground_jack_df_list$Fe,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
   labs(y=expression("Measured Fe (mg g"^-1*")"),x=expression("Predicted Fe (mg g"^-1*")"))+
   guides(color=F)
@@ -1512,6 +1589,7 @@ K_ground_val_plot<-ggplot(ground_jack_df_list$K,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1529,6 +1607,7 @@ Mg_ground_val_plot<-ggplot(ground_jack_df_list$Mg,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Mg (mg g"^-1*")"),x=expression("Predicted Mg (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1546,6 +1625,7 @@ Mn_ground_val_plot<-ggplot(ground_jack_df_list$Mn,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
@@ -1564,6 +1644,7 @@ Na_ground_val_plot<-ggplot(ground_jack_df_list$Na,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Na (mg g"^-1*")"),x=expression("Predicted Na (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1581,6 +1662,7 @@ P_ground_val_plot<-ggplot(ground_jack_df_list$P,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured P (mg g"^-1*")"),x=expression("Predicted P (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1598,6 +1680,7 @@ Zn_ground_val_plot<-ggplot(ground_jack_df_list$Zn,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Zn (mg g"^-1*")"),x=expression("Predicted Zn (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
@@ -1668,6 +1751,7 @@ chlA_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$chlA,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
@@ -1686,6 +1770,7 @@ chlA_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$chlA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=F)
@@ -1704,6 +1789,7 @@ EWT_ground_val_plot_alt<-ggplot(ground_jack_df_list$EWT,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured EWT (mm)"),x=expression("Predicted EWT (mm)"))+
   guides(color=F)
 
@@ -1721,6 +1807,7 @@ chlA_ground_val_plot_alt<-ggplot(ground_jack_df_list$chlA,
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Chl"~italic("a")~"(mg g"^-1*")"),
        x=expression("Predicted Chl"~italic("a")~"(mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
@@ -1752,6 +1839,7 @@ perN_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Fresh-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
@@ -1768,6 +1856,7 @@ K_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$K,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1783,6 +1872,7 @@ Mn_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$Mn,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
@@ -1798,6 +1888,7 @@ perN_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Pressed-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
@@ -1814,7 +1905,9 @@ K_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$K,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured K (mg g"^-1*")"),
+       x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
@@ -1829,7 +1922,9 @@ Mn_pressed_val_plot_alt<-ggplot(pressed_jack_df_list$Mn,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Mn (mg g"^-1*")"),
+       x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=F)
 
 perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$N,
@@ -1844,6 +1939,7 @@ perN_ground_val_plot_alt<-ggplot(ground_jack_df_list$N,
   theme(text = element_text(size=20),
         legend.position = c(0.8, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
+  scale_color_manual(values=focal_palette)+
   ggtitle("Ground-leaf spectra")+
   labs(y="Measured N (%)",x="Predicted N (%)")+
   guides(color=F)
@@ -1860,7 +1956,9 @@ K_ground_val_plot_alt<-ggplot(ground_jack_df_list$K,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured K (mg g"^-1*")"),x=expression("Predicted K (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured K (mg g"^-1*")"),
+       x=expression("Predicted K (mg g"^-1*")"))+
   guides(color=F)
 
 Mn_ground_val_plot_alt<-ggplot(ground_jack_df_list$Mn,
@@ -1875,7 +1973,9 @@ Mn_ground_val_plot_alt<-ggplot(ground_jack_df_list$Mn,
   theme(text = element_text(size=20),
         legend.position = c(0.85, 0.25),
         plot.margin=unit(c(0,0.3,0,0),"in"))+
-  labs(y=expression("Measured Mn (mg g"^-1*")"),x=expression("Predicted Mn (mg g"^-1*")"))+
+  scale_color_manual(values=focal_palette)+
+  labs(y=expression("Measured Mn (mg g"^-1*")"),
+       x=expression("Predicted Mn (mg g"^-1*")"))+
   guides(color=guide_legend(title="Growth form"))
 
 pdf("Manuscript/Fig3.pdf",width=16,height=15)
@@ -1894,7 +1994,8 @@ dev.off()
 ## with(lignin_fresh_pred,RMSD(measured,val_pred)/(max(measured$Measured,na.rm=T)-min(measured$Measured,na.rm=T)))
 
 ## validation R2, RMSE, and %RMSE
-unlist(lapply(fresh_jack_df_list,function(x) x$ncomp[1]))
-unlist(lapply(fresh_jack_df_list,function(x) summary(lm(Measured~pred_mean,data=x))$r.squared))
-unlist(lapply(fresh_jack_df_list,function(x) RMSD(x$Measured,x$pred_mean)))
-unlist(lapply(fresh_jack_df_list,function(x) percentRMSD(x$Measured,x$pred_mean,0.025,0.975)))*100
+summ<-data.frame(ncomp=unlist(lapply(ground_jack_df_list,function(x) x$ncomp[1])),
+                 r2=round(unlist(lapply(ground_jack_df_list,function(x) summary(lm(Measured~pred_mean,data=x))$r.squared)),3),
+                 rmse=signif(unlist(lapply(ground_jack_df_list,function(x) RMSD(x$Measured,x$pred_mean))),3),
+                 perrmse=signif(unlist(lapply(ground_jack_df_list,function(x) percentRMSD(x$Measured,x$pred_mean,0.025,0.975)))*100,3))
+write.csv(summ,"SavedResults/plsr_summ.csv")
