@@ -85,18 +85,27 @@ fcm_d$Reference<-unlist(lapply(as.character(fcm_d$Reference),function(x){
   pred_paste<-paste(pred_split[[1]][1:2],collapse=" ")
   return(pred_paste)
 }))
+
+fcm_d$RefSum<-unlist(lapply(fcm_d$Reference,function(x) sum(fcm_d$Freq[fcm_d$Reference==x])))
+fcm_d$RefPer<-round(fcm_d$Freq/fcm_d$RefSum*100,digits=0)
+
 fcm_st<-as.data.frame(fresh_conmat$overall)
 
-fcm_d_p <-  ggplot(data = fcm_d, aes(x = Prediction , y =  Reference, fill = Freq))+
+fcm_d_p <-  ggplot(data = fcm_d[fcm_d$RefPer>0,],
+                   aes(x = Prediction , y =  Reference, fill = RefPer))+
   geom_tile() +
-  geom_text(aes(label = paste("",Freq)), color = 'dark gray', size = 8) +
+  geom_text(aes(label = RefPer), color = 'peachpuff1', size = 6) +
   theme_light() +
   guides(fill=FALSE)+
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7",
+                        limits=c(0,100))+
   theme(text=element_text(size=20),
         axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, face="italic"),
-        axis.text.y = element_text(face="italic"))+
+        axis.text.y = element_text(face="italic"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
   ggtitle("Fresh-leaf spectra")+
-  labs(tag="A")
+  labs(tag="A",y="True identity")
 
 pdf("Manuscript/Fig6A.pdf",width=7.5,height=7.5)
 fcm_d_p
@@ -151,18 +160,27 @@ pcm_d$Reference<-unlist(lapply(as.character(pcm_d$Reference),function(x){
   pred_paste<-paste(pred_split[[1]][1:2],collapse=" ")
   return(pred_paste)
 }))
+
+pcm_d$RefSum<-unlist(lapply(pcm_d$Reference,function(x) sum(pcm_d$Freq[pcm_d$Reference==x])))
+pcm_d$RefPer<-round(pcm_d$Freq/pcm_d$RefSum*100,digits=0)
+
 pcm_st<-as.data.frame(pressed_conmat$overall)
 
-pcm_d_p <-  ggplot(data = pcm_d, aes(x = Prediction , y =  Reference, fill = Freq))+
+pcm_d_p <-  ggplot(data = pcm_d[pcm_d$RefPer>0,],
+                   aes(x = Prediction , y =  Reference, fill = RefPer))+
   geom_tile() +
-  geom_text(aes(label = paste("",Freq)), color = 'dark gray', size = 8) +
+  geom_text(aes(label = RefPer), color = 'peachpuff1', size = 6) +
   theme_light() +
   guides(fill=FALSE)+
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7",
+                        limits=c(0,100))+
   theme(text=element_text(size=20),
-        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1,face="italic"),
-        axis.text.y = element_text(face="italic"))+
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, face="italic"),
+        axis.text.y = element_text(face="italic"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
   ggtitle("Pressed-leaf spectra")+
-  labs(tag="B")
+  labs(tag="B",y="True identity")
 
 pdf("Manuscript/Fig6B.pdf",width=7.5,height=7.5)
 pcm_d_p
@@ -216,19 +234,39 @@ gcm_d$Reference<-unlist(lapply(as.character(gcm_d$Reference),function(x){
   pred_paste<-paste(pred_split[[1]][1:2],collapse=" ")
   return(pred_paste)
 }))
+
+gcm_d$RefSum<-unlist(lapply(gcm_d$Reference,function(x) sum(gcm_d$Freq[gcm_d$Reference==x])))
+gcm_d$RefPer<-round(gcm_d$Freq/gcm_d$RefSum*100,digits=0)
+
 gcm_st<-as.data.frame(ground_conmat$overall)
 
-gcm_d_p <-  ggplot(data = gcm_d, aes(x = Prediction , y =  Reference, fill = Freq))+
+gcm_d_p <-  ggplot(data = gcm_d[gcm_d$RefPer>0,],
+                   aes(x = Prediction , y =  Reference, fill = RefPer))+
   geom_tile() +
-  geom_text(aes(label = paste("",Freq)), color = 'dark gray', size = 8) +
+  geom_text(aes(label = RefPer), color = 'peachpuff1', size = 6) +
   theme_light() +
   guides(fill=FALSE)+
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7",
+                        limits=c(0,100))+
   theme(text=element_text(size=20),
-        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1,face="italic"),
-        axis.text.y = element_text(face="italic"))+
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, face="italic"),
+        axis.text.y = element_text(face="italic"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
   ggtitle("Ground-leaf spectra")+
-  labs(tag="C")
+  labs(tag="C",y="True identity")
 
 pdf("Manuscript/Fig6C.pdf",width=7.5,height=7.5)
 gcm_d_p
 dev.off()
+
+obj_list<-list(fresh=list(fresh_dat=fcm_d,
+                          fresh_sum=fcm_st,
+                          fresh_comp=plsFit_fresh2$bestTune$ncomp),
+               pressed=list(pressed_dat=pcm_d,
+                            pressed_sum=pcm_st,
+                            pressed_comp=plsFit_pressed2$bestTune$ncomp),
+               ground=list(ground_dat=gcm_d,
+                           ground_sum=gcm_st,
+                           ground_comp=plsFit_ground2$bestTune$ncomp))
+saveRDS(obj_list,"SavedResults/class_summ.rds")
