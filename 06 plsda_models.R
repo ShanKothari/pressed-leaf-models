@@ -12,25 +12,25 @@ library(plyr)
 ######################################################
 ## read data
 
-fresh_spec_EL_agg<-readRDS("ProcessedSpectralData/fresh_spec_EL_agg.rds")
-pressed_spec_all<-readRDS("ProcessedSpectralData/pressed_spec_EL_agg.rds")
-ground_spec_EL_agg<-readRDS("ProcessedSpectralData/ground_spec_EL_agg.rds")
+fresh_spec_all<-readRDS("ProcessedSpectralData/fresh_spec_all.rds")
+pressed_spec_all<-readRDS("ProcessedSpectralData/pressed_spec_all.rds")
+ground_spec_all<-readRDS("ProcessedSpectralData/ground_spec_all.rds")
 
 #####################################################
 ## shorten species names
 
-meta(fresh_spec_EL_agg)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(fresh_spec_EL_agg)$Species),split=" "),
+meta(fresh_spec_all)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(fresh_spec_all)$Species),split=" "),
                                                function(x) paste(substring(x[[1]], 1, 1),x[[2]],sep = ". "))))
 meta(pressed_spec_all)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(pressed_spec_all)$Species),split=" "),
                                                function(x) paste(substring(x[[1]], 1, 1),x[[2]],sep = ". "))))
-meta(ground_spec_EL_agg)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(ground_spec_EL_agg)$Species),split=" "),
+meta(ground_spec_all)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(ground_spec_all)$Species),split=" "),
                                                function(x) paste(substring(x[[1]], 1, 1),x[[2]],sep = ". "))))
 
 #####################################################
 ## fresh spectra
 
-common_sp<-names(which(table(meta(fresh_spec_EL_agg)$SpShort)>=20))
-fresh_spec_EL_common<-fresh_spec_EL_agg[which(meta(fresh_spec_EL_agg)$SpShort %in% common_sp)]
+common_sp<-names(which(table(meta(fresh_spec_all)$SpShort)>=20))
+fresh_spec_EL_common<-fresh_spec_all[which(meta(fresh_spec_all)$SpShort %in% common_sp)]
 meta(fresh_spec_EL_common)$SpShort<-droplevels(meta(fresh_spec_EL_common)$SpShort)
 
 fresh_spec_EL_class<-meta(fresh_spec_EL_common)$SpShort
@@ -189,8 +189,8 @@ dev.off()
 ##################################################
 ## ground spectra
 
-common_sp<-names(which(table(meta(ground_spec_EL_agg)$SpShort)>=20))
-ground_spec_EL_common<-ground_spec_EL_agg[which(meta(ground_spec_EL_agg)$SpShort %in% common_sp)]
+common_sp<-names(which(table(meta(ground_spec_all)$SpShort)>=20))
+ground_spec_EL_common<-ground_spec_all[which(meta(ground_spec_all)$SpShort %in% common_sp)]
 meta(ground_spec_EL_common)$SpShort<-droplevels(meta(ground_spec_EL_common)$SpShort)
 
 ground_spec_EL_class<-meta(ground_spec_EL_common)$SpShort
