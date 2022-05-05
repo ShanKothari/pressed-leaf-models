@@ -45,22 +45,22 @@ apply.coefs<-function(coef.list,val.spec,intercept=T){
 ######################################################
 ## read data
 
-fresh_spec_EL_agg_train<-readRDS("ProcessedSpectralData/fresh_spec_EL_agg_train.rds")
-fresh_spec_EL_agg_test<-readRDS("ProcessedSpectralData/fresh_spec_EL_agg_test.rds")
+fresh_spec_all_train<-readRDS("ProcessedSpectralData/fresh_spec_all_train.rds")
+fresh_spec_all_test<-readRDS("ProcessedSpectralData/fresh_spec_all_test.rds")
 
 ################################################
 ## building calibration models
 
-perC_fresh<-plsr(meta(fresh_spec_EL_agg_train)$C~as.matrix(fresh_spec_EL_agg_train),
+perC_fresh<-plsr(meta(fresh_spec_all_train)$C~as.matrix(fresh_spec_all_train),
                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_perC_fresh <- selectNcomp(perC_fresh, method = "onesigma", plot = FALSE)
-perC_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$C))
-perC_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[perC_fresh_valid],
-                            Species=meta(fresh_spec_EL_agg_train)$Species[perC_fresh_valid],
-                            Project=meta(fresh_spec_EL_agg_train)$Project[perC_fresh_valid],
-                            Stage=meta(fresh_spec_EL_agg_train)$Stage[perC_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[perC_fresh_valid],
-                            measured=meta(fresh_spec_EL_agg_train)$C[perC_fresh_valid],
+perC_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$C))
+perC_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[perC_fresh_valid],
+                            Species=meta(fresh_spec_all_train)$Species[perC_fresh_valid],
+                            Project=meta(fresh_spec_all_train)$Project[perC_fresh_valid],
+                            Stage=meta(fresh_spec_all_train)$Stage[perC_fresh_valid],
+                            GrowthForm=meta(fresh_spec_all_train)$GrowthForm[perC_fresh_valid],
+                            measured=meta(fresh_spec_all_train)$C[perC_fresh_valid],
                             val_pred=perC_fresh$validation$pred[,,ncomp_perC_fresh])
 ggplot(perC_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -72,16 +72,16 @@ ggplot(perC_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting %C from fresh-leaf spectra")
 
-perN_fresh<-plsr(meta(fresh_spec_EL_agg_train)$N~as.matrix(fresh_spec_EL_agg_train),
+perN_fresh<-plsr(meta(fresh_spec_all_train)$N~as.matrix(fresh_spec_all_train),
                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_perN_fresh <- selectNcomp(perN_fresh, method = "onesigma", plot = FALSE)
-perN_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$N))
-perN_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[perN_fresh_valid],
-                            Species=meta(fresh_spec_EL_agg_train)$Species[perN_fresh_valid],
-                            Project=meta(fresh_spec_EL_agg_train)$Project[perN_fresh_valid],
-                            Stage=meta(fresh_spec_EL_agg_train)$Stage[perN_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[perN_fresh_valid],
-                            measured=meta(fresh_spec_EL_agg_train)$N[perN_fresh_valid],
+perN_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$N))
+perN_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[perN_fresh_valid],
+                            Species=meta(fresh_spec_all_train)$Species[perN_fresh_valid],
+                            Project=meta(fresh_spec_all_train)$Project[perN_fresh_valid],
+                            Stage=meta(fresh_spec_all_train)$Stage[perN_fresh_valid],
+                            GrowthForm=meta(fresh_spec_all_train)$GrowthForm[perN_fresh_valid],
+                            measured=meta(fresh_spec_all_train)$N[perN_fresh_valid],
                             val_pred=perN_fresh$validation$pred[,,ncomp_perN_fresh])
 ggplot(perN_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -93,16 +93,16 @@ ggplot(perN_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting %N from fresh-leaf spectra")+guides(color=F)
 
-LMA_fresh<-plsr(meta(fresh_spec_EL_agg_train)$LMA~as.matrix(fresh_spec_EL_agg_train),
+LMA_fresh<-plsr(meta(fresh_spec_all_train)$LMA~as.matrix(fresh_spec_all_train),
                 ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_LMA_fresh <- selectNcomp(LMA_fresh, method = "onesigma", plot = FALSE)
-LMA_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$LMA))
-LMA_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[LMA_fresh_valid],
-                           Species=meta(fresh_spec_EL_agg_train)$Species[LMA_fresh_valid],
-                           Project=meta(fresh_spec_EL_agg_train)$Project[LMA_fresh_valid],
-                           Stage=meta(fresh_spec_EL_agg_train)$Stage[LMA_fresh_valid],
-                           GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[LMA_fresh_valid],
-                           measured=meta(fresh_spec_EL_agg_train)$LMA[LMA_fresh_valid],
+LMA_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$LMA))
+LMA_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[LMA_fresh_valid],
+                           Species=meta(fresh_spec_all_train)$Species[LMA_fresh_valid],
+                           Project=meta(fresh_spec_all_train)$Project[LMA_fresh_valid],
+                           Stage=meta(fresh_spec_all_train)$Stage[LMA_fresh_valid],
+                           GrowthForm=meta(fresh_spec_all_train)$GrowthForm[LMA_fresh_valid],
+                           measured=meta(fresh_spec_all_train)$LMA[LMA_fresh_valid],
                            val_pred=LMA_fresh$validation$pred[,,ncomp_LMA_fresh])
 ggplot(LMA_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -114,16 +114,16 @@ ggplot(LMA_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting LMA from fresh-leaf spectra")
 
-LDMC_fresh<-plsr(meta(fresh_spec_EL_agg_train)$LDMC~as.matrix(fresh_spec_EL_agg_train),
+LDMC_fresh<-plsr(meta(fresh_spec_all_train)$LDMC~as.matrix(fresh_spec_all_train),
                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_LDMC_fresh <- selectNcomp(LDMC_fresh, method = "onesigma", plot = FALSE)
-LDMC_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$LDMC))
-LDMC_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[LDMC_fresh_valid],
-                            Species=meta(fresh_spec_EL_agg_train)$Species[LDMC_fresh_valid],
-                            Project=meta(fresh_spec_EL_agg_train)$Project[LDMC_fresh_valid],
-                            Stage=meta(fresh_spec_EL_agg_train)$Stage[LDMC_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[LDMC_fresh_valid],
-                            measured=meta(fresh_spec_EL_agg_train)$LDMC[LDMC_fresh_valid],
+LDMC_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$LDMC))
+LDMC_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[LDMC_fresh_valid],
+                            Species=meta(fresh_spec_all_train)$Species[LDMC_fresh_valid],
+                            Project=meta(fresh_spec_all_train)$Project[LDMC_fresh_valid],
+                            Stage=meta(fresh_spec_all_train)$Stage[LDMC_fresh_valid],
+                            GrowthForm=meta(fresh_spec_all_train)$GrowthForm[LDMC_fresh_valid],
+                            measured=meta(fresh_spec_all_train)$LDMC[LDMC_fresh_valid],
                             val_pred=LDMC_fresh$validation$pred[,,ncomp_LDMC_fresh])
 ggplot(LDMC_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -135,16 +135,16 @@ ggplot(LDMC_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting LDMC from fresh-leaf spectra")
 
-EWT_fresh<-plsr(meta(fresh_spec_EL_agg_train)$EWT~as.matrix(fresh_spec_EL_agg_train),
+EWT_fresh<-plsr(meta(fresh_spec_all_train)$EWT~as.matrix(fresh_spec_all_train),
                 ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_EWT_fresh <- selectNcomp(EWT_fresh, method = "onesigma", plot = FALSE)
-EWT_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$EWT))
-EWT_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[EWT_fresh_valid],
-                           Species=meta(fresh_spec_EL_agg_train)$Species[EWT_fresh_valid],
-                           Project=meta(fresh_spec_EL_agg_train)$Project[EWT_fresh_valid],
-                           Stage=meta(fresh_spec_EL_agg_train)$Stage[EWT_fresh_valid],
-                           GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[EWT_fresh_valid],
-                           measured=meta(fresh_spec_EL_agg_train)$EWT[EWT_fresh_valid],
+EWT_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$EWT))
+EWT_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[EWT_fresh_valid],
+                           Species=meta(fresh_spec_all_train)$Species[EWT_fresh_valid],
+                           Project=meta(fresh_spec_all_train)$Project[EWT_fresh_valid],
+                           Stage=meta(fresh_spec_all_train)$Stage[EWT_fresh_valid],
+                           GrowthForm=meta(fresh_spec_all_train)$GrowthForm[EWT_fresh_valid],
+                           measured=meta(fresh_spec_all_train)$EWT[EWT_fresh_valid],
                            val_pred=EWT_fresh$validation$pred[,,ncomp_EWT_fresh])
 ggplot(EWT_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -156,16 +156,16 @@ ggplot(EWT_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting EWT from fresh-leaf spectra")
 
-chlA_fresh<-plsr(meta(fresh_spec_EL_agg_train)$chlA~as.matrix(fresh_spec_EL_agg_train),
+chlA_fresh<-plsr(meta(fresh_spec_all_train)$chlA~as.matrix(fresh_spec_all_train),
                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_chlA_fresh <- selectNcomp(chlA_fresh, method = "onesigma", plot = FALSE)
-chlA_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$chlA))
-chlA_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[chlA_fresh_valid],
-                            Species=meta(fresh_spec_EL_agg_train)$Species[chlA_fresh_valid],
-                            Project=meta(fresh_spec_EL_agg_train)$Project[chlA_fresh_valid],
-                            Stage=meta(fresh_spec_EL_agg_train)$Stage[chlA_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[chlA_fresh_valid],
-                            measured=meta(fresh_spec_EL_agg_train)$chlA[chlA_fresh_valid],
+chlA_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$chlA))
+chlA_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[chlA_fresh_valid],
+                            Species=meta(fresh_spec_all_train)$Species[chlA_fresh_valid],
+                            Project=meta(fresh_spec_all_train)$Project[chlA_fresh_valid],
+                            Stage=meta(fresh_spec_all_train)$Stage[chlA_fresh_valid],
+                            GrowthForm=meta(fresh_spec_all_train)$GrowthForm[chlA_fresh_valid],
+                            measured=meta(fresh_spec_all_train)$chlA[chlA_fresh_valid],
                             val_pred=chlA_fresh$validation$pred[,,ncomp_chlA_fresh])
 ggplot(chlA_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -177,16 +177,16 @@ ggplot(chlA_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Chl a from fresh-leaf spectra")
 
-chlB_fresh<-plsr(meta(fresh_spec_EL_agg_train)$chlB~as.matrix(fresh_spec_EL_agg_train),
+chlB_fresh<-plsr(meta(fresh_spec_all_train)$chlB~as.matrix(fresh_spec_all_train),
                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_chlB_fresh <- selectNcomp(chlB_fresh, method = "onesigma", plot = FALSE)
-chlB_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$chlB))
-chlB_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[chlB_fresh_valid],
-                            Species=meta(fresh_spec_EL_agg_train)$Species[chlB_fresh_valid],
-                            Project=meta(fresh_spec_EL_agg_train)$Project[chlB_fresh_valid],
-                            Stage=meta(fresh_spec_EL_agg_train)$Stage[chlB_fresh_valid],
-                            GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[chlB_fresh_valid],
-                            measured=meta(fresh_spec_EL_agg_train)$chlB[chlB_fresh_valid],
+chlB_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$chlB))
+chlB_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[chlB_fresh_valid],
+                            Species=meta(fresh_spec_all_train)$Species[chlB_fresh_valid],
+                            Project=meta(fresh_spec_all_train)$Project[chlB_fresh_valid],
+                            Stage=meta(fresh_spec_all_train)$Stage[chlB_fresh_valid],
+                            GrowthForm=meta(fresh_spec_all_train)$GrowthForm[chlB_fresh_valid],
+                            measured=meta(fresh_spec_all_train)$chlB[chlB_fresh_valid],
                             val_pred=chlB_fresh$validation$pred[,,ncomp_chlB_fresh])
 ggplot(chlB_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -198,16 +198,16 @@ ggplot(chlB_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Chl b from fresh-leaf spectra")
 
-car_fresh<-plsr(meta(fresh_spec_EL_agg_train)$car~as.matrix(fresh_spec_EL_agg_train),
+car_fresh<-plsr(meta(fresh_spec_all_train)$car~as.matrix(fresh_spec_all_train),
                 ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_car_fresh <- selectNcomp(car_fresh, method = "onesigma", plot = FALSE)
-car_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$car))
-car_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[car_fresh_valid],
-                           Species=meta(fresh_spec_EL_agg_train)$Species[car_fresh_valid],
-                           Project=meta(fresh_spec_EL_agg_train)$Project[car_fresh_valid],
-                           Stage=meta(fresh_spec_EL_agg_train)$Stage[car_fresh_valid],
-                           GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[car_fresh_valid],
-                           measured=meta(fresh_spec_EL_agg_train)$car[car_fresh_valid],
+car_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$car))
+car_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[car_fresh_valid],
+                           Species=meta(fresh_spec_all_train)$Species[car_fresh_valid],
+                           Project=meta(fresh_spec_all_train)$Project[car_fresh_valid],
+                           Stage=meta(fresh_spec_all_train)$Stage[car_fresh_valid],
+                           GrowthForm=meta(fresh_spec_all_train)$GrowthForm[car_fresh_valid],
+                           measured=meta(fresh_spec_all_train)$car[car_fresh_valid],
                            val_pred=car_fresh$validation$pred[,,ncomp_car_fresh])
 ggplot(car_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -219,16 +219,16 @@ ggplot(car_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting total car from fresh-leaf spectra")
 
-solubles_fresh<-plsr(meta(fresh_spec_EL_agg_train)$solubles~as.matrix(fresh_spec_EL_agg_train),
+solubles_fresh<-plsr(meta(fresh_spec_all_train)$solubles~as.matrix(fresh_spec_all_train),
                      ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_solubles_fresh <- selectNcomp(solubles_fresh, method = "onesigma", plot = FALSE)
-solubles_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$solubles))
-solubles_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[solubles_fresh_valid],
-                                Species=meta(fresh_spec_EL_agg_train)$Species[solubles_fresh_valid],
-                                Project=meta(fresh_spec_EL_agg_train)$Project[solubles_fresh_valid],
-                                Stage=meta(fresh_spec_EL_agg_train)$Stage[solubles_fresh_valid],
-                                GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[solubles_fresh_valid],
-                                measured=meta(fresh_spec_EL_agg_train)$solubles[solubles_fresh_valid],
+solubles_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$solubles))
+solubles_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[solubles_fresh_valid],
+                                Species=meta(fresh_spec_all_train)$Species[solubles_fresh_valid],
+                                Project=meta(fresh_spec_all_train)$Project[solubles_fresh_valid],
+                                Stage=meta(fresh_spec_all_train)$Stage[solubles_fresh_valid],
+                                GrowthForm=meta(fresh_spec_all_train)$GrowthForm[solubles_fresh_valid],
+                                measured=meta(fresh_spec_all_train)$solubles[solubles_fresh_valid],
                                 val_pred=solubles_fresh$validation$pred[,,ncomp_solubles_fresh])
 ggplot(solubles_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -240,16 +240,16 @@ ggplot(solubles_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting solubles from fresh-leaf spectra")
 
-hemicellulose_fresh<-plsr(meta(fresh_spec_EL_agg_train)$hemicellulose~as.matrix(fresh_spec_EL_agg_train),
+hemicellulose_fresh<-plsr(meta(fresh_spec_all_train)$hemicellulose~as.matrix(fresh_spec_all_train),
                           ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_hemicellulose_fresh <- selectNcomp(hemicellulose_fresh, method = "onesigma", plot = FALSE)
-hemicellulose_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$hemicellulose))
-hemicellulose_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[hemicellulose_fresh_valid],
-                                     Species=meta(fresh_spec_EL_agg_train)$Species[hemicellulose_fresh_valid],
-                                     Project=meta(fresh_spec_EL_agg_train)$Project[hemicellulose_fresh_valid],
-                                     Stage=meta(fresh_spec_EL_agg_train)$Stage[hemicellulose_fresh_valid],
-                                     GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[hemicellulose_fresh_valid],
-                                     measured=meta(fresh_spec_EL_agg_train)$hemicellulose[hemicellulose_fresh_valid],
+hemicellulose_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$hemicellulose))
+hemicellulose_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[hemicellulose_fresh_valid],
+                                     Species=meta(fresh_spec_all_train)$Species[hemicellulose_fresh_valid],
+                                     Project=meta(fresh_spec_all_train)$Project[hemicellulose_fresh_valid],
+                                     Stage=meta(fresh_spec_all_train)$Stage[hemicellulose_fresh_valid],
+                                     GrowthForm=meta(fresh_spec_all_train)$GrowthForm[hemicellulose_fresh_valid],
+                                     measured=meta(fresh_spec_all_train)$hemicellulose[hemicellulose_fresh_valid],
                                      val_pred=hemicellulose_fresh$validation$pred[,,ncomp_hemicellulose_fresh])
 ggplot(hemicellulose_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -261,16 +261,16 @@ ggplot(hemicellulose_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting hemicellulose from fresh-leaf spectra")
 
-cellulose_fresh<-plsr(meta(fresh_spec_EL_agg_train)$cellulose~as.matrix(fresh_spec_EL_agg_train),
+cellulose_fresh<-plsr(meta(fresh_spec_all_train)$cellulose~as.matrix(fresh_spec_all_train),
                       ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_cellulose_fresh <- selectNcomp(cellulose_fresh, method = "onesigma", plot = FALSE)
-cellulose_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$cellulose))
-cellulose_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[cellulose_fresh_valid],
-                                 Species=meta(fresh_spec_EL_agg_train)$Species[cellulose_fresh_valid],
-                                 Project=meta(fresh_spec_EL_agg_train)$Project[cellulose_fresh_valid],
-                                 Stage=meta(fresh_spec_EL_agg_train)$Stage[cellulose_fresh_valid],
-                                 GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[cellulose_fresh_valid],
-                                 measured=meta(fresh_spec_EL_agg_train)$cellulose[cellulose_fresh_valid],
+cellulose_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$cellulose))
+cellulose_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[cellulose_fresh_valid],
+                                 Species=meta(fresh_spec_all_train)$Species[cellulose_fresh_valid],
+                                 Project=meta(fresh_spec_all_train)$Project[cellulose_fresh_valid],
+                                 Stage=meta(fresh_spec_all_train)$Stage[cellulose_fresh_valid],
+                                 GrowthForm=meta(fresh_spec_all_train)$GrowthForm[cellulose_fresh_valid],
+                                 measured=meta(fresh_spec_all_train)$cellulose[cellulose_fresh_valid],
                                  val_pred=cellulose_fresh$validation$pred[,,ncomp_cellulose_fresh])
 ggplot(cellulose_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -282,16 +282,16 @@ ggplot(cellulose_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting cellulose from fresh-leaf spectra")
 
-lignin_fresh<-plsr(meta(fresh_spec_EL_agg_train)$lignin~as.matrix(fresh_spec_EL_agg_train),
+lignin_fresh<-plsr(meta(fresh_spec_all_train)$lignin~as.matrix(fresh_spec_all_train),
                    ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_lignin_fresh <- selectNcomp(lignin_fresh, method = "onesigma", plot = FALSE)
-lignin_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$lignin))
-lignin_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[lignin_fresh_valid],
-                              Species=meta(fresh_spec_EL_agg_train)$Species[lignin_fresh_valid],
-                              Project=meta(fresh_spec_EL_agg_train)$Project[lignin_fresh_valid],
-                              Stage=meta(fresh_spec_EL_agg_train)$Stage[lignin_fresh_valid],
-                              GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[lignin_fresh_valid],
-                              measured=meta(fresh_spec_EL_agg_train)$lignin[lignin_fresh_valid],
+lignin_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$lignin))
+lignin_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[lignin_fresh_valid],
+                              Species=meta(fresh_spec_all_train)$Species[lignin_fresh_valid],
+                              Project=meta(fresh_spec_all_train)$Project[lignin_fresh_valid],
+                              Stage=meta(fresh_spec_all_train)$Stage[lignin_fresh_valid],
+                              GrowthForm=meta(fresh_spec_all_train)$GrowthForm[lignin_fresh_valid],
+                              measured=meta(fresh_spec_all_train)$lignin[lignin_fresh_valid],
                               val_pred=lignin_fresh$validation$pred[,,ncomp_lignin_fresh])
 ggplot(lignin_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -303,16 +303,16 @@ ggplot(lignin_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting lignin from fresh-leaf spectra")
 
-Al_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Al~as.matrix(fresh_spec_EL_agg_train),
+Al_fresh<-plsr(meta(fresh_spec_all_train)$Al~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Al_fresh <- selectNcomp(Al_fresh, method = "onesigma", plot = FALSE)
-Al_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Al))
-Al_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Al_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Al_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Al_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Al_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Al_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Al[Al_fresh_valid],
+Al_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Al))
+Al_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Al_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Al_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Al_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Al_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Al_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Al[Al_fresh_valid],
                           val_pred=Al_fresh$validation$pred[,,ncomp_Al_fresh])
 ggplot(Al_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -324,16 +324,16 @@ ggplot(Al_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Al from fresh-leaf spectra")
 
-Ca_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Ca~as.matrix(fresh_spec_EL_agg_train),
+Ca_fresh<-plsr(meta(fresh_spec_all_train)$Ca~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Ca_fresh <- selectNcomp(Ca_fresh, method = "onesigma", plot = FALSE)
-Ca_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Ca))
-Ca_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Ca_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Ca_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Ca_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Ca_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Ca_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Ca[Ca_fresh_valid],
+Ca_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Ca))
+Ca_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Ca_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Ca_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Ca_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Ca_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Ca_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Ca[Ca_fresh_valid],
                           val_pred=Ca_fresh$validation$pred[,,ncomp_Ca_fresh])
 ggplot(Ca_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -345,16 +345,16 @@ ggplot(Ca_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Ca from fresh-leaf spectra")
 
-Cu_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Cu~as.matrix(fresh_spec_EL_agg_train),
+Cu_fresh<-plsr(meta(fresh_spec_all_train)$Cu~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Cu_fresh <- selectNcomp(Cu_fresh, method = "onesigma", plot = FALSE)
-Cu_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Cu))
-Cu_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Cu_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Cu_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Cu_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Cu_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Cu_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Cu[Cu_fresh_valid],
+Cu_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Cu))
+Cu_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Cu_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Cu_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Cu_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Cu_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Cu_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Cu[Cu_fresh_valid],
                           val_pred=Cu_fresh$validation$pred[,,ncomp_Cu_fresh])
 ggplot(Cu_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -366,16 +366,16 @@ ggplot(Cu_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Cu from fresh-leaf spectra")
 
-Fe_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Fe~as.matrix(fresh_spec_EL_agg_train),
+Fe_fresh<-plsr(meta(fresh_spec_all_train)$Fe~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Fe_fresh <- selectNcomp(Fe_fresh, method = "onesigma", plot = FALSE)
-Fe_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Fe))
-Fe_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Fe_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Fe_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Fe_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Fe_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Fe_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Fe[Fe_fresh_valid],
+Fe_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Fe))
+Fe_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Fe_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Fe_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Fe_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Fe_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Fe_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Fe[Fe_fresh_valid],
                           val_pred=Fe_fresh$validation$pred[,,ncomp_Fe_fresh])
 ggplot(Fe_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -387,16 +387,16 @@ ggplot(Fe_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Fe from fresh-leaf spectra")
 
-K_fresh<-plsr(meta(fresh_spec_EL_agg_train)$K~as.matrix(fresh_spec_EL_agg_train),
+K_fresh<-plsr(meta(fresh_spec_all_train)$K~as.matrix(fresh_spec_all_train),
               ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_K_fresh <- selectNcomp(K_fresh, method = "onesigma", plot = FALSE)
-K_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$K))
-K_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[K_fresh_valid],
-                         Species=meta(fresh_spec_EL_agg_train)$Species[K_fresh_valid],
-                         Project=meta(fresh_spec_EL_agg_train)$Project[K_fresh_valid],
-                         Stage=meta(fresh_spec_EL_agg_train)$Stage[K_fresh_valid],
-                         GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[K_fresh_valid],
-                         measured=meta(fresh_spec_EL_agg_train)$K[K_fresh_valid],
+K_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$K))
+K_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[K_fresh_valid],
+                         Species=meta(fresh_spec_all_train)$Species[K_fresh_valid],
+                         Project=meta(fresh_spec_all_train)$Project[K_fresh_valid],
+                         Stage=meta(fresh_spec_all_train)$Stage[K_fresh_valid],
+                         GrowthForm=meta(fresh_spec_all_train)$GrowthForm[K_fresh_valid],
+                         measured=meta(fresh_spec_all_train)$K[K_fresh_valid],
                          val_pred=K_fresh$validation$pred[,,ncomp_K_fresh])
 ggplot(K_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -408,16 +408,16 @@ ggplot(K_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting K from fresh-leaf spectra")
 
-Mg_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Mg~as.matrix(fresh_spec_EL_agg_train),
+Mg_fresh<-plsr(meta(fresh_spec_all_train)$Mg~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Mg_fresh <- selectNcomp(Mg_fresh, method = "onesigma", plot = FALSE)
-Mg_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Mg))
-Mg_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Mg_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Mg_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Mg_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Mg_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Mg_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Mg[Mg_fresh_valid],
+Mg_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Mg))
+Mg_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Mg_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Mg_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Mg_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Mg_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Mg_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Mg[Mg_fresh_valid],
                           val_pred=Mg_fresh$validation$pred[,,ncomp_Mg_fresh])
 ggplot(Mg_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -429,16 +429,16 @@ ggplot(Mg_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Mg from fresh-leaf spectra")
 
-Mn_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Mn~as.matrix(fresh_spec_EL_agg_train),
+Mn_fresh<-plsr(meta(fresh_spec_all_train)$Mn~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Mn_fresh <- selectNcomp(Mn_fresh, method = "onesigma", plot = FALSE)
-Mn_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Mn))
-Mn_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Mn_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Mn_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Mn_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Mn_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Mn_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Mn[Mn_fresh_valid],
+Mn_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Mn))
+Mn_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Mn_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Mn_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Mn_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Mn_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Mn_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Mn[Mn_fresh_valid],
                           val_pred=Mn_fresh$validation$pred[,,ncomp_Mn_fresh])
 ggplot(Mn_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -450,16 +450,16 @@ ggplot(Mn_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Mn from fresh-leaf spectra")
 
-Na_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Na~as.matrix(fresh_spec_EL_agg_train),
+Na_fresh<-plsr(meta(fresh_spec_all_train)$Na~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Na_fresh <- selectNcomp(Na_fresh, method = "onesigma", plot = FALSE)
-Na_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Na))
-Na_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Na_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Na_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Na_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Na_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Na_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Na[Na_fresh_valid],
+Na_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Na))
+Na_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Na_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Na_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Na_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Na_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Na_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Na[Na_fresh_valid],
                           val_pred=Na_fresh$validation$pred[,,ncomp_Na_fresh])
 ggplot(Na_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -471,16 +471,16 @@ ggplot(Na_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting Na from fresh-leaf spectra")
 
-P_fresh<-plsr(meta(fresh_spec_EL_agg_train)$P~as.matrix(fresh_spec_EL_agg_train),
+P_fresh<-plsr(meta(fresh_spec_all_train)$P~as.matrix(fresh_spec_all_train),
               ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_P_fresh <- selectNcomp(P_fresh, method = "onesigma", plot = FALSE)
-P_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$P))
-P_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[P_fresh_valid],
-                         Species=meta(fresh_spec_EL_agg_train)$Species[P_fresh_valid],
-                         Project=meta(fresh_spec_EL_agg_train)$Project[P_fresh_valid],
-                         Stage=meta(fresh_spec_EL_agg_train)$Stage[P_fresh_valid],
-                         GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[P_fresh_valid],
-                         measured=meta(fresh_spec_EL_agg_train)$P[P_fresh_valid],
+P_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$P))
+P_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[P_fresh_valid],
+                         Species=meta(fresh_spec_all_train)$Species[P_fresh_valid],
+                         Project=meta(fresh_spec_all_train)$Project[P_fresh_valid],
+                         Stage=meta(fresh_spec_all_train)$Stage[P_fresh_valid],
+                         GrowthForm=meta(fresh_spec_all_train)$GrowthForm[P_fresh_valid],
+                         measured=meta(fresh_spec_all_train)$P[P_fresh_valid],
                          val_pred=P_fresh$validation$pred[,,ncomp_P_fresh])
 ggplot(P_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -492,16 +492,16 @@ ggplot(P_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   labs(x="Predicted",y="Measured")+
   ggtitle("Predicting P from fresh-leaf spectra")
 
-Zn_fresh<-plsr(meta(fresh_spec_EL_agg_train)$Zn~as.matrix(fresh_spec_EL_agg_train),
+Zn_fresh<-plsr(meta(fresh_spec_all_train)$Zn~as.matrix(fresh_spec_all_train),
                ncomp=30,method = "oscorespls",validation="CV",segments=10)
 ncomp_Zn_fresh <- selectNcomp(Zn_fresh, method = "onesigma", plot = FALSE)
-Zn_fresh_valid <- which(!is.na(meta(fresh_spec_EL_agg_train)$Zn))
-Zn_fresh_pred<-data.frame(ID=meta(fresh_spec_EL_agg_train)$ID[Zn_fresh_valid],
-                          Species=meta(fresh_spec_EL_agg_train)$Species[Zn_fresh_valid],
-                          Project=meta(fresh_spec_EL_agg_train)$Project[Zn_fresh_valid],
-                          Stage=meta(fresh_spec_EL_agg_train)$Stage[Zn_fresh_valid],
-                          GrowthForm=meta(fresh_spec_EL_agg_train)$GrowthForm[Zn_fresh_valid],
-                          measured=meta(fresh_spec_EL_agg_train)$Zn[Zn_fresh_valid],
+Zn_fresh_valid <- which(!is.na(meta(fresh_spec_all_train)$Zn))
+Zn_fresh_pred<-data.frame(ID=meta(fresh_spec_all_train)$ID[Zn_fresh_valid],
+                          Species=meta(fresh_spec_all_train)$Species[Zn_fresh_valid],
+                          Project=meta(fresh_spec_all_train)$Project[Zn_fresh_valid],
+                          Stage=meta(fresh_spec_all_train)$Stage[Zn_fresh_valid],
+                          GrowthForm=meta(fresh_spec_all_train)$GrowthForm[Zn_fresh_valid],
+                          measured=meta(fresh_spec_all_train)$Zn[Zn_fresh_valid],
                           val_pred=Zn_fresh$validation$pred[,,ncomp_Zn_fresh])
 ggplot(Zn_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -598,12 +598,12 @@ nreps<-100
 for(i in 1:nreps){
   print(i)
   
-  n_cal_spec_fresh<-nrow(fresh_spec_EL_agg_train)
+  n_cal_spec_fresh<-nrow(fresh_spec_all_train)
   train_jack_fresh<-sample(1:n_cal_spec_fresh,floor(0.7*n_cal_spec_fresh))
   test_jack_fresh<-setdiff(1:n_cal_spec_fresh,train_jack_fresh)
   
-  calib_jack_fresh<-fresh_spec_EL_agg_train[train_jack_fresh]
-  val_jack_fresh<-fresh_spec_EL_agg_train[test_jack_fresh]
+  calib_jack_fresh<-fresh_spec_all_train[train_jack_fresh]
+  val_jack_fresh<-fresh_spec_all_train[test_jack_fresh]
   
   solubles_fresh_jack<-plsr(meta(calib_jack_fresh)$solubles~as.matrix(calib_jack_fresh),
                             ncomp=30,method = "oscorespls",validation="none")
@@ -828,269 +828,269 @@ for(i in 1:nreps){
   Zn_jack_coefs_fresh[[i]]<-as.vector(coef(Zn_fresh_jack,ncomp=ncomp_Zn_fresh,intercept=TRUE))
 }
 
-solubles_jack_pred_fresh<-apply.coefs(solubles_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+solubles_jack_pred_fresh<-apply.coefs(solubles_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 solubles_jack_stat_fresh<-t(apply(solubles_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 solubles_jack_df_fresh<-data.frame(pred_mean=solubles_jack_stat_fresh[,1],
                                    pred_low=solubles_jack_stat_fresh[,2],
                                    pred_high=solubles_jack_stat_fresh[,3],
-                                   Measured=meta(fresh_spec_EL_agg_test)$solubles,
+                                   Measured=meta(fresh_spec_all_test)$solubles,
                                    ncomp=ncomp_solubles_fresh,
-                                   Project=meta(fresh_spec_EL_agg_test)$Project,
-                                   GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                                   Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                                   ID=meta(fresh_spec_EL_agg_test)$ID)
+                                   Project=meta(fresh_spec_all_test)$Project,
+                                   GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                                   Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                                   ID=meta(fresh_spec_all_test)$ID)
 
-hemicellulose_jack_pred_fresh<-apply.coefs(hemicellulose_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+hemicellulose_jack_pred_fresh<-apply.coefs(hemicellulose_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 hemicellulose_jack_stat_fresh<-t(apply(hemicellulose_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 hemicellulose_jack_df_fresh<-data.frame(pred_mean=hemicellulose_jack_stat_fresh[,1],
                                         pred_low=hemicellulose_jack_stat_fresh[,2],
                                         pred_high=hemicellulose_jack_stat_fresh[,3],
-                                        Measured=meta(fresh_spec_EL_agg_test)$hemicellulose,
+                                        Measured=meta(fresh_spec_all_test)$hemicellulose,
                                         ncomp=ncomp_hemicellulose_fresh,
-                                        Project=meta(fresh_spec_EL_agg_test)$Project,
-                                        GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                                        Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                                        ID=meta(fresh_spec_EL_agg_test)$ID)
+                                        Project=meta(fresh_spec_all_test)$Project,
+                                        GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                                        Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                                        ID=meta(fresh_spec_all_test)$ID)
 
-cellulose_jack_pred_fresh<-apply.coefs(cellulose_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+cellulose_jack_pred_fresh<-apply.coefs(cellulose_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 cellulose_jack_stat_fresh<-t(apply(cellulose_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 cellulose_jack_df_fresh<-data.frame(pred_mean=cellulose_jack_stat_fresh[,1],
                                     pred_low=cellulose_jack_stat_fresh[,2],
                                     pred_high=cellulose_jack_stat_fresh[,3],
-                                    Measured=meta(fresh_spec_EL_agg_test)$cellulose,
+                                    Measured=meta(fresh_spec_all_test)$cellulose,
                                     ncomp=ncomp_cellulose_fresh,
-                                    Project=meta(fresh_spec_EL_agg_test)$Project,
-                                    GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                                    Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                                    ID=meta(fresh_spec_EL_agg_test)$ID)
+                                    Project=meta(fresh_spec_all_test)$Project,
+                                    GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                                    Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                                    ID=meta(fresh_spec_all_test)$ID)
 
-lignin_jack_pred_fresh<-apply.coefs(lignin_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+lignin_jack_pred_fresh<-apply.coefs(lignin_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 lignin_jack_stat_fresh<-t(apply(lignin_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 lignin_jack_df_fresh<-data.frame(pred_mean=lignin_jack_stat_fresh[,1],
                                  pred_low=lignin_jack_stat_fresh[,2],
                                  pred_high=lignin_jack_stat_fresh[,3],
-                                 Measured=meta(fresh_spec_EL_agg_test)$lignin,
+                                 Measured=meta(fresh_spec_all_test)$lignin,
                                  ncomp=ncomp_lignin_fresh,
-                                 Project=meta(fresh_spec_EL_agg_test)$Project,
-                                 GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                                 Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                                 ID=meta(fresh_spec_EL_agg_test)$ID)
+                                 Project=meta(fresh_spec_all_test)$Project,
+                                 GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                                 Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                                 ID=meta(fresh_spec_all_test)$ID)
 
-perC_jack_pred_fresh<-apply.coefs(perC_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+perC_jack_pred_fresh<-apply.coefs(perC_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 perC_jack_stat_fresh<-t(apply(perC_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 perC_jack_df_fresh<-data.frame(pred_mean=perC_jack_stat_fresh[,1],
                                pred_low=perC_jack_stat_fresh[,2],
                                pred_high=perC_jack_stat_fresh[,3],
-                               Measured=meta(fresh_spec_EL_agg_test)$C,
+                               Measured=meta(fresh_spec_all_test)$C,
                                ncomp=ncomp_perC_fresh,
-                               Project=meta(fresh_spec_EL_agg_test)$Project,
-                               GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                               Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                               ID=meta(fresh_spec_EL_agg_test)$ID)
+                               Project=meta(fresh_spec_all_test)$Project,
+                               GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                               Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                               ID=meta(fresh_spec_all_test)$ID)
 
-perN_jack_pred_fresh<-apply.coefs(perN_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+perN_jack_pred_fresh<-apply.coefs(perN_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 perN_jack_stat_fresh<-t(apply(perN_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 perN_jack_df_fresh<-data.frame(pred_mean=perN_jack_stat_fresh[,1],
                                pred_low=perN_jack_stat_fresh[,2],
                                pred_high=perN_jack_stat_fresh[,3],
-                               Measured=meta(fresh_spec_EL_agg_test)$N,
+                               Measured=meta(fresh_spec_all_test)$N,
                                ncomp=ncomp_perN_fresh,
-                               Project=meta(fresh_spec_EL_agg_test)$Project,
-                               GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                               Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                               ID=meta(fresh_spec_EL_agg_test)$ID)
+                               Project=meta(fresh_spec_all_test)$Project,
+                               GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                               Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                               ID=meta(fresh_spec_all_test)$ID)
 
-LMA_jack_pred_fresh<-apply.coefs(LMA_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+LMA_jack_pred_fresh<-apply.coefs(LMA_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 LMA_jack_stat_fresh<-t(apply(LMA_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 LMA_jack_df_fresh<-data.frame(pred_mean=LMA_jack_stat_fresh[,1],
                               pred_low=LMA_jack_stat_fresh[,2],
                               pred_high=LMA_jack_stat_fresh[,3],
-                              Measured=meta(fresh_spec_EL_agg_test)$LMA,
+                              Measured=meta(fresh_spec_all_test)$LMA,
                               ncomp=ncomp_LMA_fresh,
-                              Project=meta(fresh_spec_EL_agg_test)$Project,
-                              GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                              Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                              ID=meta(fresh_spec_EL_agg_test)$ID)
+                              Project=meta(fresh_spec_all_test)$Project,
+                              GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                              Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                              ID=meta(fresh_spec_all_test)$ID)
 
-LDMC_jack_pred_fresh<-apply.coefs(LDMC_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+LDMC_jack_pred_fresh<-apply.coefs(LDMC_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 LDMC_jack_stat_fresh<-t(apply(LDMC_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 LDMC_jack_df_fresh<-data.frame(pred_mean=LDMC_jack_stat_fresh[,1],
                                pred_low=LDMC_jack_stat_fresh[,2],
                                pred_high=LDMC_jack_stat_fresh[,3],
-                               Measured=meta(fresh_spec_EL_agg_test)$LDMC,
+                               Measured=meta(fresh_spec_all_test)$LDMC,
                                ncomp=ncomp_LDMC_fresh,
-                               Project=meta(fresh_spec_EL_agg_test)$Project,
-                               GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                               Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                               ID=meta(fresh_spec_EL_agg_test)$ID)
+                               Project=meta(fresh_spec_all_test)$Project,
+                               GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                               Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                               ID=meta(fresh_spec_all_test)$ID)
 
-EWT_jack_pred_fresh<-apply.coefs(EWT_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+EWT_jack_pred_fresh<-apply.coefs(EWT_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 EWT_jack_stat_fresh<-t(apply(EWT_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 EWT_jack_df_fresh<-data.frame(pred_mean=EWT_jack_stat_fresh[,1],
                               pred_low=EWT_jack_stat_fresh[,2],
                               pred_high=EWT_jack_stat_fresh[,3],
-                              Measured=meta(fresh_spec_EL_agg_test)$EWT,
+                              Measured=meta(fresh_spec_all_test)$EWT,
                               ncomp=ncomp_EWT_fresh,
-                              Project=meta(fresh_spec_EL_agg_test)$Project,
-                              GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                              Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                              ID=meta(fresh_spec_EL_agg_test)$ID)
+                              Project=meta(fresh_spec_all_test)$Project,
+                              GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                              Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                              ID=meta(fresh_spec_all_test)$ID)
 
-chlA_jack_pred_fresh<-apply.coefs(chlA_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+chlA_jack_pred_fresh<-apply.coefs(chlA_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 chlA_jack_stat_fresh<-t(apply(chlA_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 chlA_jack_df_fresh<-data.frame(pred_mean=chlA_jack_stat_fresh[,1],
                               pred_low=chlA_jack_stat_fresh[,2],
                               pred_high=chlA_jack_stat_fresh[,3],
-                              Measured=meta(fresh_spec_EL_agg_test)$chlA,
+                              Measured=meta(fresh_spec_all_test)$chlA,
                               ncomp=ncomp_chlA_fresh,
-                              Project=meta(fresh_spec_EL_agg_test)$Project,
-                              GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                              Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                              ID=meta(fresh_spec_EL_agg_test)$ID)
+                              Project=meta(fresh_spec_all_test)$Project,
+                              GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                              Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                              ID=meta(fresh_spec_all_test)$ID)
 
-chlB_jack_pred_fresh<-apply.coefs(chlB_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+chlB_jack_pred_fresh<-apply.coefs(chlB_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 chlB_jack_stat_fresh<-t(apply(chlB_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 chlB_jack_df_fresh<-data.frame(pred_mean=chlB_jack_stat_fresh[,1],
                                pred_low=chlB_jack_stat_fresh[,2],
                                pred_high=chlB_jack_stat_fresh[,3],
-                               Measured=meta(fresh_spec_EL_agg_test)$chlB,
+                               Measured=meta(fresh_spec_all_test)$chlB,
                                ncomp=ncomp_chlB_fresh,
-                               Project=meta(fresh_spec_EL_agg_test)$Project,
-                               GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                               Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                               ID=meta(fresh_spec_EL_agg_test)$ID)
+                               Project=meta(fresh_spec_all_test)$Project,
+                               GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                               Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                               ID=meta(fresh_spec_all_test)$ID)
 
-car_jack_pred_fresh<-apply.coefs(car_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+car_jack_pred_fresh<-apply.coefs(car_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 car_jack_stat_fresh<-t(apply(car_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 car_jack_df_fresh<-data.frame(pred_mean=car_jack_stat_fresh[,1],
                               pred_low=car_jack_stat_fresh[,2],
                               pred_high=car_jack_stat_fresh[,3],
-                              Measured=meta(fresh_spec_EL_agg_test)$car,
+                              Measured=meta(fresh_spec_all_test)$car,
                               ncomp=ncomp_car_fresh,
-                              Project=meta(fresh_spec_EL_agg_test)$Project,
-                              GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                              Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                              ID=meta(fresh_spec_EL_agg_test)$ID)
+                              Project=meta(fresh_spec_all_test)$Project,
+                              GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                              Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                              ID=meta(fresh_spec_all_test)$ID)
 
-Al_jack_pred_fresh<-apply.coefs(Al_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Al_jack_pred_fresh<-apply.coefs(Al_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Al_jack_stat_fresh<-t(apply(Al_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Al_jack_df_fresh<-data.frame(pred_mean=Al_jack_stat_fresh[,1],
                              pred_low=Al_jack_stat_fresh[,2],
                              pred_high=Al_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Al,
+                             Measured=meta(fresh_spec_all_test)$Al,
                              ncomp=ncomp_Al_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-Ca_jack_pred_fresh<-apply.coefs(Ca_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Ca_jack_pred_fresh<-apply.coefs(Ca_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Ca_jack_stat_fresh<-t(apply(Ca_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Ca_jack_df_fresh<-data.frame(pred_mean=Ca_jack_stat_fresh[,1],
                              pred_low=Ca_jack_stat_fresh[,2],
                              pred_high=Ca_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Ca,
+                             Measured=meta(fresh_spec_all_test)$Ca,
                              ncomp=ncomp_Ca_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-Cu_jack_pred_fresh<-apply.coefs(Cu_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Cu_jack_pred_fresh<-apply.coefs(Cu_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Cu_jack_stat_fresh<-t(apply(Cu_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Cu_jack_df_fresh<-data.frame(pred_mean=Cu_jack_stat_fresh[,1],
                              pred_low=Cu_jack_stat_fresh[,2],
                              pred_high=Cu_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Cu,
+                             Measured=meta(fresh_spec_all_test)$Cu,
                              ncomp=ncomp_Cu_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-Fe_jack_pred_fresh<-apply.coefs(Fe_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Fe_jack_pred_fresh<-apply.coefs(Fe_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Fe_jack_stat_fresh<-t(apply(Fe_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Fe_jack_df_fresh<-data.frame(pred_mean=Fe_jack_stat_fresh[,1],
                              pred_low=Fe_jack_stat_fresh[,2],
                              pred_high=Fe_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Fe,
+                             Measured=meta(fresh_spec_all_test)$Fe,
                              ncomp=ncomp_Fe_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-K_jack_pred_fresh<-apply.coefs(K_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+K_jack_pred_fresh<-apply.coefs(K_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 K_jack_stat_fresh<-t(apply(K_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 K_jack_df_fresh<-data.frame(pred_mean=K_jack_stat_fresh[,1],
                             pred_low=K_jack_stat_fresh[,2],
                             pred_high=K_jack_stat_fresh[,3],
-                            Measured=meta(fresh_spec_EL_agg_test)$K,
+                            Measured=meta(fresh_spec_all_test)$K,
                             ncomp=ncomp_K_fresh,
-                            Project=meta(fresh_spec_EL_agg_test)$Project,
-                            GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                            Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                            ID=meta(fresh_spec_EL_agg_test)$ID)
+                            Project=meta(fresh_spec_all_test)$Project,
+                            GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                            Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                            ID=meta(fresh_spec_all_test)$ID)
 
-Mg_jack_pred_fresh<-apply.coefs(Mg_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Mg_jack_pred_fresh<-apply.coefs(Mg_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Mg_jack_stat_fresh<-t(apply(Mg_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Mg_jack_df_fresh<-data.frame(pred_mean=Mg_jack_stat_fresh[,1],
                              pred_low=Mg_jack_stat_fresh[,2],
                              pred_high=Mg_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Mg,
+                             Measured=meta(fresh_spec_all_test)$Mg,
                              ncomp=ncomp_Mg_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-Mn_jack_pred_fresh<-apply.coefs(Mn_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Mn_jack_pred_fresh<-apply.coefs(Mn_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Mn_jack_stat_fresh<-t(apply(Mn_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Mn_jack_df_fresh<-data.frame(pred_mean=Mn_jack_stat_fresh[,1],
                              pred_low=Mn_jack_stat_fresh[,2],
                              pred_high=Mn_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Mn,
+                             Measured=meta(fresh_spec_all_test)$Mn,
                              ncomp=ncomp_Mn_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-Na_jack_pred_fresh<-apply.coefs(Na_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Na_jack_pred_fresh<-apply.coefs(Na_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Na_jack_stat_fresh<-t(apply(Na_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Na_jack_df_fresh<-data.frame(pred_mean=Na_jack_stat_fresh[,1],
                              pred_low=Na_jack_stat_fresh[,2],
                              pred_high=Na_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Na,
+                             Measured=meta(fresh_spec_all_test)$Na,
                              ncomp=ncomp_Na_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
-P_jack_pred_fresh<-apply.coefs(P_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+P_jack_pred_fresh<-apply.coefs(P_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 P_jack_stat_fresh<-t(apply(P_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 P_jack_df_fresh<-data.frame(pred_mean=P_jack_stat_fresh[,1],
                             pred_low=P_jack_stat_fresh[,2],
                             pred_high=P_jack_stat_fresh[,3],
-                            Measured=meta(fresh_spec_EL_agg_test)$P,
+                            Measured=meta(fresh_spec_all_test)$P,
                             ncomp=ncomp_P_fresh,
-                            Project=meta(fresh_spec_EL_agg_test)$Project,
-                            GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                            Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                            ID=meta(fresh_spec_EL_agg_test)$ID)
+                            Project=meta(fresh_spec_all_test)$Project,
+                            GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                            Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                            ID=meta(fresh_spec_all_test)$ID)
 
-Zn_jack_pred_fresh<-apply.coefs(Zn_jack_coefs_fresh,as.matrix(fresh_spec_EL_agg_test))
+Zn_jack_pred_fresh<-apply.coefs(Zn_jack_coefs_fresh,as.matrix(fresh_spec_all_test))
 Zn_jack_stat_fresh<-t(apply(Zn_jack_pred_fresh,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 Zn_jack_df_fresh<-data.frame(pred_mean=Zn_jack_stat_fresh[,1],
                              pred_low=Zn_jack_stat_fresh[,2],
                              pred_high=Zn_jack_stat_fresh[,3],
-                             Measured=meta(fresh_spec_EL_agg_test)$Zn,
+                             Measured=meta(fresh_spec_all_test)$Zn,
                              ncomp=ncomp_Zn_fresh,
-                             Project=meta(fresh_spec_EL_agg_test)$Project,
-                             GrowthForm=meta(fresh_spec_EL_agg_test)$GrowthForm,
-                             Discoloration=meta(fresh_spec_EL_agg_test)$Discoloration,
-                             ID=meta(fresh_spec_EL_agg_test)$ID)
+                             Project=meta(fresh_spec_all_test)$Project,
+                             GrowthForm=meta(fresh_spec_all_test)$GrowthForm,
+                             Discoloration=meta(fresh_spec_all_test)$Discoloration,
+                             ID=meta(fresh_spec_all_test)$ID)
 
 ##########################################################
 ## save output

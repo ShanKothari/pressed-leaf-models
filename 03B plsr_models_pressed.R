@@ -7,10 +7,6 @@ library(reshape2)
 library(RColorBrewer)
 library(patchwork)
 
-########################################
-## to do:
-## try Model II regressions?
-
 #########################################
 ## define functions
 
@@ -49,8 +45,8 @@ apply.coefs<-function(coef.list,val.spec,intercept=T){
 ######################################################
 ## read data
 
-pressed_spec_all_train<-readRDS("ProcessedSpectralData/pressed_spec_EL_agg_train.rds")
-pressed_spec_all_test<-readRDS("ProcessedSpectralData/pressed_spec_EL_agg_test.rds")
+pressed_spec_all_train<-readRDS("ProcessedSpectralData/pressed_spec_all_train.rds")
+pressed_spec_all_test<-readRDS("ProcessedSpectralData/pressed_spec_all_test.rds")
 
 ###################################################
 ## building calibration models

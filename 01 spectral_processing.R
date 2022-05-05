@@ -15,28 +15,31 @@ library(geomtextpath)
 ground_spec_EL<-read_spectra(path = "GroundSpectra/LaliberteLab","sed",exclude_if_matches = c("BAD","WR"))
 
 ## match sensors if desired
-##ground_spec_EL_match<-match_sensors(ground_spec_EL,splice_at=983)
+## not necessary, and not performed for the paper
+# ground_spec_EL_match<-match_sensors(ground_spec_EL,splice_at=983)
 
 ground_spec_EL_spl<-strsplit(x = names(ground_spec_EL), split = "_")
 meta(ground_spec_EL)$ID<-unlist(lapply(ground_spec_EL_spl, function(x) x[[1]]))
 meta(ground_spec_EL)$dummy<-0
-ground_spec_EL_agg_raw<-aggregate(ground_spec_EL,by=meta(ground_spec_EL)$ID,
+## aggregate by sample
+ground_spec_all_raw<-aggregate(ground_spec_EL,by=meta(ground_spec_EL)$ID,
                               FUN=try_keep_txt(mean))
 
 ## if smoothing is desired
 ## but this may obscure some small absorption features
-# ground_spec_EL_agg_vis<-t(apply(as.matrix(ground_spec_EL_agg_raw[,350:715]),1,sgolayfilt,p=3,n=21))
-# ground_spec_EL_agg_nir<-t(apply(as.matrix(ground_spec_EL_agg_raw[,716:1390]),1,sgolayfilt,p=3,n=35))
-# ground_spec_EL_agg_swir1<-t(apply(as.matrix(ground_spec_EL_agg_raw[,1391:1880]),1,sgolayfilt,p=3,n=35))
-# ground_spec_EL_agg_swir2<-t(apply(as.matrix(ground_spec_EL_agg_raw[,1881:2500]),1,sgolayfilt,p=3,n=35))
+## so I didn't do it for the paper
+# ground_spec_all_vis<-t(apply(as.matrix(ground_spec_all_raw[,350:715]),1,sgolayfilt,p=3,n=21))
+# ground_spec_all_nir<-t(apply(as.matrix(ground_spec_all_raw[,716:1390]),1,sgolayfilt,p=3,n=35))
+# ground_spec_all_swir1<-t(apply(as.matrix(ground_spec_all_raw[,1391:1880]),1,sgolayfilt,p=3,n=35))
+# ground_spec_all_swir2<-t(apply(as.matrix(ground_spec_all_raw[,1881:2500]),1,sgolayfilt,p=3,n=35))
 
-# ground_spec_EL_agg<-cbind(ground_spec_EL_agg_vis,ground_spec_EL_agg_nir,ground_spec_EL_agg_swir1,ground_spec_EL_agg_swir2)
-# colnames(ground_spec_EL_agg)<-350:2500
-# ground_spec_EL_agg<-as_spectra(ground_spec_EL_agg)
-# meta(ground_spec_EL_agg)$ID<-meta(ground_spec_EL_agg_raw)$ID
-# ground_spec_EL_agg <- ground_spec_EL_agg[ ,400:2400]
+# ground_spec_all<-cbind(ground_spec_all_vis,ground_spec_all_nir,ground_spec_all_swir1,ground_spec_all_swir2)
+# colnames(ground_spec_all)<-350:2500
+# ground_spec_all<-as_spectra(ground_spec_all)
+# meta(ground_spec_all)$ID<-meta(ground_spec_all_raw)$ID
+# ground_spec_all <- ground_spec_all[ ,400:2400]
 
-ground_spec_EL_agg <- ground_spec_EL_agg_raw[ ,400:2400]
+ground_spec_all <- ground_spec_all_raw[ ,400:2400]
 
 #####################################################
 ## process pressed spectra
@@ -47,15 +50,11 @@ pressed_spec_EL_match<-match_sensors(pressed_spec_EL,splice_at=983)
 pressed_spec_EL_spl<-strsplit(x = names(pressed_spec_EL_match), split = "_")
 meta(pressed_spec_EL_match)$ID<-as.factor(unlist(lapply(pressed_spec_EL_spl, function(x) x[[1]])))
 meta(pressed_spec_EL_match)$dummy<-0
-pressed_spec_EL_agg<-aggregate(pressed_spec_EL_match,by=meta(pressed_spec_EL_match)$ID,
+pressed_spec_all<-aggregate(pressed_spec_EL_match,by=meta(pressed_spec_EL_match)$ID,
                                FUN=try_keep_txt(mean))
 ## here again it is possible to smooth as one can do for ground spectra
 ## but again, not necessarily advisable
-pressed_spec_EL_agg <- pressed_spec_EL_agg[,400:2400]
-
-# this is a weird old legacy; should change it but
-# that will require other changes
-pressed_spec_all<-pressed_spec_EL_agg
+pressed_spec_all <- pressed_spec_all[,400:2400]
 
 #######################################################
 ## read and process fresh spectra
@@ -70,9 +69,9 @@ fresh_spec<-as_spectra(fresh_spec_df,name_idx=1)
 fresh_spec<-fresh_spec[ ,400:2400]
 CABO_general<-as_spectra(CABO_general_df,name_idx=1)
 CABO_general<-CABO_general[ ,400:2400]
-fresh_spec_EL_agg<-spectrolab::combine(fresh_spec,CABO_general)
+fresh_spec_all<-spectrolab::combine(fresh_spec,CABO_general)
 
-meta(fresh_spec_EL_agg)$ID<-c(as.character(fresh_spec_df$sample_id),CABO_general_df$sample_id)
+meta(fresh_spec_all)$ID<-c(as.character(fresh_spec_df$sample_id),CABO_general_df$sample_id)
 
 ##########################################################
 ## remove bad spectra
@@ -84,17 +83,17 @@ bad_spectra<-c("11851575","13221003","22405244",
                "10453164","10454172","10461643",
                "10465061","10466192","10466735",
                "10468015")
-fresh_spec_EL_agg<-fresh_spec_EL_agg[-which(meta(fresh_spec_EL_agg)$ID %in% bad_spectra)]
-ground_spec_EL_agg<-ground_spec_EL_agg[-which(meta(ground_spec_EL_agg)$ID %in% bad_spectra)]
+fresh_spec_all<-fresh_spec_all[-which(meta(fresh_spec_all)$ID %in% bad_spectra)]
+ground_spec_all<-ground_spec_all[-which(meta(ground_spec_all)$ID %in% bad_spectra)]
 pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% bad_spectra)]
 
 ## remove spectra only found at one stage
-unique_spectra<-union(union(setdiff(meta(fresh_spec_EL_agg)$ID,union(meta(ground_spec_EL_agg)$ID,meta(pressed_spec_all)$ID)),
-                            setdiff(meta(ground_spec_EL_agg)$ID,union(meta(fresh_spec_EL_agg)$ID,meta(pressed_spec_all)$ID))),
-                      setdiff(meta(pressed_spec_all)$ID,union(meta(ground_spec_EL_agg)$ID,meta(fresh_spec_EL_agg)$ID)))
+unique_spectra<-union(union(setdiff(meta(fresh_spec_all)$ID,union(meta(ground_spec_all)$ID,meta(pressed_spec_all)$ID)),
+                            setdiff(meta(ground_spec_all)$ID,union(meta(fresh_spec_all)$ID,meta(pressed_spec_all)$ID))),
+                      setdiff(meta(pressed_spec_all)$ID,union(meta(ground_spec_all)$ID,meta(fresh_spec_all)$ID)))
 
-fresh_spec_EL_agg<-fresh_spec_EL_agg[-which(meta(fresh_spec_EL_agg)$ID %in% unique_spectra)]
-ground_spec_EL_agg<-ground_spec_EL_agg[-which(meta(ground_spec_EL_agg)$ID %in% unique_spectra)]
+fresh_spec_all<-fresh_spec_all[-which(meta(fresh_spec_all)$ID %in% unique_spectra)]
+ground_spec_all<-ground_spec_all[-which(meta(ground_spec_all)$ID %in% unique_spectra)]
 pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% unique_spectra)]
 
 #######################################################
@@ -144,18 +143,18 @@ summary_all$GrowthForm[summary_all$Species=="Calamagrostis canadensis Michaux Pa
 ## all tree species here in the CABO dataset are broadleaf
 levels(summary_all$GrowthForm)[levels(summary_all$GrowthForm)=="tree"]<-"broadleaf"
 
-meta(fresh_spec_EL_agg)$Species<-
-  summary_all$Species[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
-meta(fresh_spec_EL_agg)$Project<-
-  summary_all$Project[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
-meta(fresh_spec_EL_agg)$Discoloration<-
-  summary_all$Discoloration[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
-meta(fresh_spec_EL_agg)$Stage<-
-  summary_all$Stage[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
-meta(fresh_spec_EL_agg)$GrowthForm<-
-  summary_all$GrowthForm[match(meta(fresh_spec_EL_agg)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Species<-
+  summary_all$Species[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Project<-
+  summary_all$Project[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Discoloration<-
+  summary_all$Discoloration[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Stage<-
+  summary_all$Stage[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$GrowthForm<-
+  summary_all$GrowthForm[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 ## this gets rid of any remaining 2017 Dessain spectra that aren't in the summary file
-fresh_spec_EL_agg<-fresh_spec_EL_agg[-which(is.na(meta(fresh_spec_EL_agg)$Project))]
+fresh_spec_all<-fresh_spec_all[-which(is.na(meta(fresh_spec_all)$Project))]
 
 meta(pressed_spec_all)$Species<-
   summary_all$Species[match(meta(pressed_spec_all)$ID,summary_all$ID)]
@@ -170,18 +169,18 @@ meta(pressed_spec_all)$GrowthForm<-
 ## should yield an error if all spectra IDs can be linked to a project
 pressed_spec_all<-pressed_spec_all[-which(is.na(meta(pressed_spec_all)$Project))]
 
-meta(ground_spec_EL_agg)$Species<-
-  summary_all$Species[match(meta(ground_spec_EL_agg)$ID,summary_all$ID)]
-meta(ground_spec_EL_agg)$Project<-
-  summary_all$Project[match(meta(ground_spec_EL_agg)$ID,summary_all$ID)]
-meta(ground_spec_EL_agg)$Discoloration<-
-  summary_all$Discoloration[match(meta(ground_spec_EL_agg)$ID,summary_all$ID)]
-meta(ground_spec_EL_agg)$Stage<-
-  summary_all$Stage[match(meta(ground_spec_EL_agg)$ID,summary_all$ID)]
-meta(ground_spec_EL_agg)$GrowthForm<-
-  summary_all$GrowthForm[match(meta(ground_spec_EL_agg)$ID,summary_all$ID)]
+meta(ground_spec_all)$Species<-
+  summary_all$Species[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$Project<-
+  summary_all$Project[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$Discoloration<-
+  summary_all$Discoloration[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$Stage<-
+  summary_all$Stage[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$GrowthForm<-
+  summary_all$GrowthForm[match(meta(ground_spec_all)$ID,summary_all$ID)]
 ## should yield an error if all spectra IDs can be linked to a project
-ground_spec_EL_agg<-ground_spec_EL_agg[-which(is.na(meta(ground_spec_EL_agg)$Project))]
+ground_spec_all<-ground_spec_all[-which(is.na(meta(ground_spec_all)$Project))]
 
 ############################################
 ## read in SLA / LDMC
@@ -207,12 +206,12 @@ SLA_all<-do.call(rbind,args=list(SLA_Dessain,SLA_other))
 SLA_all$SLA[SLA_all$ID==13404937]<-NA
 SLA_all$LDMC[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 
-meta(fresh_spec_EL_agg)$SLA<-
-  SLA_all$SLA[match(meta(fresh_spec_EL_agg)$ID,SLA_all$ID)]
-meta(fresh_spec_EL_agg)$LDMC<-
-  SLA_all$LDMC[match(meta(fresh_spec_EL_agg)$ID,SLA_all$ID)]
-meta(fresh_spec_EL_agg)$LMA<-1/meta(fresh_spec_EL_agg)$SLA
-meta(fresh_spec_EL_agg)$EWT<-with(meta(fresh_spec_EL_agg),(1/(LDMC/1000)-1)*LMA)
+meta(fresh_spec_all)$SLA<-
+  SLA_all$SLA[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$LDMC<-
+  SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$LMA<-1/meta(fresh_spec_all)$SLA
+meta(fresh_spec_all)$EWT<-with(meta(fresh_spec_all),(1/(LDMC/1000)-1)*LMA)
 
 meta(pressed_spec_all)$SLA<-
   SLA_all$SLA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
@@ -221,12 +220,12 @@ meta(pressed_spec_all)$LDMC<-
 meta(pressed_spec_all)$LMA<-1/meta(pressed_spec_all)$SLA
 meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*LMA)
 
-meta(ground_spec_EL_agg)$SLA<-
-  SLA_all$SLA[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
-meta(ground_spec_EL_agg)$LDMC<-
-  SLA_all$LDMC[match(meta(ground_spec_EL_agg)$ID,SLA_all$ID)]
-meta(ground_spec_EL_agg)$LMA<-1/meta(ground_spec_EL_agg)$SLA
-meta(ground_spec_EL_agg)$EWT<-with(meta(ground_spec_EL_agg),(1/(LDMC/1000)-1)*LMA)
+meta(ground_spec_all)$SLA<-
+  SLA_all$SLA[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$LDMC<-
+  SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$LMA<-1/meta(ground_spec_all)$SLA
+meta(ground_spec_all)$EWT<-with(meta(ground_spec_all),(1/(LDMC/1000)-1)*LMA)
 
 ############################################
 ## read in C/N
@@ -246,20 +245,20 @@ CN_Dessain<-read.csv("Traits/ElementalAnalysis/CN_data_all_projects - Dessain.cs
 
 CN_all<-do.call(rbind,args=list(CN_BeauchampRioux,CN_Boucherville,CN_Warren,CN_Dessain))
 
-meta(fresh_spec_EL_agg)$N<-
-  CN_all$N....[match(meta(fresh_spec_EL_agg)$ID,CN_all$Sample_id)]
-meta(fresh_spec_EL_agg)$C<-
-  CN_all$C.....[match(meta(fresh_spec_EL_agg)$ID,CN_all$Sample_id)]
+meta(fresh_spec_all)$N<-
+  CN_all$N....[match(meta(fresh_spec_all)$ID,CN_all$Sample_id)]
+meta(fresh_spec_all)$C<-
+  CN_all$C.....[match(meta(fresh_spec_all)$ID,CN_all$Sample_id)]
 
 meta(pressed_spec_all)$N<-
   CN_all$N....[match(meta(pressed_spec_all)$ID,CN_all$Sample_id)]
 meta(pressed_spec_all)$C<-
   CN_all$C.....[match(meta(pressed_spec_all)$ID,CN_all$Sample_id)]
 
-meta(ground_spec_EL_agg)$N<-
-  CN_all$N....[match(meta(ground_spec_EL_agg)$ID,CN_all$Sample_id)]
-meta(ground_spec_EL_agg)$C<-
-  CN_all$C.....[match(meta(ground_spec_EL_agg)$ID,CN_all$Sample_id)]
+meta(ground_spec_all)$N<-
+  CN_all$N....[match(meta(ground_spec_all)$ID,CN_all$Sample_id)]
+meta(ground_spec_all)$C<-
+  CN_all$C.....[match(meta(ground_spec_all)$ID,CN_all$Sample_id)]
 
 ###################################################
 ## read in carbon fractions
@@ -276,20 +275,20 @@ Fiber<-data.frame(ID=Fiber$bottle_id,
                   lignin=Fiber$lignin_perc)
 Fiber$ID<-as.character(Fiber$ID)
 
-meta(fresh_spec_EL_agg)$NDF<-
-  Fiber$NDF[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$ADF<-
-  Fiber$ADF[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$ADL<-
-  Fiber$ADL[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$solubles<-
-  Fiber$solubles[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$hemicellulose<-
-  Fiber$hemicellulose[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$cellulose<-
-  Fiber$cellulose[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
-meta(fresh_spec_EL_agg)$lignin<-
-  Fiber$lignin[match(meta(fresh_spec_EL_agg)$ID,Fiber$ID)]
+meta(fresh_spec_all)$NDF<-
+  Fiber$NDF[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$ADF<-
+  Fiber$ADF[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$ADL<-
+  Fiber$ADL[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$solubles<-
+  Fiber$solubles[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$hemicellulose<-
+  Fiber$hemicellulose[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$cellulose<-
+  Fiber$cellulose[match(meta(fresh_spec_all)$ID,Fiber$ID)]
+meta(fresh_spec_all)$lignin<-
+  Fiber$lignin[match(meta(fresh_spec_all)$ID,Fiber$ID)]
 
 meta(pressed_spec_all)$NDF<-
   Fiber$NDF[match(meta(pressed_spec_all)$ID,Fiber$ID)]
@@ -306,20 +305,20 @@ meta(pressed_spec_all)$cellulose<-
 meta(pressed_spec_all)$lignin<-
   Fiber$lignin[match(meta(pressed_spec_all)$ID,Fiber$ID)]
 
-meta(ground_spec_EL_agg)$NDF<-
-  Fiber$NDF[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$ADF<-
-  Fiber$ADF[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$ADL<-
-  Fiber$ADL[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$solubles<-
-  Fiber$solubles[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$hemicellulose<-
-  Fiber$hemicellulose[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$cellulose<-
-  Fiber$cellulose[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
-meta(ground_spec_EL_agg)$lignin<-
-  Fiber$lignin[match(meta(ground_spec_EL_agg)$ID,Fiber$ID)]
+meta(ground_spec_all)$NDF<-
+  Fiber$NDF[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$ADF<-
+  Fiber$ADF[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$ADL<-
+  Fiber$ADL[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$solubles<-
+  Fiber$solubles[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$hemicellulose<-
+  Fiber$hemicellulose[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$cellulose<-
+  Fiber$cellulose[match(meta(ground_spec_all)$ID,Fiber$ID)]
+meta(ground_spec_all)$lignin<-
+  Fiber$lignin[match(meta(ground_spec_all)$ID,Fiber$ID)]
 
 ###############################################
 ## read pigments
@@ -349,12 +348,12 @@ pigments_all$carotenoides._mg_g[pigments_all$sample_id==13404937]<-NA
 ## remove records who notes contain "refaire" or "refait" since these were all redone
 pigments_all<-pigments_all[-which(str_detect(string = pigments_all$Notes,pattern = "efai")),]
 
-meta(fresh_spec_EL_agg)$chlA<-
-  pigments_all$chlA_mg_g[match(meta(fresh_spec_EL_agg)$ID,pigments_all$sample_id)]
-meta(fresh_spec_EL_agg)$chlB<-
-  pigments_all$chlB_mg_g[match(meta(fresh_spec_EL_agg)$ID,pigments_all$sample_id)]
-meta(fresh_spec_EL_agg)$car<-
-  pigments_all$carotenoides._mg_g[match(meta(fresh_spec_EL_agg)$ID,pigments_all$sample_id)]
+meta(fresh_spec_all)$chlA<-
+  pigments_all$chlA_mg_g[match(meta(fresh_spec_all)$ID,pigments_all$sample_id)]
+meta(fresh_spec_all)$chlB<-
+  pigments_all$chlB_mg_g[match(meta(fresh_spec_all)$ID,pigments_all$sample_id)]
+meta(fresh_spec_all)$car<-
+  pigments_all$carotenoides._mg_g[match(meta(fresh_spec_all)$ID,pigments_all$sample_id)]
 
 meta(pressed_spec_all)$chlA<-
   pigments_all$chlA_mg_g[match(meta(pressed_spec_all)$ID,pigments_all$sample_id)]
@@ -363,12 +362,12 @@ meta(pressed_spec_all)$chlB<-
 meta(pressed_spec_all)$car<-
   pigments_all$carotenoides._mg_g[match(meta(pressed_spec_all)$ID,pigments_all$sample_id)]
 
-meta(ground_spec_EL_agg)$chlA<-
-  pigments_all$chlA_mg_g[match(meta(ground_spec_EL_agg)$ID,pigments_all$sample_id)]
-meta(ground_spec_EL_agg)$chlB<-
-  pigments_all$chlB_mg_g[match(meta(ground_spec_EL_agg)$ID,pigments_all$sample_id)]
-meta(ground_spec_EL_agg)$car<-
-  pigments_all$carotenoides._mg_g[match(meta(ground_spec_EL_agg)$ID,pigments_all$sample_id)]
+meta(ground_spec_all)$chlA<-
+  pigments_all$chlA_mg_g[match(meta(ground_spec_all)$ID,pigments_all$sample_id)]
+meta(ground_spec_all)$chlB<-
+  pigments_all$chlB_mg_g[match(meta(ground_spec_all)$ID,pigments_all$sample_id)]
+meta(ground_spec_all)$car<-
+  pigments_all$carotenoides._mg_g[match(meta(ground_spec_all)$ID,pigments_all$sample_id)]
 
 ######################################
 ## ICP elemental concentrations
@@ -411,30 +410,30 @@ ICP_all$Na[ICP_all$Sample_id=="2017-06-15-jbmcb-P003"]<-NA
 ICP_all$Al[ICP_all$Al<0]<-0
 ICP_all$Na[ICP_all$Na<0]<-0
 
-meta(fresh_spec_EL_agg)$Al<-
-  ICP_all$Al[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$B<-
-  ICP_all$B[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$B.1<-
-  ICP_all$B.1[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Ca<-
-  ICP_all$Ca[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Cu<-
-  ICP_all$Cu[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Fe<-
-  ICP_all$Fe[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$K<-
-  ICP_all$K[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Mg<-
-  ICP_all$Mg[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Mn<-
-  ICP_all$Mn[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Na<-
-  ICP_all$Na[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$P<-
-  ICP_all$P[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_EL_agg)$Zn<-
-  ICP_all$Zn[match(meta(fresh_spec_EL_agg)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Al<-
+  ICP_all$Al[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$B<-
+  ICP_all$B[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$B.1<-
+  ICP_all$B.1[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Ca<-
+  ICP_all$Ca[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Cu<-
+  ICP_all$Cu[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Fe<-
+  ICP_all$Fe[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$K<-
+  ICP_all$K[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Mg<-
+  ICP_all$Mg[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Mn<-
+  ICP_all$Mn[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Na<-
+  ICP_all$Na[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$P<-
+  ICP_all$P[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
+meta(fresh_spec_all)$Zn<-
+  ICP_all$Zn[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
 
 meta(pressed_spec_all)$Al<-
   ICP_all$Al[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
@@ -461,53 +460,53 @@ meta(pressed_spec_all)$P<-
 meta(pressed_spec_all)$Zn<-
   ICP_all$Zn[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
 
-meta(ground_spec_EL_agg)$Al<-
-  ICP_all$Al[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$B<-
-  ICP_all$B[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$B.1<-
-  ICP_all$B.1[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Ca<-
-  ICP_all$Ca[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Cu<-
-  ICP_all$Cu[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Fe<-
-  ICP_all$Fe[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$K<-
-  ICP_all$K[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Mg<-
-  ICP_all$Mg[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Mn<-
-  ICP_all$Mn[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Na<-
-  ICP_all$Na[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$P<-
-  ICP_all$P[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
-meta(ground_spec_EL_agg)$Zn<-
-  ICP_all$Zn[match(meta(ground_spec_EL_agg)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Al<-
+  ICP_all$Al[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$B<-
+  ICP_all$B[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$B.1<-
+  ICP_all$B.1[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Ca<-
+  ICP_all$Ca[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Cu<-
+  ICP_all$Cu[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Fe<-
+  ICP_all$Fe[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$K<-
+  ICP_all$K[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Mg<-
+  ICP_all$Mg[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Mn<-
+  ICP_all$Mn[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Na<-
+  ICP_all$Na[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$P<-
+  ICP_all$P[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
+meta(ground_spec_all)$Zn<-
+  ICP_all$Zn[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
 
 #####################################
 ## mass based traits
 
-meta(fresh_spec_EL_agg)$N_area<-meta(fresh_spec_EL_agg)$N*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$C_area<-meta(fresh_spec_EL_agg)$C*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$solubles_area<-meta(fresh_spec_EL_agg)$solubles*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$hemicellulose_area<-meta(fresh_spec_EL_agg)$hemicellulose*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$cellulose_area<-meta(fresh_spec_EL_agg)$cellulose*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$lignin_area<-meta(fresh_spec_EL_agg)$lignin*meta(fresh_spec_EL_agg)$LMA/1000
-meta(fresh_spec_EL_agg)$chlA_area<-meta(fresh_spec_EL_agg)$chlA*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$chlB_area<-meta(fresh_spec_EL_agg)$chlB*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$car_area<-meta(fresh_spec_EL_agg)$car*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Al_area<-meta(fresh_spec_EL_agg)$Al*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Ca_area<-meta(fresh_spec_EL_agg)$Ca*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Cu_area<-meta(fresh_spec_EL_agg)$Cu*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Fe_area<-meta(fresh_spec_EL_agg)$Fe*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$K_area<-meta(fresh_spec_EL_agg)$K*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Mg_area<-meta(fresh_spec_EL_agg)$Mg*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Mn_area<-meta(fresh_spec_EL_agg)$Mn*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Na_area<-meta(fresh_spec_EL_agg)$Na*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$P_area<-meta(fresh_spec_EL_agg)$P*meta(fresh_spec_EL_agg)$LMA/10000
-meta(fresh_spec_EL_agg)$Zn_area<-meta(fresh_spec_EL_agg)$Zn*meta(fresh_spec_EL_agg)$LMA/10000
+meta(fresh_spec_all)$N_area<-meta(fresh_spec_all)$N*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$C_area<-meta(fresh_spec_all)$C*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$solubles_area<-meta(fresh_spec_all)$solubles*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$hemicellulose_area<-meta(fresh_spec_all)$hemicellulose*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$cellulose_area<-meta(fresh_spec_all)$cellulose*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$lignin_area<-meta(fresh_spec_all)$lignin*meta(fresh_spec_all)$LMA/1000
+meta(fresh_spec_all)$chlA_area<-meta(fresh_spec_all)$chlA*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$chlB_area<-meta(fresh_spec_all)$chlB*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$car_area<-meta(fresh_spec_all)$car*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Al_area<-meta(fresh_spec_all)$Al*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Ca_area<-meta(fresh_spec_all)$Ca*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Cu_area<-meta(fresh_spec_all)$Cu*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Fe_area<-meta(fresh_spec_all)$Fe*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$K_area<-meta(fresh_spec_all)$K*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Mg_area<-meta(fresh_spec_all)$Mg*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Mn_area<-meta(fresh_spec_all)$Mn*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Na_area<-meta(fresh_spec_all)$Na*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$P_area<-meta(fresh_spec_all)$P*meta(fresh_spec_all)$LMA/10000
+meta(fresh_spec_all)$Zn_area<-meta(fresh_spec_all)$Zn*meta(fresh_spec_all)$LMA/10000
 
 meta(pressed_spec_all)$N_area<-meta(pressed_spec_all)$N*meta(pressed_spec_all)$LMA/1000
 meta(pressed_spec_all)$C_area<-meta(pressed_spec_all)$C*meta(pressed_spec_all)$LMA/1000
@@ -533,41 +532,41 @@ meta(pressed_spec_all)$Zn_area<-meta(pressed_spec_all)$Zn*meta(pressed_spec_all)
 ## Indices for discoloration analyses
 
 ## calculate NDVI and degradation / brown pigment index for fresh leaves
-meta(fresh_spec_EL_agg)$NDVI<-(fresh_spec_EL_agg[,800]-fresh_spec_EL_agg[,680])/(fresh_spec_EL_agg[,800]+fresh_spec_EL_agg[,680])
-meta(fresh_spec_EL_agg)$deg_ind<-(fresh_spec_EL_agg[,1080]-fresh_spec_EL_agg[,780])/(fresh_spec_EL_agg[,1080]+fresh_spec_EL_agg[,780])
+meta(fresh_spec_all)$NDVI<-(fresh_spec_all[,800]-fresh_spec_all[,680])/(fresh_spec_all[,800]+fresh_spec_all[,680])
+meta(fresh_spec_all)$deg_ind<-(fresh_spec_all[,1080]-fresh_spec_all[,780])/(fresh_spec_all[,1080]+fresh_spec_all[,780])
 
 ## calculate NDVI and degradation / brown pigment index for pressed leaves
 meta(pressed_spec_all)$NDVI<-(pressed_spec_all[,800]-pressed_spec_all[,680])/(pressed_spec_all[,800]+pressed_spec_all[,680])
 meta(pressed_spec_all)$deg_ind<-(pressed_spec_all[,1080]-pressed_spec_all[,780])/(pressed_spec_all[,1080]+pressed_spec_all[,780])
 
 ## attach fresh leaf indices to pressed leaf data
-meta(pressed_spec_all)$NDVI_fresh<-meta(fresh_spec_EL_agg)$NDVI[match(meta(pressed_spec_all)$ID,meta(fresh_spec_EL_agg)$ID)]
-meta(pressed_spec_all)$deg_ind_fresh<-meta(fresh_spec_EL_agg)$deg_ind[match(meta(pressed_spec_all)$ID,meta(fresh_spec_EL_agg)$ID)]
+meta(pressed_spec_all)$NDVI_fresh<-meta(fresh_spec_all)$NDVI[match(meta(pressed_spec_all)$ID,meta(fresh_spec_all)$ID)]
+meta(pressed_spec_all)$deg_ind_fresh<-meta(fresh_spec_all)$deg_ind[match(meta(pressed_spec_all)$ID,meta(fresh_spec_all)$ID)]
 
 ######################################
 ## write files
 
-saveRDS(fresh_spec_EL_agg,"ProcessedSpectralData/fresh_spec_EL_agg.rds")
-saveRDS(pressed_spec_all,"ProcessedSpectralData/pressed_spec_EL_agg.rds")
-saveRDS(ground_spec_EL_agg,"ProcessedSpectralData/ground_spec_EL_agg.rds")
+saveRDS(fresh_spec_all,"ProcessedSpectralData/fresh_spec_all.rds")
+saveRDS(pressed_spec_all,"ProcessedSpectralData/pressed_spec_all.rds")
+saveRDS(ground_spec_all,"ProcessedSpectralData/ground_spec_all.rds")
 
 ######################################################
 ## read data again if needed
 
-# fresh_spec_EL_agg<-readRDS("ProcessedSpectralData/fresh_spec_EL_agg.rds")
-# pressed_spec_all<-readRDS("ProcessedSpectralData/pressed_spec_EL_agg.rds")
-# ground_spec_EL_agg<-readRDS("ProcessedSpectralData/ground_spec_EL_agg.rds")
+# fresh_spec_all<-readRDS("ProcessedSpectralData/fresh_spec_all.rds")
+# pressed_spec_all<-readRDS("ProcessedSpectralData/pressed_spec_all.rds")
+# ground_spec_all<-readRDS("ProcessedSpectralData/ground_spec_all.rds")
 
 ###############################################
 ## plot spectra quantiles
 
-fresh_quantiles<-quantile(fresh_spec_EL_agg,probs=c(0.025,0.25,0.5,0.75,0.975))
+fresh_quantiles<-quantile(fresh_spec_all,probs=c(0.025,0.25,0.5,0.75,0.975))
 pressed_quantiles<-quantile(pressed_spec_all,probs=c(0.025,0.25,0.5,0.75,0.975))
-ground_quantiles<-quantile(ground_spec_EL_agg,probs=c(0.025,0.25,0.5,0.75,0.975))
+ground_quantiles<-quantile(ground_spec_all,probs=c(0.025,0.25,0.5,0.75,0.975))
 
-fresh_CV<-apply(fresh_spec_EL_agg,2,function(x) sd(x)/mean(x))
+fresh_CV<-apply(fresh_spec_all,2,function(x) sd(x)/mean(x))
 pressed_CV<-apply(pressed_spec_all,2,function(x) sd(x)/mean(x))
-ground_CV<-apply(ground_spec_EL_agg,2,function(x) sd(x)/mean(x))
+ground_CV<-apply(ground_spec_all,2,function(x) sd(x)/mean(x))
 
 fresh_spec_plot<-ggplot()+
   geom_ribbon(aes(x=400:2400,
