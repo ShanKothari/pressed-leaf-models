@@ -3,12 +3,6 @@ library(spectrolab)
 library(caret)
 library(plyr)
 
-##################################
-## to dos
-
-## redo the divisions into training and testing data so that
-## training data are the same for each analysis?
-
 ######################################################
 ## read data
 
