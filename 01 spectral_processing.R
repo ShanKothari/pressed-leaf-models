@@ -14,6 +14,8 @@ library(geomtextpath)
 
 ground_spec_EL<-read_spectra(path = "GroundSpectra/LaliberteLab","sed",exclude_if_matches = c("BAD","WR"))
 
+# write.csv(as.matrix(ground_spec_EL),"ProcessedSpectralData/ground_spec_nonavg.csv")
+
 ## match sensors if desired
 ## not necessary, and not performed for the paper
 # ground_spec_EL_match<-match_sensors(ground_spec_EL,splice_at=983)
@@ -45,6 +47,9 @@ ground_spec_all <- ground_spec_all_raw[ ,400:2400]
 ## process pressed spectra
 
 pressed_spec_EL<-read_spectra(path = "PressedSpectra/LaliberteLab","sed",exclude_if_matches = c("BAD","WR","BLACK"))
+
+# write.csv(as.matrix(pressed_spec_EL),"ProcessedSpectralData/pressed_spec_nonavg.csv")
+
 pressed_spec_EL_match<-match_sensors(pressed_spec_EL,splice_at=983)
 
 pressed_spec_EL_spl<-strsplit(x = names(pressed_spec_EL_match), split = "_")
@@ -102,32 +107,47 @@ pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% unique_
 summary_BeauchampRioux<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - BeauchampRioux+Cabo-General.csv")
 sBR_sub<-data.frame(ID=summary_BeauchampRioux$Bulk.sample.ID,
                     Species=summary_BeauchampRioux$Species,
-                    Project="QBT",
+                    Project="Beauchamp-Rioux",
                     Discoloration=summary_BeauchampRioux$Discoloration,
                     Stage=NA)
 
 summary_Boucherville<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - Boucherville.csv")
 sBV_sub<-data.frame(ID=summary_Boucherville$Bulk.sample.ID,
                     Species=summary_Boucherville$Species,
-                    Project="IBV",
+                    Project="Boucherville",
                     Discoloration=summary_Boucherville$Discoloration,
                     Stage=NA)
 
 summary_Warren<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - SWA-Warren.csv")
 sWN_sub<-data.frame(ID=summary_Warren$Bulk.sample.ID,
                     Species=summary_Warren$Species,
-                    Project="WCS",
+                    Project="Warren",
                     Discoloration=summary_Warren$Discoloration,
                     Stage=summary_Warren$Stage)
 
 summary_Dessain<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - Dessain.csv")
 sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
                     Species=summary_Dessain$Species,
-                    Project="QTH",
+                    Project="Dessain",
                     Discoloration=summary_Dessain$Discoloration,
                     Stage=NA)
 
 summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub))
+
+Dessain_gps<-read.csv("ELSummary_7_9_2020/Dessainleafspectra - gps.csv")
+Dessain_gps_sub<-data.frame(ID=as.character(Dessain_gps$parentEventID),
+                            latitude=Dessain_gps$decimalLatitude,
+                            longitude=Dessain_gps$decimalLongitude)
+
+other_gps<-read.csv("ELSummary_7_9_2020/leaf_spectra.csv")
+other_gps_sub<-data.frame(ID=as.character(other_gps$sample_id),
+                          latitude=other_gps$latitude,
+                          longitude=other_gps$longitude)
+
+all_gps<-rbind(Dessain_gps_sub,other_gps_sub)
+
+summary_all$latitude<-all_gps$latitude[match(summary_all$ID,all_gps$ID)]
+summary_all$longitude<-all_gps$longitude[match(summary_all$ID,all_gps$ID)]
 
 vascan<-read.csv("ELSummary_7_9_2020/vascan.csv")
 summary_all$GrowthForm<-vascan$growth_form[match(summary_all$Species,vascan$scientific_name)]
@@ -153,6 +173,10 @@ meta(fresh_spec_all)$Stage<-
   summary_all$Stage[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 meta(fresh_spec_all)$GrowthForm<-
   summary_all$GrowthForm[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Latitude<-
+  summary_all$latitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$Longitude<-
+  summary_all$longitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 ## this gets rid of any remaining 2017 Dessain spectra that aren't in the summary file
 fresh_spec_all<-fresh_spec_all[-which(is.na(meta(fresh_spec_all)$Project))]
 
@@ -166,6 +190,10 @@ meta(pressed_spec_all)$Stage<-
   summary_all$Stage[match(meta(pressed_spec_all)$ID,summary_all$ID)]
 meta(pressed_spec_all)$GrowthForm<-
   summary_all$GrowthForm[match(meta(pressed_spec_all)$ID,summary_all$ID)]
+meta(pressed_spec_all)$Latitude<-
+  summary_all$latitude[match(meta(pressed_spec_all)$ID,summary_all$ID)]
+meta(pressed_spec_all)$Longitude<-
+  summary_all$longitude[match(meta(pressed_spec_all)$ID,summary_all$ID)]
 ## should yield an error if all spectra IDs can be linked to a project
 pressed_spec_all<-pressed_spec_all[-which(is.na(meta(pressed_spec_all)$Project))]
 
@@ -179,6 +207,10 @@ meta(ground_spec_all)$Stage<-
   summary_all$Stage[match(meta(ground_spec_all)$ID,summary_all$ID)]
 meta(ground_spec_all)$GrowthForm<-
   summary_all$GrowthForm[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$Latitude<-
+  summary_all$latitude[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$Longitude<-
+  summary_all$longitude[match(meta(ground_spec_all)$ID,summary_all$ID)]
 ## should yield an error if all spectra IDs can be linked to a project
 ground_spec_all<-ground_spec_all[-which(is.na(meta(ground_spec_all)$Project))]
 
@@ -412,10 +444,6 @@ ICP_all$Na[ICP_all$Na<0]<-0
 
 meta(fresh_spec_all)$Al<-
   ICP_all$Al[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_all)$B<-
-  ICP_all$B[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
-meta(fresh_spec_all)$B.1<-
-  ICP_all$B.1[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
 meta(fresh_spec_all)$Ca<-
   ICP_all$Ca[match(meta(fresh_spec_all)$ID,ICP_all$Sample_id)]
 meta(fresh_spec_all)$Cu<-
@@ -437,10 +465,6 @@ meta(fresh_spec_all)$Zn<-
 
 meta(pressed_spec_all)$Al<-
   ICP_all$Al[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
-meta(pressed_spec_all)$B<-
-  ICP_all$B[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
-meta(pressed_spec_all)$B.1<-
-  ICP_all$B.1[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
 meta(pressed_spec_all)$Ca<-
   ICP_all$Ca[match(meta(pressed_spec_all)$ID,ICP_all$Sample_id)]
 meta(pressed_spec_all)$Cu<-
@@ -462,10 +486,6 @@ meta(pressed_spec_all)$Zn<-
 
 meta(ground_spec_all)$Al<-
   ICP_all$Al[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
-meta(ground_spec_all)$B<-
-  ICP_all$B[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
-meta(ground_spec_all)$B.1<-
-  ICP_all$B.1[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
 meta(ground_spec_all)$Ca<-
   ICP_all$Ca[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
 meta(ground_spec_all)$Cu<-
@@ -527,21 +547,6 @@ meta(pressed_spec_all)$Mn_area<-meta(pressed_spec_all)$Mn*meta(pressed_spec_all)
 meta(pressed_spec_all)$Na_area<-meta(pressed_spec_all)$Na*meta(pressed_spec_all)$LMA/10000
 meta(pressed_spec_all)$P_area<-meta(pressed_spec_all)$P*meta(pressed_spec_all)$LMA/10000
 meta(pressed_spec_all)$Zn_area<-meta(pressed_spec_all)$Zn*meta(pressed_spec_all)$LMA/10000
-
-#####################################
-## Indices for discoloration analyses
-
-## calculate NDVI and degradation / brown pigment index for fresh leaves
-meta(fresh_spec_all)$NDVI<-(fresh_spec_all[,800]-fresh_spec_all[,680])/(fresh_spec_all[,800]+fresh_spec_all[,680])
-meta(fresh_spec_all)$deg_ind<-(fresh_spec_all[,1080]-fresh_spec_all[,780])/(fresh_spec_all[,1080]+fresh_spec_all[,780])
-
-## calculate NDVI and degradation / brown pigment index for pressed leaves
-meta(pressed_spec_all)$NDVI<-(pressed_spec_all[,800]-pressed_spec_all[,680])/(pressed_spec_all[,800]+pressed_spec_all[,680])
-meta(pressed_spec_all)$deg_ind<-(pressed_spec_all[,1080]-pressed_spec_all[,780])/(pressed_spec_all[,1080]+pressed_spec_all[,780])
-
-## attach fresh leaf indices to pressed leaf data
-meta(pressed_spec_all)$NDVI_fresh<-meta(fresh_spec_all)$NDVI[match(meta(pressed_spec_all)$ID,meta(fresh_spec_all)$ID)]
-meta(pressed_spec_all)$deg_ind_fresh<-meta(fresh_spec_all)$deg_ind[match(meta(pressed_spec_all)$ID,meta(fresh_spec_all)$ID)]
 
 ######################################
 ## write files

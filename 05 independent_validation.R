@@ -24,6 +24,8 @@ meta(pressed_spec_MN)$ID<-toupper(unlist(lapply(pressed_spec_MN_ID,
                                                 function(x) paste(x[-length(x)],collapse="_"))))
 splookup<-read.csv("Traits/JCBdata/splookup.csv")
 meta(pressed_spec_MN)$functional.group<-splookup$Group[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+meta(pressed_spec_MN)$full.species<-splookup$SpeciesBinomial[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+meta(pressed_spec_MN)$genotype<-splookup$Genotype[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
 ## remove ACNE due to discrepancy about including the rachis or not
 pressed_spec_MN<-pressed_spec_MN[-which(meta(pressed_spec_MN)$Species=="ACNE")]
 
@@ -75,7 +77,11 @@ CN<-read.csv("Traits/JCBdata/ElementalAnalysis/SummaryTables/fullsummarytable.cs
 CN$SampleID<-gsub(pattern=" ",replacement="_",x = CN$SampleID)
 meta(pressed_spec_MN_agg)$C<-CN$Carbon[match(meta(pressed_spec_MN_agg)$ID,CN$SampleID)]
 meta(pressed_spec_MN_agg)$N<-CN$Nitrogen[match(meta(pressed_spec_MN_agg)$ID,CN$SampleID)]
-meta(pressed_spec_MN_agg)$EA_run<-CN$Run[match(meta(pressed_spec_MN_agg)$ID,CN$SampleID)]
+
+# write.csv(as.matrix(pressed_spec_MN_agg),"ProcessedSpectralData/pressed_spec_MN_all_avg.csv")
+# write.csv(as.matrix(pressed_spec_MN_RWC_agg),"ProcessedSpectralData/pressed_spec_MN_RWC_avg.csv")
+# write.csv(meta(pressed_spec_MN_agg),"ProcessedSpectralData/pressed_spec_MN_all_meta.csv",row.names=F)
+# write.csv(meta(pressed_spec_MN_RWC_agg),"ProcessedSpectralData/pressed_spec_MN_RWC_meta.csv",row.names=F)
 
 #####################################
 ## read coefficients
