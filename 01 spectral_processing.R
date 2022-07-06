@@ -135,19 +135,30 @@ sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
 summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub))
 
 Dessain_gps<-read.csv("ELSummary_7_9_2020/Dessainleafspectra - gps.csv")
+Dessain_date<-sapply(Dessain_gps$parentEventID,function(id) substr(id,start=1,stop=10))
+Dessain_gps$MeasurementDate<-as.POSIXlt(Dessain_date,format="%Y-%m-%d")
 Dessain_gps_sub<-data.frame(ID=as.character(Dessain_gps$parentEventID),
+                            Project="Dessain",
+                            MeasurementDate=Dessain_gps$MeasurementDate,
                             latitude=Dessain_gps$decimalLatitude,
                             longitude=Dessain_gps$decimalLongitude)
 
 other_gps<-read.csv("ELSummary_7_9_2020/leaf_spectra.csv")
+site_gps<-read.csv("ELSummary_7_9_2020/sites.csv")
+other_gps$site_latitude<-site_gps$latitude[match(other_gps$site_id,site_gps$site_id)]
+other_gps$site_longitude<-site_gps$longitude[match(other_gps$site_id,site_gps$site_id)]
+other_gps$MeasurementDate<-as.POSIXlt(other_gps$date_measured,format="%Y-%m-%d")
 other_gps_sub<-data.frame(ID=as.character(other_gps$sample_id),
-                          latitude=other_gps$latitude,
-                          longitude=other_gps$longitude)
+                          Project=other_gps$project,
+                          MeasurementDate=other_gps$MeasurementDate,
+                          latitude=other_gps$site_latitude,
+                          longitude=other_gps$site_longitude)
 
 all_gps<-rbind(Dessain_gps_sub,other_gps_sub)
 
 summary_all$latitude<-all_gps$latitude[match(summary_all$ID,all_gps$ID)]
 summary_all$longitude<-all_gps$longitude[match(summary_all$ID,all_gps$ID)]
+summary_all$MeasurementDate<-all_gps$MeasurementDate[match(summary_all$ID,all_gps$ID)]
 
 vascan<-read.csv("ELSummary_7_9_2020/vascan.csv")
 summary_all$GrowthForm<-vascan$growth_form[match(summary_all$Species,vascan$scientific_name)]
@@ -177,6 +188,8 @@ meta(fresh_spec_all)$Latitude<-
   summary_all$latitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 meta(fresh_spec_all)$Longitude<-
   summary_all$longitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$MeasurementDate<-
+  summary_all$MeasurementDate[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 ## this gets rid of any remaining 2017 Dessain spectra that aren't in the summary file
 fresh_spec_all<-fresh_spec_all[-which(is.na(meta(fresh_spec_all)$Project))]
 
@@ -213,6 +226,11 @@ meta(ground_spec_all)$Longitude<-
   summary_all$longitude[match(meta(ground_spec_all)$ID,summary_all$ID)]
 ## should yield an error if all spectra IDs can be linked to a project
 ground_spec_all<-ground_spec_all[-which(is.na(meta(ground_spec_all)$Project))]
+
+## remove dummy variables
+## for some reason, this doesn't actually work (must be done manually)
+meta(pressed_spec_all)$dummy<-NULL
+meta(ground_spec_all)$dummy<-NULL
 
 ############################################
 ## read in SLA / LDMC
@@ -506,7 +524,7 @@ meta(ground_spec_all)$Zn<-
   ICP_all$Zn[match(meta(ground_spec_all)$ID,ICP_all$Sample_id)]
 
 #####################################
-## mass based traits
+## area based traits
 
 meta(fresh_spec_all)$N_area<-meta(fresh_spec_all)$N*meta(fresh_spec_all)$LMA/1000
 meta(fresh_spec_all)$C_area<-meta(fresh_spec_all)$C*meta(fresh_spec_all)$LMA/1000
