@@ -16,12 +16,9 @@ fresh_meta<-meta(fresh_spec_all)
 pressed_meta<-meta(pressed_spec_all)
 ground_meta<-meta(ground_spec_all)
 
-# write.csv(as.matrix(fresh_spec_all),"ProcessedSpectralData/fresh_spec_avg.csv")
-# write.csv(as.matrix(pressed_spec_all),"ProcessedSpectralData/pressed_spec_avg.csv")
-# write.csv(as.matrix(ground_spec_all),"ProcessedSpectralData/ground_spec_avg.csv")
-# write.csv(fresh_meta,"ProcessedSpectralData/fresh_spec_meta.csv",rownames=F)
-# write.csv(pressed_meta,"ProcessedSpectralData/pressed_spec_meta.csv",rownames=F)
-# write.csv(ground_meta,"ProcessedSpectralData/ground_spec_meta.csv",rownames=F)
+# write.csv(as.data.frame(fresh_spec_all),"ProcessedSpectralData/fresh_spec_avg.csv")
+# write.csv(as.data.frame(pressed_spec_all),"ProcessedSpectralData/pressed_spec_avg.csv")
+# write.csv(as.data.frame(ground_spec_all),"ProcessedSpectralData/ground_spec_avg.csv")
 
 fp_merge<-merge(fresh_meta,pressed_meta,by="ID",all=T)
 fp_merge$GrowthForm.x[is.na(fp_merge$GrowthForm.x)]<-fp_merge$GrowthForm.y[is.na(fp_merge$GrowthForm.x)]
