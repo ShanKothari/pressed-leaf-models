@@ -24,10 +24,10 @@ meta(pressed_spec_MN)$ID<-toupper(unlist(lapply(pressed_spec_MN_ID,
                                                 function(x) paste(x[-length(x)],collapse="_"))))
 
 splookup<-read.csv("Traits/JCBdata/splookup.csv")
-meta(pressed_spec_MN)$functional.group<-splookup$Group[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
-meta(pressed_spec_MN)$full.species<-splookup$SpeciesBinomial[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+meta(pressed_spec_MN)$FunctionalGroup<-splookup$Group[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+meta(pressed_spec_MN)$FullSpecies<-splookup$SpeciesBinomial[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
 
-sp_split<-strsplit(as.character(meta(pressed_spec_MN)$full.species),split=" ")
+sp_split<-strsplit(as.character(meta(pressed_spec_MN)$FullSpecies),split=" ")
 meta(pressed_spec_MN)$LatinGenus<-unlist(lapply(sp_split,function(entry) entry[[1]]))
 meta(pressed_spec_MN)$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
 
@@ -151,7 +151,7 @@ meta(pressed_spec_MN_agg)$N_1300_upper<-apply(N_preds_1300,1,quantile,probs=0.97
 focal_palette=palette(brewer.pal(8,name="Set2")[c(5,4,3,6,8,1,2)])
 
 N_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
-       aes(x=N_pred,y=N,color=functional.group))+
+       aes(x=N_pred,y=N,color=FunctionalGroup))+
   geom_errorbarh(aes(y=N,xmin=N_lower,xmax=N_upper),
                color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -164,7 +164,7 @@ N_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   guides(color=guide_legend(title="Functional group"))
 
 N_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
-       aes(x=N_pred_1300,y=N,color=functional.group))+
+       aes(x=N_pred_1300,y=N,color=FunctionalGroup))+
   geom_errorbarh(aes(y=N,xmin=N_1300_lower,xmax=N_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -177,7 +177,7 @@ N_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   guides(color=guide_legend(title="Functional group"))
 
 LMA_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-       aes(x=LMA_pred,y=LMA,color=functional.group))+
+       aes(x=LMA_pred,y=LMA,color=FunctionalGroup))+
   geom_errorbarh(aes(y=LMA,xmin=LMA_lower,xmax=LMA_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -190,7 +190,7 @@ LMA_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   guides(color=guide_legend(title="Functional group"))
 
 LMA_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-                             aes(x=LMA_pred_1300,y=LMA,color=functional.group))+
+                             aes(x=LMA_pred_1300,y=LMA,color=FunctionalGroup))+
   geom_errorbarh(aes(y=LMA,xmin=LMA_1300_lower,xmax=LMA_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -203,7 +203,7 @@ LMA_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   guides(color=guide_legend(title="Functional group"))
 
 EWT_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-       aes(x=EWT_pred,y=EWT,color=functional.group))+
+       aes(x=EWT_pred,y=EWT,color=FunctionalGroup))+
   geom_errorbarh(aes(y=EWT,xmin=EWT_lower,xmax=EWT_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -216,7 +216,7 @@ EWT_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   guides(color=guide_legend(title="Functional group"))
 
 EWT_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-       aes(x=EWT_pred_1300,y=EWT,color=functional.group))+
+       aes(x=EWT_pred_1300,y=EWT,color=FunctionalGroup))+
   geom_errorbarh(aes(y=EWT,xmin=EWT_1300_lower,xmax=EWT_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -229,7 +229,7 @@ EWT_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   guides(color=guide_legend(title="Functional group"))
 
 C_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
-       aes(x=C_pred,y=C,color=functional.group))+
+       aes(x=C_pred,y=C,color=FunctionalGroup))+
   geom_errorbarh(aes(y=C,xmin=C_lower,xmax=C_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -242,7 +242,7 @@ C_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   guides(color=guide_legend(title="Functional group"))
 
 C_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
-       aes(x=C_pred_1300,y=C,color=functional.group))+
+       aes(x=C_pred_1300,y=C,color=FunctionalGroup))+
   geom_errorbarh(aes(y=C,xmin=C_1300_lower,xmax=C_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -255,7 +255,7 @@ C_1300_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
   guides(color=guide_legend(title="Functional group"))
 
 LDMC_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-       aes(x=LDMC_pred,y=LDMC,color=functional.group))+
+       aes(x=LDMC_pred,y=LDMC,color=FunctionalGroup))+
   geom_errorbarh(aes(y=LDMC,xmin=LDMC_lower,xmax=LDMC_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -269,7 +269,7 @@ LDMC_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   guides(color=guide_legend(title="Functional group"))
 
 LDMC_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
-       aes(x=LDMC_pred_1300,y=LDMC,color=functional.group))+
+       aes(x=LDMC_pred_1300,y=LDMC,color=FunctionalGroup))+
   geom_errorbarh(aes(y=LDMC,xmin=LDMC_1300_lower,xmax=LDMC_1300_upper),
                  color="darkslategrey",alpha=0.7)+
   geom_point(size=2)+geom_smooth(method="lm",se=F)+
@@ -296,8 +296,8 @@ pdf("Manuscript/FigS19.pdf",width=9,height=12)
   theme(legend.position = 'bottom')
 dev.off()
 
-pressed_spec_MN_agg_nc<-pressed_spec_MN_agg[meta(pressed_spec_MN_agg)$functional.group!="conifer",]
-pressed_spec_MN_RWC_agg_nc<-pressed_spec_MN_RWC_agg[meta(pressed_spec_MN_RWC_agg)$functional.group!="conifer",]
+pressed_spec_MN_agg_nc<-pressed_spec_MN_agg[meta(pressed_spec_MN_agg)$FunctionalGroup!="conifer",]
+pressed_spec_MN_RWC_agg_nc<-pressed_spec_MN_RWC_agg[meta(pressed_spec_MN_RWC_agg)$FunctionalGroup!="conifer",]
 
 summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg)))
 summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg_nc)))
