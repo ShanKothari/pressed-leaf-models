@@ -134,6 +134,10 @@ sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
 
 summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub))
 
+sp_split<-strsplit(as.character(summary_all$Species),split=" ")
+summary_all$LatinGenus<-unlist(lapply(sp_split,function(entry) entry[[1]]))
+summary_all$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
+
 Dessain_gps<-read.csv("ELSummary_7_9_2020/Dessainleafspectra - gps.csv")
 Dessain_date<-sapply(Dessain_gps$parentEventID,function(id) substr(id,start=1,stop=10))
 Dessain_gps$MeasurementDate<-as.POSIXlt(Dessain_date,format="%Y-%m-%d")
@@ -176,6 +180,10 @@ levels(summary_all$GrowthForm)[levels(summary_all$GrowthForm)=="tree"]<-"broadle
 
 meta(fresh_spec_all)$Species<-
   summary_all$Species[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$LatinGenus<-
+  summary_all$LatinGenus[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$LatinSpecies<-
+  summary_all$LatinSpecies[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 meta(fresh_spec_all)$Project<-
   summary_all$Project[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 meta(fresh_spec_all)$Discoloration<-
@@ -195,6 +203,10 @@ fresh_spec_all<-fresh_spec_all[-which(is.na(meta(fresh_spec_all)$Project))]
 
 meta(pressed_spec_all)$Species<-
   summary_all$Species[match(meta(pressed_spec_all)$ID,summary_all$ID)]
+meta(pressed_spec_all)$LatinGenus<-
+  summary_all$LatinGenus[match(meta(pressed_spec_all)$ID,summary_all$ID)]
+meta(pressed_spec_all)$LatinSpecies<-
+  summary_all$LatinSpecies[match(meta(pressed_spec_all)$ID,summary_all$ID)]
 meta(pressed_spec_all)$Project<-
   summary_all$Project[match(meta(pressed_spec_all)$ID,summary_all$ID)]
 meta(pressed_spec_all)$Discoloration<-
@@ -212,6 +224,10 @@ pressed_spec_all<-pressed_spec_all[-which(is.na(meta(pressed_spec_all)$Project))
 
 meta(ground_spec_all)$Species<-
   summary_all$Species[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$LatinGenus<-
+  summary_all$LatinGenus[match(meta(ground_spec_all)$ID,summary_all$ID)]
+meta(ground_spec_all)$LatinSpecies<-
+  summary_all$LatinSpecies[match(meta(ground_spec_all)$ID,summary_all$ID)]
 meta(ground_spec_all)$Project<-
   summary_all$Project[match(meta(ground_spec_all)$ID,summary_all$ID)]
 meta(ground_spec_all)$Discoloration<-

@@ -26,8 +26,13 @@ meta(pressed_spec_MN)$ID<-toupper(unlist(lapply(pressed_spec_MN_ID,
 splookup<-read.csv("Traits/JCBdata/splookup.csv")
 meta(pressed_spec_MN)$functional.group<-splookup$Group[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
 meta(pressed_spec_MN)$full.species<-splookup$SpeciesBinomial[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+
+sp_split<-strsplit(as.character(meta(pressed_spec_MN)$full.species),split=" ")
+meta(pressed_spec_MN)$LatinGenus<-unlist(lapply(sp_split,function(entry) entry[[1]]))
+meta(pressed_spec_MN)$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
+
 meta(pressed_spec_MN)$genotype<-splookup$Genotype[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
-meta(pressed_spec_MN)$latitude<-45.40
+meta(pressed_spec_MN)$latitude<- 45.40
 meta(pressed_spec_MN)$longitude<- -93.19
 ## remove ACNE due to discrepancy about including the rachis or not
 pressed_spec_MN<-pressed_spec_MN[-which(meta(pressed_spec_MN)$Species=="ACNE")]
