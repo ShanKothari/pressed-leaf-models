@@ -11,7 +11,7 @@ pressed_spec_all<-readRDS("ProcessedSpectralData/pressed_spec_all.rds")
 ground_spec_all<-readRDS("ProcessedSpectralData/ground_spec_all.rds")
 
 #####################################################
-## shorten species names
+## shorten species names for display
 
 meta(fresh_spec_all)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(fresh_spec_all)$Species),split=" "),
                                                function(x) paste(substring(x[[1]], 1, 1),x[[2]],sep = ". "))))
@@ -23,6 +23,7 @@ meta(ground_spec_all)$SpShort<-factor(unlist(lapply(strsplit(as.character(meta(g
 #####################################################
 ## fresh spectra
 
+## select common species
 common_sp<-names(which(table(meta(fresh_spec_all)$SpShort)>=20))
 fresh_spec_EL_common<-fresh_spec_all[which(meta(fresh_spec_all)$SpShort %in% common_sp)]
 meta(fresh_spec_EL_common)$SpShort<-droplevels(meta(fresh_spec_EL_common)$SpShort)
@@ -65,6 +66,7 @@ plsFit_fresh2 <- train(fresh_spec_EL_common_train, fresh_spec_EL_class_train,
                       method = "pls", tuneLength = plsFit_fresh1$bestTune$ncomp,
                       trControl = ctrl2,probMethod="softmax")
 
+## get confusion matrix and turn it into tables
 fresh_conmat<-confusionMatrix(predict(plsFit_fresh2, fresh_spec_EL_common_test),fresh_spec_EL_class_test)
 
 fcm_d<-as.data.frame(fresh_conmat$table)
@@ -80,6 +82,7 @@ fcm_d$Reference<-unlist(lapply(as.character(fcm_d$Reference),function(x){
   return(pred_paste)
 }))
 
+## turn raw counts into percents normalized by total reference counts
 fcm_d$RefSum<-unlist(lapply(fcm_d$Reference,function(x) sum(fcm_d$Freq[fcm_d$Reference==x])))
 fcm_d$RefPer<-round(fcm_d$Freq/fcm_d$RefSum*100,digits=0)
 
@@ -254,6 +257,7 @@ pdf("Manuscript/Fig6C.pdf",width=7.5,height=7.5)
 gcm_d_p
 dev.off()
 
+## output summary data
 obj_list<-list(fresh=list(fresh_dat=fcm_d,
                           fresh_sum=fcm_st,
                           fresh_comp=plsFit_fresh2$bestTune$ncomp),
