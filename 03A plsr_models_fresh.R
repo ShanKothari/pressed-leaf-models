@@ -480,8 +480,10 @@ ggplot(Zn_fresh_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   ggtitle("Predicting Zn from fresh-leaf spectra")
 
 ###############################################
-## VIP plots
+## VIP metric
 
+## download VIP.R from Bjorn-Helge Mevik's website:
+## https://mevik.net/work/software/pls.html
 source("VIP.R")
 
 VIP_fresh<-data.frame(LMA=VIP(LMA_fresh)[ncomp_LMA_fresh,],

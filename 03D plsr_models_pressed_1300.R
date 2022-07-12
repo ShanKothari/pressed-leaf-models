@@ -8,11 +8,15 @@ library(RColorBrewer)
 library(patchwork)
 source("Scripts/pressed-leaf-models/00 useful_functions.R")
 
+## this script is for 'restricted-range' pressed-leaf models
+## using only 1300-2400 nm
+
 ######################################################
 ## read data
 
 pressed_spec_all_train<-readRDS("ProcessedSpectralData/pressed_spec_all_train.rds")
 pressed_spec_all_test<-readRDS("ProcessedSpectralData/pressed_spec_all_test.rds")
+## trim to 1300-2400 nm
 pressed_1300_spec_all_train<-pressed_spec_all_train[,1300:2400]
 pressed_1300_spec_all_test<-pressed_spec_all_test[,1300:2400]
 
@@ -484,8 +488,10 @@ ggplot(Zn_pressed_1300_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   ggtitle("Predicting Zn from pressed-leaf spectra")
 
 ###############################################
-## VIP plots
+## VIP metric
 
+## download VIP.R from Bjorn-Helge Mevik's website:
+## https://mevik.net/work/software/pls.html
 source("VIP.R")
 
 VIP_pressed_1300<-data.frame(LMA=VIP(LMA_pressed_1300)[ncomp_LMA_pressed_1300,],
@@ -510,7 +516,7 @@ VIP_pressed_1300<-data.frame(LMA=VIP(LMA_pressed_1300)[ncomp_LMA_pressed_1300,],
                              Na=VIP(Na_pressed_1300)[ncomp_Na_pressed_1300,],
                              P=VIP(P_pressed_1300)[ncomp_P_pressed_1300,],
                              Zn=VIP(Zn_pressed_1300)[ncomp_Zn_pressed_1300,],
-                             wavelength=400:2400)
+                             wavelength=1300:2400)
 
 saveRDS(VIP_pressed_1300,"SavedResults/VIP_pressed_1300.rds")
 

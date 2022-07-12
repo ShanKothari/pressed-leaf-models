@@ -481,8 +481,10 @@ ggplot(Zn_ground_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   ggtitle("Predicting Zn from ground-leaf spectra")
 
 ###############################################
-## VIP plots
+## VIP metric
 
+## download VIP.R from Bjorn-Helge Mevik's website:
+## https://mevik.net/work/software/pls.html
 source("VIP.R")
 
 VIP_ground<-data.frame(LMA=VIP(LMA_ground)[ncomp_LMA_ground,],

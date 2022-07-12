@@ -482,8 +482,10 @@ ggplot(Zn_pressed_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
   ggtitle("Predicting Zn from pressed-leaf spectra")
 
 ###############################################
-## VIP plots
+## VIP metric
 
+## download VIP.R from Bjorn-Helge Mevik's website:
+## https://mevik.net/work/software/pls.html
 source("VIP.R")
 
 VIP_pressed<-data.frame(LMA=VIP(LMA_pressed)[ncomp_LMA_pressed,],
