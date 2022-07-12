@@ -6,6 +6,12 @@ library(patchwork)
 library(reshape2)
 source("Scripts/pressed-leaf-models/00 useful_functions.R")
 
+## in this script we bring together the results from models
+## based on fresh, pressed, and ground leaves as well as
+## restricted-range pressed models and area-based fresh
+## and pressed models so that we can plot the results
+## side-by-side
+
 #############################################
 ## VIP plots
 
@@ -205,7 +211,8 @@ VIP_fiber_ground_plot+VIP_pigments_ground_plot+
   VIP_ICP2_ground_plot+plot_layout(ncol = 1)
 dev.off()
 
-## all together
+## side-by-side fresh, pressed and ground VIP plots
+## for particular traits
 
 VIP_ms1_fresh<-ggplot(VIP_fresh_long[VIP_fresh_long$variable %in% c("LMA","EWT","cell","chlA"),],
                       aes(x=wavelength,y=value,color=variable))+
@@ -1703,7 +1710,8 @@ pdf("Manuscript/FigS12.pdf",width=16,height=15,onefile=F)
   plot_layout(guides="collect") & theme(legend.position = "bottom")
 dev.off()
 
-## main text versions
+## side-by-side fresh, pressed, and ground plots
+## for particular traits (to go in main text)
 
 chlA_fresh_val_plot_alt<-ggplot(fresh_jack_df_list$chlA,
                             aes(y=Measured,x=pred_mean,color=GrowthForm))+
@@ -1952,7 +1960,7 @@ pdf("Manuscript/Fig3.pdf",width=16,height=15)
 dev.off()
 
 ##################################################
-## model performance
+## summarize model performance
 
 ## calibration R2, RMSE, and %RMSE
 ## summary(lm(measured~val_pred,data=lignin_fresh_pred))
