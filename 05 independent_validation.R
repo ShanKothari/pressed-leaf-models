@@ -8,12 +8,16 @@ library(stringr)
 library(RColorBrewer)
 source("Scripts/pressed-leaf-models/00 useful_functions.R")
 
+## independent validation based on Cedar Creek pressed-leaf data
+
 #####################################
 ## process data
 
 pressed_spec_MN<-read_spectra("PressedSpectra/JCBLab","sed",exclude_if_matches = c("BAD","WR_"))
+## match sensors
 pressed_spec_MN<-match_sensors(pressed_spec_MN,splice_at=983)
 
+## extracting metadata from sample names
 pressed_spec_MN_spl<-strsplit(names(pressed_spec_MN),split = "_")
 pressed_spec_MN_ID<-lapply(pressed_spec_MN_spl,function(x) x[-length(x)])
 meta(pressed_spec_MN)$Plot<-unlist(lapply(pressed_spec_MN_ID,function(x) x[[1]]))
@@ -23,21 +27,30 @@ meta(pressed_spec_MN)$Type<-unlist(lapply(pressed_spec_MN_ID,function(x) x[[leng
 meta(pressed_spec_MN)$ID<-toupper(unlist(lapply(pressed_spec_MN_ID,
                                                 function(x) paste(x[-length(x)],collapse="_"))))
 
+## drawing from a lookup table to get functional groups
+## and match species codes to full binomials
 splookup<-read.csv("Traits/JCBdata/splookup.csv")
 meta(pressed_spec_MN)$FunctionalGroup<-splookup$Group[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
 meta(pressed_spec_MN)$FullSpecies<-splookup$SpeciesBinomial[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
 
+## splitting Latin binomials into separate genus and species columns
 sp_split<-strsplit(as.character(meta(pressed_spec_MN)$FullSpecies),split=" ")
 meta(pressed_spec_MN)$LatinGenus<-unlist(lapply(sp_split,function(entry) entry[[1]]))
 meta(pressed_spec_MN)$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
 
 meta(pressed_spec_MN)$genotype<-splookup$Genotype[match(meta(pressed_spec_MN)$Species,splookup$SpeciesCode)]
+## all samples are from roughly the same area:
+## the BioDIV and FAB experiments, and the vicinity of the
+## main Cedar Creek lab buildings
 meta(pressed_spec_MN)$latitude<- 45.40
 meta(pressed_spec_MN)$longitude<- -93.19
-## remove ACNE due to discrepancy about including the rachis or not
+## remove ACNE because I included the rachis as part of mass
+## while CABO did not for compound-leaved species
 pressed_spec_MN<-pressed_spec_MN[-which(meta(pressed_spec_MN)$Species=="ACNE")]
 
-## only spectra for RWC
+## selecting only spectra for RWC
+## to associate with structural/water-related traits
+## (whereas we use all spectra for C and N)
 pressed_spec_MN_RWC<-pressed_spec_MN[-grep("PIG",names(pressed_spec_MN))]
 
 ## aggregate spectra with the same ID
@@ -46,9 +59,12 @@ pressed_spec_MN_agg<-aggregate(pressed_spec_MN,by=meta(pressed_spec_MN)$ID,
 pressed_spec_MN_RWC_agg<-aggregate(pressed_spec_MN_RWC,by=meta(pressed_spec_MN_RWC)$ID,
                                FUN=try_keep_txt(mean))
 
+## trim range
 pressed_spec_MN_agg <- pressed_spec_MN_agg[,400:2400]
 pressed_spec_MN_RWC_agg <- pressed_spec_MN_RWC_agg[,400:2400]
 
+## getting rid of one particular sample
+## whose measurement seems very wrong
 pressed_spec_MN_agg<-pressed_spec_MN_agg[-which(meta(pressed_spec_MN_agg)$ID=="31_BAPLE_1")]
 pressed_spec_MN_RWC_agg<-pressed_spec_MN_RWC_agg[-which(meta(pressed_spec_MN_RWC_agg)$ID=="31_BAPLE_1")]
 
@@ -58,23 +74,24 @@ pressed_spec_MN_RWC_agg<-pressed_spec_MN_RWC_agg[-which(meta(pressed_spec_MN_RWC
 freshmass<-read.csv("Traits/JCBdata/Relative Water Content -- Trait-Spectra Models 2018 - Sheet1.csv")
 freshmass$ID<-toupper(apply(freshmass,1,function(x) paste(x[1:4],collapse="_")))
 freshmass$ID<-sub("_$","",freshmass$ID)
+## when petiole/rachis mass is missing, assign it 0
 freshmass$Wet.mass.petiole.rachis..g.[is.na(freshmass$Wet.mass.petiole.rachis..g.)]<-0
+## fresh laminar mass is fresh total mass minus fresh petiole/rachis mass
 freshmass$lamina<-freshmass$Total.wet.mass..g.-freshmass$Wet.mass.petiole.rachis..g.
 
 drymass<-read.csv("Traits/JCBdata/Dry Mass -- Trait-Spectra Models 2018 - Sheet1.csv")
-## adjust this to include more species
 drymass_RWC<-drymass[drymass$Purpose=="RWC",]
 drymass_RWC$ID<-toupper(apply(drymass_RWC,1,function(x) paste(x[1:4],collapse="_")))
 drymass_RWC$ID<-sub("_$","",drymass_RWC$ID)
+## when petiole/rachis mass is missing, assign it 0
 drymass_RWC$Dry.mass.petiole.rachis..g.[is.na(drymass_RWC$Dry.mass.petiole.rachis..g.)]<-0
+## dry laminar mass is dry total mass minus dry petiole/rachis mass
 drymass_RWC$lamina<-drymass_RWC$Total.dry.mass..g.-drymass_RWC$Dry.mass.petiole.rachis..g.
 
 meta(pressed_spec_MN_RWC_agg)$fresh_mass<-freshmass$lamina[match(meta(pressed_spec_MN_RWC_agg)$ID,freshmass$ID)]
-## some missing matches for dry mass?
+## at least one missing match for dry mass
 meta(pressed_spec_MN_RWC_agg)$dry_mass<-drymass_RWC$lamina[match(meta(pressed_spec_MN_RWC_agg)$ID,drymass_RWC$ID)]
 meta(pressed_spec_MN_RWC_agg)$LDMC<-with(meta(pressed_spec_MN_RWC_agg),dry_mass/fresh_mass)*1000
-
-## attach dry mass also to full (not just RWC) data
 
 area_all<-read.csv("Traits/JCBdata/LeafArea/area_all.csv")
 meta(pressed_spec_MN_RWC_agg)$area<-area_all$area[match(toupper(meta(pressed_spec_MN_RWC_agg)$ID),toupper(area_all$TrueID))]
@@ -95,6 +112,8 @@ meta(pressed_spec_MN_agg)$N<-CN$Nitrogen[match(meta(pressed_spec_MN_agg)$ID,CN$S
 pressed_jack_coef_list<-readRDS("SavedResults/pressed_jack_coefs_list.rds")
 pressed_1300_jack_coef_list<-readRDS("SavedResults/pressed_1300_jack_coefs_list.rds")
 
+## apply coefficients to external validation
+## and get mean predictions + 95% CI
 LDMC_preds<-apply.coefs(pressed_jack_coef_list$LDMC,as.matrix(pressed_spec_MN_RWC_agg))
 meta(pressed_spec_MN_RWC_agg)$LDMC_pred<-rowMeans(LDMC_preds)
 meta(pressed_spec_MN_RWC_agg)$LDMC_lower<-apply(LDMC_preds,1,quantile,probs=0.025)
@@ -212,7 +231,7 @@ EWT_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   theme_bw()+
   theme(text=element_text(size=20))+
   scale_color_manual(values=focal_palette[c(1,5,3)])+
-  labs(x="Predicted EWT (cm)",y="Measured EWT (cm)")+
+  labs(x="Predicted EWT (mm)",y="Measured EWT (mm)")+
   guides(color=guide_legend(title="Functional group"))
 
 EWT_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
@@ -225,7 +244,7 @@ EWT_1300_indval_plot<-ggplot(meta(pressed_spec_MN_RWC_agg),
   theme_bw()+
   theme(text=element_text(size=20))+
   scale_color_manual(values=focal_palette[c(1,5,3)])+
-  labs(x="Predicted EWT (cm)",y="Measured EWT (cm)")+
+  labs(x="Predicted EWT (mm)",y="Measured EWT (mm)")+
   guides(color=guide_legend(title="Functional group"))
 
 C_indval_plot<-ggplot(meta(pressed_spec_MN_agg),
@@ -296,6 +315,7 @@ pdf("Manuscript/FigS19.pdf",width=9,height=12)
   theme(legend.position = 'bottom')
 dev.off()
 
+## getting summary statistics, with and without conifers
 pressed_spec_MN_agg_nc<-pressed_spec_MN_agg[meta(pressed_spec_MN_agg)$FunctionalGroup!="conifer",]
 pressed_spec_MN_RWC_agg_nc<-pressed_spec_MN_RWC_agg[meta(pressed_spec_MN_RWC_agg)$FunctionalGroup!="conifer",]
 
