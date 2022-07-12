@@ -19,18 +19,16 @@ The processed spectral and trait data products produced at the end of script 1, 
 
 ## How to use
 
-This repository is *not* a software package or any sort of user-oriented product that people can use without further modification. It *is* meant to be a reasonably well-documented and faithful record of the analyses carried out in the two manuscripts listed above. Some analyses should be easily reproducible, with some modification, given the scripts and the archived data (see **Associated data** below). Users will have to (for example) change paths to the directories where they have saved the files locally.
+This repository is *not* a software package or any sort of user-oriented product that people can use without further modification. It *is* meant to be a reasonably well-documented and faithful record of the analyses carried out in the paper. Some analyses should be easily reproducible, with some modification, given the scripts and the archived data (see **Associated data** below). Users will have to (for example) change paths to the directories where they have saved the files locally.
 
 ## Associated data products
 
-There are a few associated data products (DOIs forthcoming):
+There are two associated data products (DOIs forthcoming):
 
-1. The main CABO dataset, including traits and spectra, are found [here](https://ecosis.org/package/cabo-2018-2019-leaf-level-spectra) at EcoSIS. Reflectance, transmittance, and absorptance spectra are available.
-2. The complete Dessain project is not yet archived, but will be upon publication of manuscript (2).
-3. [LOPEX](https://ecosis.org/package/leaf-optical-properties-experiment-database--lopex93-) and [ANGERS](https://ecosis.org/package/angers-leaf-optical-properties-database--2003-), used in the external validation, are available at those respective links
-4. In script 10, I read in [fresh-](https://ecosis.org/package/fresh-leaf-cabo-spectra-from-herbarium-project), [pressed-](https://ecosis.org/package/pressed-leaf-cabo-spectra-from-herbarium-project), and [ground-](https://ecosis.org/package/pressed-leaf-cabo-spectra-from-herbarium-project)leaf spectra from another manuscript ([Kothari et al. 2022](https://www.biorxiv.org/content/10.1101/2021.04.21.440856), in press _Methods in Ecology and Evolution_) available at those respective links.
+1. The main [fresh-](https://ecosis.org/package/fresh-leaf-cabo-spectra-from-herbarium-project), [pressed-](https://ecosis.org/package/pressed-leaf-cabo-spectra-from-herbarium-project), and [ground-](https://ecosis.org/package/pressed-leaf-cabo-spectra-from-herbarium-project)leaf spectra with trait metadata.
+2. The [CABO pressed-leaf dataset](https://ecosis.org/package/2018-cedar-creek-pressed-leaves) used for independent validation.
 
-Even more raw data can be queried from the [CABO Data Portal](https://data.caboscience.org/leaf/).
+Even more raw fresh-leaf data can be queried from the [CABO Data Portal](https://data.caboscience.org/leaf/).
 
 In most of the scripts, I use the CRAN-hosted package `spectrolab v. 0.0.10` to handle the spectral data. In this package, the class `spectra` allows users to attach and retrieve metadata from spectral data using the function `meta()`. Below, you can find an example script that reads a .csv file, like our archived data, and turns it into an R `spectra` object like the ones I work with in the script.
 
@@ -52,4 +50,4 @@ spec<-spectra(value = spec_df[,-c(name_vars,meta_vars)],
 
 ## Questions?
 
-Please feel free to reach me at _shan.kothari \[at\] umontreal \[dot\] ca_ with questions about the code or the data. I'm glad to help you adapt any of the approaches I use for your own purposes. If you draw heavily from my code, I would ask that (purely as a courtesy) you cite one of the two papers above⁠—whichever is more relevant.
+Please feel free to reach me at _shan.kothari \[at\] umontreal \[dot\] ca_ with questions about the code or the data. I'm glad to help you adapt any of the approaches I use for your own purposes. If you draw heavily from my code or data, I would ask that (purely as a courtesy) you cite the paper above⁠.
