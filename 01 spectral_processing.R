@@ -22,7 +22,7 @@ ground_spec_EL<-read_spectra(path = "GroundSpectra/LaliberteLab","sed",exclude_i
 
 ground_spec_EL_spl<-strsplit(x = names(ground_spec_EL), split = "_")
 meta(ground_spec_EL)$ID<-unlist(lapply(ground_spec_EL_spl, function(x) x[[1]]))
-meta(ground_spec_EL)$dummy<-0
+meta(ground_spec_EL)$dummy<-0 # dummy variable just so metadata (ID) stays intact
 ## aggregate by sample
 ground_spec_all_raw<-aggregate(ground_spec_EL,by=meta(ground_spec_EL)$ID,
                               FUN=try_keep_txt(mean))
@@ -41,6 +41,7 @@ ground_spec_all_raw<-aggregate(ground_spec_EL,by=meta(ground_spec_EL)$ID,
 # meta(ground_spec_all)$ID<-meta(ground_spec_all_raw)$ID
 # ground_spec_all <- ground_spec_all[ ,400:2400]
 
+# trim to 400-2400 nm
 ground_spec_all <- ground_spec_all_raw[ ,400:2400]
 
 #####################################################
@@ -50,6 +51,7 @@ pressed_spec_EL<-read_spectra(path = "PressedSpectra/LaliberteLab","sed",exclude
 
 # write.csv(as.matrix(pressed_spec_EL),"ProcessedSpectralData/pressed_spec_nonavg.csv")
 
+## for pressed spectra I did match sensors
 pressed_spec_EL_match<-match_sensors(pressed_spec_EL,splice_at=983)
 
 pressed_spec_EL_spl<-strsplit(x = names(pressed_spec_EL_match), split = "_")
@@ -57,12 +59,23 @@ meta(pressed_spec_EL_match)$ID<-as.factor(unlist(lapply(pressed_spec_EL_spl, fun
 meta(pressed_spec_EL_match)$dummy<-0
 pressed_spec_all<-aggregate(pressed_spec_EL_match,by=meta(pressed_spec_EL_match)$ID,
                                FUN=try_keep_txt(mean))
+
 ## here again it is possible to smooth as one can do for ground spectra
 ## but again, not necessarily advisable
+
+## trim to 400-2400 nm
 pressed_spec_all <- pressed_spec_all[,400:2400]
 
 #######################################################
 ## read and process fresh spectra
+
+## most of the basic processing was done according to the script
+## labeled 01 in the GitHub repository archived at
+## DOI: 10.5281/zenodo.6820487
+## here, we just read in the already-processed data
+## (compiled across projects, and including
+## some samples from the Dessain project found in the
+## independent validation in that repository)
 
 # source("FreshSpectra/process_fresh_spectra.R")
 fresh_spec_df<-read.csv("FreshSpectra/fresh_spec_EL_processed.csv")
@@ -70,6 +83,7 @@ colnames(fresh_spec_df)<-gsub(pattern="X",replacement="",colnames(fresh_spec_df)
 CABO_general_df<-read.csv("FreshSpectra/CABOGeneralOther_spec_processed.csv")
 colnames(CABO_general_df)<-gsub(pattern="X",replacement="",colnames(CABO_general_df))
 
+## trim ranges
 fresh_spec<-as_spectra(fresh_spec_df,name_idx=1)
 fresh_spec<-fresh_spec[ ,400:2400]
 CABO_general<-as_spectra(CABO_general_df,name_idx=1)
@@ -81,7 +95,8 @@ meta(fresh_spec_all)$ID<-c(as.character(fresh_spec_df$sample_id),CABO_general_df
 ##########################################################
 ## remove bad spectra
 
-## removing yellow/red leaves, or other ones Rosalie excluded
+## removing yellow/red leaves, or other ones excluded
+## because they deviated from the standard sampling protocol
 bad_spectra<-c("11851575","13221003","22405244",
                "21854888","21854774","21854585",
                "10449089","10450505","10452131",
@@ -92,7 +107,7 @@ fresh_spec_all<-fresh_spec_all[-which(meta(fresh_spec_all)$ID %in% bad_spectra)]
 ground_spec_all<-ground_spec_all[-which(meta(ground_spec_all)$ID %in% bad_spectra)]
 pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% bad_spectra)]
 
-## remove spectra only found at one stage
+## remove samples only found at one stage
 unique_spectra<-union(union(setdiff(meta(fresh_spec_all)$ID,union(meta(ground_spec_all)$ID,meta(pressed_spec_all)$ID)),
                             setdiff(meta(ground_spec_all)$ID,union(meta(fresh_spec_all)$ID,meta(pressed_spec_all)$ID))),
                       setdiff(meta(pressed_spec_all)$ID,union(meta(ground_spec_all)$ID,meta(fresh_spec_all)$ID)))
@@ -134,10 +149,13 @@ sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
 
 summary_all<-do.call(rbind,args=list(sBR_sub,sBV_sub,sWN_sub,sDN_sub))
 
+## separate genus and species columns
 sp_split<-strsplit(as.character(summary_all$Species),split=" ")
 summary_all$LatinGenus<-unlist(lapply(sp_split,function(entry) entry[[1]]))
 summary_all$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
 
+## attach site-level latitude and longitude
+## as well as the measurement date
 Dessain_gps<-read.csv("ELSummary_7_9_2020/Dessainleafspectra - gps.csv")
 Dessain_date<-sapply(Dessain_gps$parentEventID,function(id) substr(id,start=1,stop=10))
 Dessain_gps$MeasurementDate<-as.POSIXlt(Dessain_date,format="%Y-%m-%d")
@@ -164,6 +182,8 @@ summary_all$latitude<-all_gps$latitude[match(summary_all$ID,all_gps$ID)]
 summary_all$longitude<-all_gps$longitude[match(summary_all$ID,all_gps$ID)]
 summary_all$MeasurementDate<-all_gps$MeasurementDate[match(summary_all$ID,all_gps$ID)]
 
+## use VASCAN (Desmet & Brouillet 2013) for growth form and taxonomic group
+## species included in multiple VASCAN growth forms are disambiguated manually
 vascan<-read.csv("ELSummary_7_9_2020/vascan.csv")
 summary_all$GrowthForm<-vascan$growth_form[match(summary_all$Species,vascan$scientific_name)]
 summary_all$GrowthForm[summary_all$Species=="Acer pensylvanicum Linnaeus"]<-"tree"
@@ -276,7 +296,9 @@ meta(fresh_spec_all)$SLA<-
   SLA_all$SLA[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
 meta(fresh_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+## LMA in kg/m2
 meta(fresh_spec_all)$LMA<-1/meta(fresh_spec_all)$SLA
+## EWT in mm
 meta(fresh_spec_all)$EWT<-with(meta(fresh_spec_all),(1/(LDMC/1000)-1)*LMA)
 
 meta(pressed_spec_all)$SLA<-
@@ -407,6 +429,7 @@ pigments_all$chlA_mg_g<-as.numeric(as.character(pigments_all$chlA_mg_g))
 pigments_all$chlB_mg_g<-as.numeric(as.character(pigments_all$chlB_mg_g))
 pigments_all$carotenoides._mg_g<-as.numeric(as.character(pigments_all$carotenoides._mg_g))
 
+## sample known to have bad pigment data
 pigments_all$chlA_mg_g[pigments_all$sample_id==13404937]<-NA
 pigments_all$chlB_mg_g[pigments_all$sample_id==13404937]<-NA
 pigments_all$carotenoides._mg_g[pigments_all$sample_id==13404937]<-NA
@@ -468,11 +491,13 @@ ICP_Warren<-data.frame(Sample_id=Fiber$ID[match(ICP_Warren$leaf_chemistry_sample
                        Zn=ICP_Warren$zn_mg_g)
 ICP_all<-rbind(ICP_boxes,ICP_Warren)
 
+## remove extreme outliers
 ICP_all$Al[ICP_all$Sample_id=="2017-08-15-jbmcb-P006"]<-NA
 ICP_all$Cu[ICP_all$Sample_id=="2017-06-07-ireqa-P010"]<-NA
 ICP_all$Fe[ICP_all$Sample_id=="2017-05-31-jbmtb-P011"]<-NA
 ICP_all$K[ICP_all$Sample_id=="2017-06-15-jbmcb-P003"]<-NA
 ICP_all$Na[ICP_all$Sample_id=="2017-06-15-jbmcb-P003"]<-NA
+## set samples with negative values (below detection limit) to 0
 ICP_all$Al[ICP_all$Al<0]<-0
 ICP_all$Na[ICP_all$Na<0]<-0
 
@@ -542,6 +567,7 @@ meta(ground_spec_all)$Zn<-
 #####################################
 ## area based traits
 
+## converting all to mg per cm2
 meta(fresh_spec_all)$N_area<-meta(fresh_spec_all)$N*meta(fresh_spec_all)$LMA/1000
 meta(fresh_spec_all)$C_area<-meta(fresh_spec_all)$C*meta(fresh_spec_all)$LMA/1000
 meta(fresh_spec_all)$solubles_area<-meta(fresh_spec_all)$solubles*meta(fresh_spec_all)$LMA/1000
@@ -704,6 +730,10 @@ fresh_spec_plot+pressed_spec_plot+ground_spec_plot+all_spec_plot+
   plot_layout(ncol = 1)
 dev.off()
 
+##################################
+## other assorted plots
+
+## spectra by discoloration stage
 pressed_spec_disc<-aggregate(as.matrix(pressed_spec_all),
                              by=list(as.factor(meta(pressed_spec_all)$Discoloration)),
                              FUN=mean)
@@ -727,6 +757,7 @@ pressed_disc_plot<-ggplot(pressed_spec_disc_long,
   guides(color=guide_legend(title="Discoloration"))+
   scale_color_manual(values=focal_palette)
 
+## histogram of discoloration
 disc_hist<-ggplot(meta(pressed_spec_all),
                   aes(x=as.factor(Discoloration)))+
   geom_bar()+
