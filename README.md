@@ -15,7 +15,7 @@ The stages are:
 5. Externally validating the models on the Cedar Creek pressed-leaf dataset.
 6. Running PLS-DA analyses to test the ability for fresh-, pressed-, and ground-leaf spectra to discriminate species.
 
-The processed spectral and trait data products produced at the end of script 1, and read in at the beginning of script 2, are archived elsewhere (see **Associated data** below).
+The processed spectral and trait data products produced at the end of script 1, and read in at the beginning of script 2, are archived elsewhere (see **Associated data** below). If you are trying to reproduce analyses from the paper, I recommend that you start by reading in the archived data at script 2 and proceed from there, clearing your environment in between scripts.
 
 ## How to use
 
