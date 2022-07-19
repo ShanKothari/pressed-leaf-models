@@ -103,8 +103,8 @@ CN$SampleID<-gsub(pattern=" ",replacement="_",x = CN$SampleID)
 meta(pressed_spec_MN_agg)$C<-CN$Carbon[match(meta(pressed_spec_MN_agg)$ID,CN$SampleID)]
 meta(pressed_spec_MN_agg)$N<-CN$Nitrogen[match(meta(pressed_spec_MN_agg)$ID,CN$SampleID)]
 
-# write.csv(as.data.frame(pressed_spec_MN_agg),"ProcessedSpectralData/pressed_spec_MN_all_avg.csv")
-# write.csv(as.data.frame(pressed_spec_MN_RWC_agg),"ProcessedSpectralData/pressed_spec_MN_RWC_avg.csv")
+write.csv(as.data.frame(pressed_spec_MN_agg),"ProcessedSpectralData/pressed_spec_MN_all_avg.csv",row.names=F)
+write.csv(as.data.frame(pressed_spec_MN_RWC_agg),"ProcessedSpectralData/pressed_spec_MN_RWC_avg.csv",row.names=F)
 
 #####################################
 ## read coefficients
@@ -319,9 +319,9 @@ dev.off()
 pressed_spec_MN_agg_nc<-pressed_spec_MN_agg[meta(pressed_spec_MN_agg)$FunctionalGroup!="conifer",]
 pressed_spec_MN_RWC_agg_nc<-pressed_spec_MN_RWC_agg[meta(pressed_spec_MN_RWC_agg)$FunctionalGroup!="conifer",]
 
-summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg)))
-summary(lm(EWT~EWT_pred_1300,data=meta(pressed_spec_MN_RWC_agg_nc)))
-with(meta(pressed_spec_MN_RWC_agg),RMSD(EWT,EWT_pred_1300))
-with(meta(pressed_spec_MN_RWC_agg_nc),RMSD(EWT,EWT_pred_1300))
-with(meta(pressed_spec_MN_RWC_agg),percentRMSD(EWT,EWT_pred_1300,0.025,0.975))
-with(meta(pressed_spec_MN_RWC_agg_nc),percentRMSD(EWT,EWT_pred_1300,0.025,0.975))
+summary(lm(C~C_pred_1300,data=meta(pressed_spec_MN_agg)))
+summary(lm(C~C_pred_1300,data=meta(pressed_spec_MN_agg_nc)))
+with(meta(pressed_spec_MN_agg),RMSD(C,C_pred_1300))
+with(meta(pressed_spec_MN_agg_nc),RMSD(C,C_pred_1300))
+with(meta(pressed_spec_MN_agg),percentRMSD(C,C_pred_1300,0.025,0.975))
+with(meta(pressed_spec_MN_agg_nc),percentRMSD(C,C_pred_1300,0.025,0.975))
