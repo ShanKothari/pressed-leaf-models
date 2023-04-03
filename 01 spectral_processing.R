@@ -119,28 +119,28 @@ pressed_spec_all<-pressed_spec_all[-which(meta(pressed_spec_all)$ID %in% unique_
 #######################################################
 ## read in summary data
 
-summary_BeauchampRioux<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - BeauchampRioux+Cabo-General.csv")
+summary_BeauchampRioux<-read.csv("ELSummary/Summary_CABOData_ShanKProject - BeauchampRioux+Cabo-General.csv")
 sBR_sub<-data.frame(ID=summary_BeauchampRioux$Bulk.sample.ID,
                     Species=summary_BeauchampRioux$Species,
                     Project="Beauchamp-Rioux",
                     Discoloration=summary_BeauchampRioux$Discoloration,
                     Stage=NA)
 
-summary_Boucherville<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - Boucherville.csv")
+summary_Boucherville<-read.csv("ELSummary/Summary_CABOData_ShanKProject - Boucherville.csv")
 sBV_sub<-data.frame(ID=summary_Boucherville$Bulk.sample.ID,
                     Species=summary_Boucherville$Species,
                     Project="Boucherville",
                     Discoloration=summary_Boucherville$Discoloration,
                     Stage=NA)
 
-summary_Warren<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - SWA-Warren.csv")
+summary_Warren<-read.csv("ELSummary/Summary_CABOData_ShanKProject - SWA-Warren.csv")
 sWN_sub<-data.frame(ID=summary_Warren$Bulk.sample.ID,
                     Species=summary_Warren$Species,
                     Project="Warren",
                     Discoloration=summary_Warren$Discoloration,
                     Stage=summary_Warren$Stage)
 
-summary_Dessain<-read.csv("ELSummary_7_9_2020/Summary_CABOData_ShanKProject - Dessain.csv")
+summary_Dessain<-read.csv("ELSummary/Summary_CABOData_ShanKProject - Dessain.csv")
 sDN_sub<-data.frame(ID=summary_Dessain$Bulk.sample.ID,
                     Species=summary_Dessain$Species,
                     Project="Dessain",
@@ -156,35 +156,37 @@ summary_all$LatinSpecies<-unlist(lapply(sp_split,function(entry) entry[[2]]))
 
 ## attach site-level latitude and longitude
 ## as well as the measurement date
-Dessain_gps<-read.csv("ELSummary_7_9_2020/Dessainleafspectra - gps.csv")
+Dessain_gps<-read.csv("ELSummary/Dessainleafspectra - gps.csv")
 Dessain_date<-sapply(Dessain_gps$parentEventID,function(id) substr(id,start=1,stop=10))
-Dessain_gps$MeasurementDate<-as.POSIXlt(Dessain_date,format="%Y-%m-%d")
+Dessain_gps$date_measured<-as.POSIXlt(Dessain_date,format="%Y-%m-%d")
 Dessain_gps_sub<-data.frame(ID=as.character(Dessain_gps$parentEventID),
                             Project="Dessain",
-                            MeasurementDate=Dessain_gps$MeasurementDate,
+                            date_measured=Dessain_gps$date_measured,
                             latitude=Dessain_gps$decimalLatitude,
                             longitude=Dessain_gps$decimalLongitude)
 
-other_gps<-read.csv("ELSummary_7_9_2020/leaf_spectra.csv")
-site_gps<-read.csv("ELSummary_7_9_2020/sites.csv")
-other_gps$site_latitude<-site_gps$latitude[match(other_gps$site_id,site_gps$site_id)]
-other_gps$site_longitude<-site_gps$longitude[match(other_gps$site_id,site_gps$site_id)]
-other_gps$MeasurementDate<-as.POSIXlt(other_gps$date_measured,format="%Y-%m-%d")
-other_gps_sub<-data.frame(ID=as.character(other_gps$sample_id),
-                          Project=other_gps$project,
-                          MeasurementDate=other_gps$MeasurementDate,
-                          latitude=other_gps$site_latitude,
-                          longitude=other_gps$site_longitude)
+spectra_summary<-read.csv("ELSummary/leaf_spectra.csv")
+bulks<-read.csv("ELsummary/bulk_leaf_samples.csv")
+plants<-read.csv("ELSummary/plants.csv")
+spectra_summary$plant_id<-bulks$plant_id[match(spectra_summary$sample_id,bulks$sample_id)]
+spectra_summary$latitude<-plants$latitude[match(spectra_summary$plant_id,plants$plant_id)]
+spectra_summary$longitude<-plants$longitude[match(spectra_summary$plant_id,plants$plant_id)]
+spectra_summary$date_measured<-as.POSIXlt(spectra_summary$date_measured,format="%Y-%m-%d")
+spectra_summary_sub<-data.frame(ID=as.character(spectra_summary$sample_id),
+                          Project=spectra_summary$project,
+                          date_measured=spectra_summary$date_measured,
+                          latitude=spectra_summary$latitude,
+                          longitude=spectra_summary$longitude)
 
-all_gps<-rbind(Dessain_gps_sub,other_gps_sub)
+all_gps<-rbind(Dessain_gps_sub,spectra_summary_sub)
 
 summary_all$latitude<-all_gps$latitude[match(summary_all$ID,all_gps$ID)]
 summary_all$longitude<-all_gps$longitude[match(summary_all$ID,all_gps$ID)]
-summary_all$MeasurementDate<-all_gps$MeasurementDate[match(summary_all$ID,all_gps$ID)]
+summary_all$date_measured<-all_gps$date_measured[match(summary_all$ID,all_gps$ID)]
 
 ## use VASCAN (Desmet & Brouillet 2013) for growth form and taxonomic group
 ## species included in multiple VASCAN growth forms are disambiguated manually
-vascan<-read.csv("ELSummary_7_9_2020/vascan.csv")
+vascan<-read.csv("ELSummary/vascan.csv")
 summary_all$GrowthForm<-vascan$growth_form[match(summary_all$Species,vascan$scientific_name)]
 summary_all$GrowthForm[summary_all$Species=="Acer pensylvanicum Linnaeus"]<-"tree"
 summary_all$GrowthForm[summary_all$Species=="Betula populifolia Marshall"]<-"tree"
@@ -216,8 +218,8 @@ meta(fresh_spec_all)$Latitude<-
   summary_all$latitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 meta(fresh_spec_all)$Longitude<-
   summary_all$longitude[match(meta(fresh_spec_all)$ID,summary_all$ID)]
-meta(fresh_spec_all)$MeasurementDate<-
-  summary_all$MeasurementDate[match(meta(fresh_spec_all)$ID,summary_all$ID)]
+meta(fresh_spec_all)$date_measured<-
+  summary_all$date_measured[match(meta(fresh_spec_all)$ID,summary_all$ID)]
 ## this gets rid of any remaining 2017 Dessain spectra that aren't in the summary file
 fresh_spec_all<-fresh_spec_all[-which(is.na(meta(fresh_spec_all)$Project))]
 
