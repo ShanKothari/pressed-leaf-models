@@ -309,23 +309,26 @@ SLA_all$LDMC[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 SLA_all$LMA<-1/SLA_all$SLA
 ## EWT in mm
 ## based on either rehydrated (EWT) or field fresh (EWT_actual) leaves
-SLA_all$EWT<-(1/(SLA_all$LDMC/1000)-1)*LMA
-SLA_all$EWT_actual<-(1/(SLA_all$LDMC_actual/1000)-1)*LMA
+SLA_all$EWT<-(1/(SLA_all$LDMC/1000)-1)*SLA_all$LMA
+SLA_all$EWT_actual<-(1/(SLA_all$LDMC_actual/1000)-1)*SLA_all$LMA
 
-meta(fresh_spec_all)$LDMC<-
-  SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
-meta(fresh_spec_all)$LMA<-1/meta(fresh_spec_all)$SLA
-meta(fresh_spec_all)$EWT<-with(meta(fresh_spec_all),(1/(LDMC/1000)-1)*LMA)
+meta(fresh_spec_all)$LDMC<-SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$LMA<-SLA_all$LMA[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$EWT<-SLA_all$EWT[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
 
-meta(pressed_spec_all)$LDMC<-
-  SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
-meta(pressed_spec_all)$LMA<-1/meta(pressed_spec_all)$SLA
-meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*LMA)
+meta(pressed_spec_all)$LDMC<-SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
+meta(pressed_spec_all)$LMA<-SLA_all$LMA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
+meta(pressed_spec_all)$EWT<-SLA_all$EWT[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
+meta(pressed_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 
-meta(ground_spec_all)$LDMC<-
-  SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
-meta(ground_spec_all)$LMA<-1/meta(ground_spec_all)$SLA
-meta(ground_spec_all)$EWT<-with(meta(ground_spec_all),(1/(LDMC/1000)-1)*LMA)
+meta(ground_spec_all)$LDMC<-SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$LMA<-SLA_all$LMA[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$EWT<-SLA_all$EWT[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+
+## check relationship between EWT and EWT_actual
+## next: fill in EWT actual = EWT for Dessain
 
 ############################################
 ## read in C/N
