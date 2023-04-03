@@ -168,15 +168,24 @@ Dessain_gps_sub<-data.frame(ID=as.character(Dessain_gps$parentEventID),
 spectra_summary<-read.csv("ELSummary/leaf_spectra.csv")
 bulks<-read.csv("ELsummary/bulk_leaf_samples.csv")
 plants<-read.csv("ELSummary/plants.csv")
+sites<-read.csv("ELSummary/sites.csv")
 spectra_summary$plant_id<-bulks$plant_id[match(spectra_summary$sample_id,bulks$sample_id)]
+
+## grab lat/long from plants app if possible
 spectra_summary$latitude<-plants$latitude[match(spectra_summary$plant_id,plants$plant_id)]
 spectra_summary$longitude<-plants$longitude[match(spectra_summary$plant_id,plants$plant_id)]
+
+## or otherwise sites app
+sites_missing<-spectra_summary$site_id[is.na(spectra_summary$latitude)]
+spectra_summary$latitude[is.na(spectra_summary$latitude)]<-sites$latitude[match(sites_missing,sites$site_id)]
+spectra_summary$longitude[is.na(spectra_summary$longitude)]<-sites$longitude[match(sites_missing,sites$site_id)]
+
 spectra_summary$date_measured<-as.POSIXlt(spectra_summary$date_measured,format="%Y-%m-%d")
 spectra_summary_sub<-data.frame(ID=as.character(spectra_summary$sample_id),
-                          Project=spectra_summary$project,
-                          date_measured=spectra_summary$date_measured,
-                          latitude=spectra_summary$latitude,
-                          longitude=spectra_summary$longitude)
+                                Project=spectra_summary$project,
+                                date_measured=spectra_summary$date_measured,
+                                latitude=spectra_summary$latitude,
+                                longitude=spectra_summary$longitude)
 
 all_gps<-rbind(Dessain_gps_sub,spectra_summary_sub)
 
@@ -277,6 +286,7 @@ SLA_Dessain<-read.csv("Traits/SLA/SLA_data_Aurelie_Dessain - Lab_data.csv")
 SLA_Dessain<-data.frame(ID=SLA_Dessain$parentEventID,
                         SLA=SLA_Dessain$SLA_m2_kg,
                         LDMC=SLA_Dessain$LDMC_mg_g,
+                        LDMC_actual=NA,
                         Thickness=NA)
 SLA_Dessain$ID<-as.character(SLA_Dessain$ID)
 SLA_Dessain$SLA<-as.numeric(as.character(SLA_Dessain$SLA))
@@ -286,6 +296,7 @@ SLA_other<-read.csv("Traits/SLA/leaf_area_and_water_samples.csv")
 SLA_other<-data.frame(ID=SLA_other$sample_id,
                       SLA=as.numeric(as.character(SLA_other$specific_leaf_area_m2_kg)),
                       LDMC=as.numeric(as.character(SLA_other$leaf_dry_matter_content_mg_g)),
+                      LDMC_actual=as.numeric(as.character(SLA_other$actual_leaf_dry_matter_content_perc)),
                       Thickness=NA)
 SLA_other$ID<-as.character(SLA_other$ID)
 
@@ -294,24 +305,23 @@ SLA_all<-do.call(rbind,args=list(SLA_Dessain,SLA_other))
 SLA_all$SLA[SLA_all$ID==13404937]<-NA
 SLA_all$LDMC[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 
-meta(fresh_spec_all)$SLA<-
-  SLA_all$SLA[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+## LMA in kg/m2
+SLA_all$LMA<-1/SLA_all$SLA
+## EWT in mm
+## based on either rehydrated (EWT) or field fresh (EWT_actual) leaves
+SLA_all$EWT<-(1/(SLA_all$LDMC/1000)-1)*LMA
+SLA_all$EWT_actual<-(1/(SLA_all$LDMC_actual/1000)-1)*LMA
+
 meta(fresh_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
-## LMA in kg/m2
 meta(fresh_spec_all)$LMA<-1/meta(fresh_spec_all)$SLA
-## EWT in mm
 meta(fresh_spec_all)$EWT<-with(meta(fresh_spec_all),(1/(LDMC/1000)-1)*LMA)
 
-meta(pressed_spec_all)$SLA<-
-  SLA_all$SLA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LMA<-1/meta(pressed_spec_all)$SLA
 meta(pressed_spec_all)$EWT<-with(meta(pressed_spec_all),(1/(LDMC/1000)-1)*LMA)
 
-meta(ground_spec_all)$SLA<-
-  SLA_all$SLA[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 meta(ground_spec_all)$LDMC<-
   SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 meta(ground_spec_all)$LMA<-1/meta(ground_spec_all)$SLA
