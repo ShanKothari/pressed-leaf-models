@@ -329,8 +329,8 @@ meta(ground_spec_all)$EWT<-SLA_all$EWT[match(meta(ground_spec_all)$ID,SLA_all$ID
 meta(ground_spec_all)$EWT_rehydrated<-SLA_all$EWT_rehydrated[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 
 ## check relationship between EWT and EWT_actual
-summary(lm(EWT_actual~EWT,data=meta(pressed_spec_all)))
-with(meta(pressed_spec_all),quantile(EWT_actual/EWT,
+summary(lm(EWT~EWT_rehydrated,data=meta(pressed_spec_all)))
+with(meta(pressed_spec_all),quantile(EWT/EWT_rehydrated,
                                      probs=c(0.025,0.25,0.5,0.75,0.975),
                                      na.rm=T))
 
