@@ -284,64 +284,55 @@ meta(ground_spec_all)$dummy<-NULL
 
 SLA_Dessain<-read.csv("Traits/SLA/SLA_data_Aurelie_Dessain - Lab_data.csv")
 SLA_Dessain<-data.frame(ID=SLA_Dessain$parentEventID,
-                        SLA=SLA_Dessain$SLA_m2_kg,
-                        LDMC=SLA_Dessain$LDMC_mg_g,
+                        LMA=1/as.numeric(as.character(SLA_Dessain$SLA_m2_kg)),
+                        LDMC=as.numeric(as.character(SLA_Dessain$LDMC_mg_g)),
                         LDMC_actual=NA,
+                        EWT=NA,
                         Thickness=NA)
 SLA_Dessain$ID<-as.character(SLA_Dessain$ID)
-SLA_Dessain$SLA<-as.numeric(as.character(SLA_Dessain$SLA))
-SLA_Dessain$LDMC<-as.numeric(as.character(SLA_Dessain$LDMC))
 
 SLA_other<-read.csv("Traits/SLA/leaf_area_and_water_samples.csv")
 SLA_other<-data.frame(ID=SLA_other$sample_id,
-                      SLA=as.numeric(as.character(SLA_other$specific_leaf_area_m2_kg)),
-                      LDMC=as.numeric(as.character(SLA_other$leaf_dry_matter_content_mg_g)),
-                      LDMC_actual=as.numeric(as.character(SLA_other$actual_leaf_dry_matter_content_perc))*10,
+                      LMA=SLA_other$leaf_mass_per_area_g_m2/1000,
+                      LDMC=SLA_other$leaf_dry_matter_content_mg_g,
+                      LDMC_actual=SLA_other$actual_leaf_dry_matter_content_perc*10,
+                      EWT=SLA_other$equivalent_water_thickness_cm*10,
                       Thickness=NA)
 SLA_other$ID<-as.character(SLA_other$ID)
 
 SLA_all<-do.call(rbind,args=list(SLA_Dessain,SLA_other))
 ## flagged bad data points
-SLA_all$SLA[SLA_all$ID==13404937]<-NA
+SLA_all$LMA[SLA_all$ID==13404937]<-NA
 SLA_all$LDMC[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 SLA_all$LDMC_actual[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
+SLA_all$EWT[SLA_all$ID %in% c(10290262,10966273,13404937)]<-NA
 
-## LMA in kg/m2
-SLA_all$LMA<-1/SLA_all$SLA
+## for comparison, rehydrated EWT
+SLA_all$EWT_rehydrated<-(1/(SLA_all$LDMC/1000)-1)*SLA_all$LMA
+
+## LDMC in mg g-1
+## LMA in kg m-2
 ## EWT in mm
-## based on either rehydrated (EWT) or field fresh (EWT_actual) leaves
-SLA_all$EWT<-(1/(SLA_all$LDMC/1000)-1)*SLA_all$LMA
-SLA_all$EWT_actual<-(1/(SLA_all$LDMC_actual/1000)-1)*SLA_all$LMA
-
-meta(fresh_spec_all)$LDMC<-SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
 meta(fresh_spec_all)$LMA<-SLA_all$LMA[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$LDMC<-SLA_all$LDMC[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
 meta(fresh_spec_all)$EWT<-SLA_all$EWT[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
-meta(fresh_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
+meta(fresh_spec_all)$EWT_rehydrated<-SLA_all$EWT_rehydrated[match(meta(fresh_spec_all)$ID,SLA_all$ID)]
 
-meta(pressed_spec_all)$LDMC<-SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$LMA<-SLA_all$LMA[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
+meta(pressed_spec_all)$LDMC<-SLA_all$LDMC[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 meta(pressed_spec_all)$EWT<-SLA_all$EWT[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
-meta(pressed_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
+meta(pressed_spec_all)$EWT_rehydrated<-SLA_all$EWT_rehydrated[match(meta(pressed_spec_all)$ID,SLA_all$ID)]
 
-meta(ground_spec_all)$LDMC<-SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 meta(ground_spec_all)$LMA<-SLA_all$LMA[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$LDMC<-SLA_all$LDMC[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 meta(ground_spec_all)$EWT<-SLA_all$EWT[match(meta(ground_spec_all)$ID,SLA_all$ID)]
-meta(ground_spec_all)$EWT_actual<-SLA_all$EWT_actual[match(meta(ground_spec_all)$ID,SLA_all$ID)]
+meta(ground_spec_all)$EWT_rehydrated<-SLA_all$EWT_rehydrated[match(meta(ground_spec_all)$ID,SLA_all$ID)]
 
 ## check relationship between EWT and EWT_actual
 summary(lm(EWT_actual~EWT,data=meta(pressed_spec_all)))
 with(meta(pressed_spec_all),quantile(EWT_actual/EWT,
                                      probs=c(0.025,0.25,0.5,0.75,0.975),
                                      na.rm=T))
-
-## 'fill in' EWT_actual (fresh leaves) for Dessain with
-## EWT (rehydrated leaves), since no fresh mass was recorded
-meta(fresh_spec_all)$EWT_actual[meta(fresh_spec_all)$Project=="Dessain"]<-
-  meta(fresh_spec_all)$EWT[meta(fresh_spec_all)$Project=="Dessain"]
-meta(pressed_spec_all)$EWT_actual[meta(pressed_spec_all)$Project=="Dessain"]<-
-  meta(pressed_spec_all)$EWT[meta(pressed_spec_all)$Project=="Dessain"]
-meta(ground_spec_all)$EWT_actual[meta(ground_spec_all)$Project=="Dessain"]<-
-  meta(ground_spec_all)$EWT[meta(ground_spec_all)$Project=="Dessain"]
 
 ############################################
 ## read in C/N
