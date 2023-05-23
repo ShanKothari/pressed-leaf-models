@@ -251,3 +251,158 @@ EWT_jack_df_ground<-data.frame(pred_mean=EWT_jack_stat_ground[,1],
                               GrowthForm=meta(ground_spec_all_test)$GrowthForm,
                               Discoloration=meta(ground_spec_all_test)$Discoloration,
                               ID=meta(ground_spec_all_test)$ID)
+
+############################################
+## save outputs
+
+saveRDS(EWT_jack_coefs_fresh,"SavedResults/EWT_corrected_jack_coefs_fresh.rds")
+saveRDS(EWT_jack_df_fresh,"SavedResults/EWT_corrected_jack_df_fresh.rds")
+saveRDS(EWT_jack_stats_fresh,"SavedResults/EWT_corrected_jack_stats_fresh.rds")
+
+saveRDS(EWT_jack_coefs_pressed,"SavedResults/EWT_corrected_jack_coefs_pressed.rds")
+saveRDS(EWT_jack_df_pressed,"SavedResults/EWT_corrected_jack_df_pressed.rds")
+saveRDS(EWT_jack_stats_pressed,"SavedResults/EWT_corrected_jack_stats_pressed.rds")
+
+saveRDS(EWT_jack_coefs_ground,"SavedResults/EWT_corrected_jack_coefs_ground.rds")
+saveRDS(EWT_jack_df_ground,"SavedResults/EWT_corrected_jack_df_ground.rds")
+saveRDS(EWT_jack_stats_ground,"SavedResults/EWT_corrected_jack_stats_ground.rds")
+
+## save coefficients
+write.coefs<-function(obj,path,filename){
+  coef_mat<-matrix(unlist(obj),nrow=length(obj),byrow=T)
+  colnames(coef_mat)<-c("intercept",400:2400)
+  write.csv(coef_mat,
+            paste(path,filename,".csv",sep=""),
+            row.names=F)
+}
+
+write.coefs(obj=EWT_jack_coefs_fresh,
+            path="ModelCoefficients/EWTCorrectedModels/",
+            filename="EWTActual_fresh")
+
+write.coefs(obj=EWT_jack_coefs_pressed,
+            path="ModelCoefficients/EWTCorrectedModels/",
+            filename="EWTActual_pressed")
+
+write.coefs(obj=EWT_jack_coefs_ground,
+            path="ModelCoefficients/EWTCorrectedModels/",
+            filename="EWTActual_ground")
+
+###############################################
+## plotting internal validation output
+
+focal_palette=palette(brewer.pal(8,name="Set2")[c(3,4,5,6,8,1,2)])
+
+all.EWT<-c(EWT_jack_df_pressed$Measured,
+           EWT_jack_df_fresh$pred.mean,
+           EWT_jack_df_pressed$pred.mean,
+           EWT_jack_df_ground$pred.mean)
+EWT_upper<-max(all.EWT,na.rm=T)+0.02
+EWT_lower<-min(all.EWT,na.rm=T)-0.02
+
+EWT_actual_fresh_plot<-ggplot(EWT_jack_df_fresh,
+                                aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="gray")+
+  geom_point(size=2,alpha=0.7)+geom_smooth(method="lm",se=F)+
+  theme_bw()+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(EWT_lower,EWT_upper),
+                  ylim=c(EWT_lower,EWT_upper))+
+  theme(text = element_text(size=25),
+        legend.position = c(0.8, 0.25))+
+  labs(y="Measured EWT (mm)",x="Predicted EWT (mm)")+
+  guides(color="none")+
+  scale_color_manual(values=focal_palette)+
+  ggtitle("Fresh-leaf spectra")
+
+EWT_actual_pressed_plot<-ggplot(EWT_jack_df_pressed,
+                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="gray")+
+  geom_point(size=2,alpha=0.7)+geom_smooth(method="lm",se=F)+
+  theme_bw()+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(EWT_lower,EWT_upper),
+                  ylim=c(EWT_lower,EWT_upper))+
+  theme(text = element_text(size=25),
+        legend.position = c(0.8, 0.25),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank())+
+  labs(y="Measured EWT (mm)",x="Predicted EWT (mm)")+
+  guides(color="none")+
+  scale_color_manual(values=focal_palette)+
+  ggtitle("Pressed-leaf spectra")
+
+EWT_actual_ground_plot<-ggplot(EWT_jack_df_ground,
+                              aes(y=Measured,x=pred_mean,color=GrowthForm))+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="gray")+
+  geom_point(size=2,alpha=0.7)+geom_smooth(method="lm",se=F)+
+  theme_bw()+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(EWT_lower,EWT_upper),
+                  ylim=c(EWT_lower,EWT_upper))+
+  theme(text = element_text(size=25),
+        legend.position = c(0.8, 0.25),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank())+
+  labs(y="Measured EWT (mm)",x="Predicted EWT (mm)",
+       color="Growth form")+
+  scale_color_manual(values=focal_palette)+
+  ggtitle("Ground-leaf spectra")
+
+pdf("Manuscript/EWT_corrected_val_plot.pdf",width=16,height=7)
+(EWT_actual_fresh_plot + EWT_actual_pressed_plot + EWT_actual_ground_plot) &
+  plot_layout(guides="collect") & theme(legend.position = "bottom")
+dev.off()
+
+summary(lm(Measured~pred_mean,data=EWT_jack_df_fresh))
+with(EWT_jack_df_fresh,
+     RMSD(measured = Measured,predicted = pred_mean))
+with(EWT_jack_df_fresh,
+     percentRMSD(measured = Measured,predicted = pred_mean,
+                 min=0.025,max=0.975))
+
+########################################
+## external validation
+
+pressed_spec_MN_RWC_agg<-read.csv("ProcessedSpectralData/pressed_spec_MN_RWC_avg.csv")
+colnames(pressed_spec_MN_RWC_agg)<-gsub("X","",colnames(pressed_spec_MN_RWC_agg))
+pressed_spec_MN_RWC_spec<-as_spectra(pressed_spec_MN_RWC_agg,
+                                     name_idx = 1,
+                                     meta_idxs = 2:19)
+meta(pressed_spec_MN_RWC_spec)$EWT<-as.numeric(meta(pressed_spec_MN_RWC_spec)$EWT)
+
+EWT_ext_pressed<-apply.coefs(EWT_jack_coefs_pressed,
+                             val.spec = pressed_spec_MN_RWC_spec)
+EWT_ext_pressed_stat<-t(apply(EWT_ext_pressed,1,
+                              function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
+EWT_ext_pressed_pred_df<-data.frame(Measured=meta(pressed_spec_MN_RWC_spec)$EWT,
+                                    pred_mean=EWT_ext_pressed_stat[,1],
+                                    pred_low=EWT_ext_pressed_stat[,2],
+                                    pred_high=EWT_ext_pressed_stat[,3],
+                                    FunctionalGroup=meta(pressed_spec_MN_RWC_spec)$FunctionalGroup)
+EWT_all<-with(EWT_ext_pressed_pred_df,c(pred_low[!is.na(Measured)],
+                                        pred_high[!is.na(Measured)],
+                                        Measured))
+EWT_upper<-max(EWT_all,na.rm=T)+0.03
+EWT_lower<-min(EWT_all,na.rm=T)-0.03
+
+EWT_ind_val<-ggplot(data=EWT_ext_pressed_pred_df,
+                    aes(x=pred_mean,y=Measured,color=FunctionalGroup))+
+  geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
+                 color="gray")+
+  geom_point(size=2,alpha=0.7)+
+  theme_bw()+
+  theme(text = element_text(size=20))+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  geom_smooth(method="lm",se=F)+
+  labs(y="Measured EWT (mm)",x="Predicted EWT (mm)")+
+  coord_cartesian(xlim=c(EWT_lower,EWT_upper),
+                  ylim=c(EWT_lower,EWT_upper))+
+  scale_color_manual(values=focal_palette)+
+  guides(color=guide_legend(title="Functional group"))
+
+## to dos:
+## output the data for upload to EcoSIS
