@@ -99,15 +99,15 @@ for(i in 1:nreps){
   calib_jack_fresh<-fresh_spec_all_train[train_jack_fresh]
   val_jack_fresh<-fresh_spec_all_train[test_jack_fresh]
   
-  EWT_fresh_jack<-plsr(meta(calib_jack_fresh)$EWT~as.matrix(calib_jack_fresh),
+  EWT_fresh_jack<-plsr(meta(calib_jack_fresh)$EWT_actual~as.matrix(calib_jack_fresh),
                        ncomp=30,method = "oscorespls",validation="none")
 
   EWT_jack_val_pred_fresh<-as.vector(predict(EWT_fresh_jack,newdata=as.matrix(val_jack_fresh),ncomp=ncomp_EWT_fresh)[,,1])
-  EWT_jack_val_fit_fresh<-lm(meta(val_jack_fresh)$EWT~EWT_jack_val_pred_fresh)
+  EWT_jack_val_fit_fresh<-lm(meta(val_jack_fresh)$EWT_actual~EWT_jack_val_pred_fresh)
   EWT_jack_stats_fresh[[i]]<-c(R2=summary(EWT_jack_val_fit_fresh)$r.squared,
-                               RMSE=RMSD(meta(val_jack_fresh)$EWT,EWT_jack_val_pred_fresh),
-                               perRMSE=percentRMSD(meta(val_jack_fresh)$EWT,EWT_jack_val_pred_fresh,0.025,0.975),
-                               bias=mean(EWT_jack_val_pred_fresh,na.rm=T)-mean(meta(val_jack_fresh)$EWT,na.rm=T))
+                               RMSE=RMSD(meta(val_jack_fresh)$EWT_actual,EWT_jack_val_pred_fresh),
+                               perRMSE=percentRMSD(meta(val_jack_fresh)$EWT_actual,EWT_jack_val_pred_fresh,0.025,0.975),
+                               bias=mean(EWT_jack_val_pred_fresh,na.rm=T)-mean(meta(val_jack_fresh)$EWT_actual,na.rm=T))
   
   EWT_jack_coefs_fresh[[i]]<-as.vector(coef(EWT_fresh_jack,ncomp=ncomp_EWT_fresh,intercept=TRUE))
 }
@@ -163,15 +163,15 @@ for(i in 1:nreps){
   calib_jack_pressed<-pressed_spec_all_train[train_jack_pressed]
   val_jack_pressed<-pressed_spec_all_train[test_jack_pressed]
   
-  EWT_pressed_jack<-plsr(meta(calib_jack_pressed)$EWT~as.matrix(calib_jack_pressed),
+  EWT_pressed_jack<-plsr(meta(calib_jack_pressed)$EWT_actual~as.matrix(calib_jack_pressed),
                        ncomp=30,method = "oscorespls",validation="none")
   
   EWT_jack_val_pred_pressed<-as.vector(predict(EWT_pressed_jack,newdata=as.matrix(val_jack_pressed),ncomp=ncomp_EWT_pressed)[,,1])
-  EWT_jack_val_fit_pressed<-lm(meta(val_jack_pressed)$EWT~EWT_jack_val_pred_pressed)
+  EWT_jack_val_fit_pressed<-lm(meta(val_jack_pressed)$EWT_actual~EWT_jack_val_pred_pressed)
   EWT_jack_stats_pressed[[i]]<-c(R2=summary(EWT_jack_val_fit_pressed)$r.squared,
-                               RMSE=RMSD(meta(val_jack_pressed)$EWT,EWT_jack_val_pred_pressed),
-                               perRMSE=percentRMSD(meta(val_jack_pressed)$EWT,EWT_jack_val_pred_pressed,0.025,0.975),
-                               bias=mean(EWT_jack_val_pred_pressed,na.rm=T)-mean(meta(val_jack_pressed)$EWT,na.rm=T))
+                               RMSE=RMSD(meta(val_jack_pressed)$EWT_actual,EWT_jack_val_pred_pressed),
+                               perRMSE=percentRMSD(meta(val_jack_pressed)$EWT_actual,EWT_jack_val_pred_pressed,0.025,0.975),
+                               bias=mean(EWT_jack_val_pred_pressed,na.rm=T)-mean(meta(val_jack_pressed)$EWT_actual,na.rm=T))
   
   EWT_jack_coefs_pressed[[i]]<-as.vector(coef(EWT_pressed_jack,ncomp=ncomp_EWT_pressed,intercept=TRUE))
 }
@@ -179,14 +179,14 @@ for(i in 1:nreps){
 EWT_jack_pred_pressed<-apply.coefs(EWT_jack_coefs_pressed,as.matrix(pressed_spec_all_test))
 EWT_jack_stat_pressed<-t(apply(EWT_jack_pred_pressed,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
 EWT_jack_df_pressed<-data.frame(pred_mean=EWT_jack_stat_pressed[,1],
-                              pred_low=EWT_jack_stat_pressed[,2],
-                              pred_high=EWT_jack_stat_pressed[,3],
-                              Measured=meta(pressed_spec_all_test)$EWT_actual,
-                              ncomp=ncomp_EWT_pressed,
-                              Project=meta(pressed_spec_all_test)$Project,
-                              GrowthForm=meta(pressed_spec_all_test)$GrowthForm,
-                              Discoloration=meta(pressed_spec_all_test)$Discoloration,
-                              ID=meta(pressed_spec_all_test)$ID)
+                                pred_low=EWT_jack_stat_pressed[,2],
+                                pred_high=EWT_jack_stat_pressed[,3],
+                                Measured=meta(pressed_spec_all_test)$EWT_actual,
+                                ncomp=ncomp_EWT_pressed,
+                                Project=meta(pressed_spec_all_test)$Project,
+                                GrowthForm=meta(pressed_spec_all_test)$GrowthForm,
+                                Discoloration=meta(pressed_spec_all_test)$Discoloration,
+                                ID=meta(pressed_spec_all_test)$ID)
 
 #######################################
 ## here we develop new models for fresh EWT using the corrected data
@@ -227,15 +227,15 @@ for(i in 1:nreps){
   calib_jack_ground<-ground_spec_all_train[train_jack_ground]
   val_jack_ground<-ground_spec_all_train[test_jack_ground]
   
-  EWT_ground_jack<-plsr(meta(calib_jack_ground)$EWT~as.matrix(calib_jack_ground),
+  EWT_ground_jack<-plsr(meta(calib_jack_ground)$EWT_actual~as.matrix(calib_jack_ground),
                        ncomp=30,method = "oscorespls",validation="none")
   
   EWT_jack_val_pred_ground<-as.vector(predict(EWT_ground_jack,newdata=as.matrix(val_jack_ground),ncomp=ncomp_EWT_ground)[,,1])
-  EWT_jack_val_fit_ground<-lm(meta(val_jack_ground)$EWT~EWT_jack_val_pred_ground)
+  EWT_jack_val_fit_ground<-lm(meta(val_jack_ground)$EWT_actual~EWT_jack_val_pred_ground)
   EWT_jack_stats_ground[[i]]<-c(R2=summary(EWT_jack_val_fit_ground)$r.squared,
-                               RMSE=RMSD(meta(val_jack_ground)$EWT,EWT_jack_val_pred_ground),
-                               perRMSE=percentRMSD(meta(val_jack_ground)$EWT,EWT_jack_val_pred_ground,0.025,0.975),
-                               bias=mean(EWT_jack_val_pred_ground,na.rm=T)-mean(meta(val_jack_ground)$EWT,na.rm=T))
+                               RMSE=RMSD(meta(val_jack_ground)$EWT_actual,EWT_jack_val_pred_ground),
+                               perRMSE=percentRMSD(meta(val_jack_ground)$EWT_actual,EWT_jack_val_pred_ground,0.025,0.975),
+                               bias=mean(EWT_jack_val_pred_ground,na.rm=T)-mean(meta(val_jack_ground)$EWT_actual,na.rm=T))
   
   EWT_jack_coefs_ground[[i]]<-as.vector(coef(EWT_ground_jack,ncomp=ncomp_EWT_ground,intercept=TRUE))
 }
@@ -357,10 +357,10 @@ pdf("Manuscript/EWT_corrected_val_plot.pdf",width=16,height=7)
   plot_layout(guides="collect") & theme(legend.position = "bottom")
 dev.off()
 
-summary(lm(Measured~pred_mean,data=EWT_jack_df_fresh))
-with(EWT_jack_df_fresh,
+summary(lm(Measured~pred_mean,data=EWT_jack_df_ground))
+with(EWT_jack_df_ground,
      RMSD(measured = Measured,predicted = pred_mean))
-with(EWT_jack_df_fresh,
+with(EWT_jack_df_ground,
      percentRMSD(measured = Measured,predicted = pred_mean,
                  min=0.025,max=0.975))
 
