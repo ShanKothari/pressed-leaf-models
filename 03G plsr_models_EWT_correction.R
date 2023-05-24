@@ -404,5 +404,9 @@ EWT_ind_val<-ggplot(data=EWT_ext_pressed_pred_df,
   scale_color_manual(values=focal_palette)+
   guides(color=guide_legend(title="Functional group"))
 
+pdf("Manuscript/EWT_corrected_ind_val_plot.pdf",height=7,width=7)
+EWT_ind_val & theme(legend.position = "bottom")
+dev.off()
+
 ## to dos:
 ## output the data for upload to EcoSIS
