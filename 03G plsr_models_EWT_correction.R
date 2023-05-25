@@ -42,7 +42,7 @@ pressed_spec_all_test<-readRDS("ProcessedSpectralData/pressed_spec_all_test.rds"
 ground_spec_all_train<-readRDS("ProcessedSpectralData/ground_spec_all_train.rds")
 ground_spec_all_test<-readRDS("ProcessedSpectralData/ground_spec_all_test.rds")
 
-## in that original split, EWT_rehydrated is simply called EWT
+## in that original split, EWT_rehydrated was simply called EWT
 ## so we add a new column for true EWT called EWT_actual
 meta(fresh_spec_all_train)$EWT_actual<-meta(fresh_spec_all)$EWT[match(meta(fresh_spec_all_train)$ID,
                                                                       meta(fresh_spec_all)$ID)]
@@ -188,6 +188,70 @@ EWT_jack_df_pressed<-data.frame(pred_mean=EWT_jack_stat_pressed[,1],
                                 Discoloration=meta(pressed_spec_all_test)$Discoloration,
                                 ID=meta(pressed_spec_all_test)$ID)
 
+############################################
+## here we develop new models for fresh EWT using the corrected data
+## and pressed-leaf spectra restricted to 1300-2400 nm
+
+EWT_pressed1300<-plsr(meta(pressed_spec_all_train)$EWT_actual~as.matrix(pressed_spec_all_train[,1300:2400]),
+                  ncomp=30,method = "oscorespls",validation="CV",segments=10)
+ncomp_EWT_pressed1300 <- selectNcomp(EWT_pressed1300, method = "onesigma", plot = FALSE)
+EWT_pressed1300_valid <- which(!is.na(meta(pressed_spec_all_train)$EWT_actual))
+EWT_pressed1300_pred<-data.frame(ID=meta(pressed_spec_all_train)$ID[EWT_pressed1300_valid],
+                             Species=meta(pressed_spec_all_train)$Species[EWT_pressed1300_valid],
+                             Project=meta(pressed_spec_all_train)$Project[EWT_pressed1300_valid],
+                             Stage=meta(pressed_spec_all_train)$Stage[EWT_pressed1300_valid],
+                             GrowthForm=meta(pressed_spec_all_train)$GrowthForm[EWT_pressed1300_valid],
+                             measured=meta(pressed_spec_all_train)$EWT_actual[EWT_pressed1300_valid],
+                             val_pred=EWT_pressed1300$validation$pred[,,ncomp_EWT_pressed1300])
+
+ggplot(EWT_pressed1300_pred,aes(y=measured,x=val_pred,color=GrowthForm))+
+  geom_point(size=2)+geom_smooth(method="lm",se=F)+
+  theme_bw()+
+  geom_abline(slope=1,intercept=0,linetype="dashed",size=2)+
+  coord_cartesian(xlim=c(0,0.3),ylim=c(0,0.3))+
+  theme(text = element_text(size=20),
+        legend.position = c(0.8, 0.2))+
+  labs(x="Predicted",y="Measured")+
+  ggtitle("Predicting EWT from pressed1300-leaf spectra")
+
+EWT_jack_coefs_pressed1300<-list()
+EWT_jack_stats_pressed1300<-list()
+
+for(i in 1:nreps){
+  print(i)
+  
+  n_cal_spec_pressed1300<-nrow(pressed_spec_all_train)
+  train_jack_pressed1300<-sample(1:n_cal_spec_pressed1300,floor(0.7*n_cal_spec_pressed1300))
+  test_jack_pressed1300<-setdiff(1:n_cal_spec_pressed1300,train_jack_pressed1300)
+  
+  calib_jack_pressed1300<-pressed_spec_all_train[train_jack_pressed1300]
+  val_jack_pressed1300<-pressed_spec_all_train[test_jack_pressed1300]
+  
+  EWT_pressed1300_jack<-plsr(meta(calib_jack_pressed1300)$EWT_actual~as.matrix(calib_jack_pressed1300[,1300:2400]),
+                         ncomp=30,method = "oscorespls",validation="none")
+  
+  EWT_jack_val_pred_pressed1300<-as.vector(predict(EWT_pressed1300_jack,newdata=as.matrix(val_jack_pressed1300[,1300:2400]),ncomp=ncomp_EWT_pressed1300)[,,1])
+  EWT_jack_val_fit_pressed1300<-lm(meta(val_jack_pressed1300)$EWT_actual~EWT_jack_val_pred_pressed1300)
+  EWT_jack_stats_pressed1300[[i]]<-c(R2=summary(EWT_jack_val_fit_pressed1300)$r.squared,
+                                 RMSE=RMSD(meta(val_jack_pressed1300)$EWT_actual,EWT_jack_val_pred_pressed1300),
+                                 perRMSE=percentRMSD(meta(val_jack_pressed1300)$EWT_actual,EWT_jack_val_pred_pressed1300,0.025,0.975),
+                                 bias=mean(EWT_jack_val_pred_pressed1300,na.rm=T)-mean(meta(val_jack_pressed1300)$EWT_actual,na.rm=T))
+  
+  EWT_jack_coefs_pressed1300[[i]]<-as.vector(coef(EWT_pressed1300_jack,ncomp=ncomp_EWT_pressed1300,intercept=TRUE))
+}
+
+EWT_jack_pred_pressed1300<-apply.coefs(EWT_jack_coefs_pressed1300,as.matrix(pressed_spec_all_test[,1300:2400]))
+EWT_jack_stat_pressed1300<-t(apply(EWT_jack_pred_pressed1300,1,function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
+EWT_jack_df_pressed1300<-data.frame(pred_mean=EWT_jack_stat_pressed1300[,1],
+                                pred_low=EWT_jack_stat_pressed1300[,2],
+                                pred_high=EWT_jack_stat_pressed1300[,3],
+                                Measured=meta(pressed_spec_all_test)$EWT_actual,
+                                ncomp=ncomp_EWT_pressed1300,
+                                Project=meta(pressed_spec_all_test)$Project,
+                                GrowthForm=meta(pressed_spec_all_test)$GrowthForm,
+                                Discoloration=meta(pressed_spec_all_test)$Discoloration,
+                                ID=meta(pressed_spec_all_test)$ID)
+
 #######################################
 ## here we develop new models for fresh EWT using the corrected data
 ## and ground-leaf spectra
@@ -263,14 +327,18 @@ saveRDS(EWT_jack_coefs_pressed,"SavedResults/EWT_corrected_jack_coefs_pressed.rd
 saveRDS(EWT_jack_df_pressed,"SavedResults/EWT_corrected_jack_df_pressed.rds")
 saveRDS(EWT_jack_stats_pressed,"SavedResults/EWT_corrected_jack_stats_pressed.rds")
 
+saveRDS(EWT_jack_coefs_pressed1300,"SavedResults/EWT_corrected_jack_coefs_pressed1300.rds")
+saveRDS(EWT_jack_df_pressed1300,"SavedResults/EWT_corrected_jack_df_pressed1300.rds")
+saveRDS(EWT_jack_stats_pressed1300,"SavedResults/EWT_corrected_jack_stats_pressed1300.rds")
+
 saveRDS(EWT_jack_coefs_ground,"SavedResults/EWT_corrected_jack_coefs_ground.rds")
 saveRDS(EWT_jack_df_ground,"SavedResults/EWT_corrected_jack_df_ground.rds")
 saveRDS(EWT_jack_stats_ground,"SavedResults/EWT_corrected_jack_stats_ground.rds")
 
 ## save coefficients
-write.coefs<-function(obj,path,filename){
+write.coefs<-function(obj,path,filename,bands=400:2400){
   coef_mat<-matrix(unlist(obj),nrow=length(obj),byrow=T)
-  colnames(coef_mat)<-c("intercept",400:2400)
+  colnames(coef_mat)<-c("intercept",bands)
   write.csv(coef_mat,
             paste(path,filename,".csv",sep=""),
             row.names=F)
@@ -283,6 +351,11 @@ write.coefs(obj=EWT_jack_coefs_fresh,
 write.coefs(obj=EWT_jack_coefs_pressed,
             path="ModelCoefficients/EWTCorrectedModels/",
             filename="EWTActual_pressed")
+
+write.coefs(obj=EWT_jack_coefs_pressed1300,
+            path="ModelCoefficients/EWTCorrectedModels/",
+            filename="EWTActual_pressed1300",
+            bands=1300:2400)
 
 write.coefs(obj=EWT_jack_coefs_ground,
             path="ModelCoefficients/EWTCorrectedModels/",
@@ -389,6 +462,16 @@ EWT_all<-with(EWT_ext_pressed_pred_df,c(pred_low[!is.na(Measured)],
 EWT_upper<-max(EWT_all,na.rm=T)+0.03
 EWT_lower<-min(EWT_all,na.rm=T)-0.03
 
+EWT_ext_pressed1300<-apply.coefs(EWT_jack_coefs_pressed1300,
+                                 val.spec = pressed_spec_MN_RWC_spec[,1300:2400])
+EWT_ext_pressed1300_stat<-t(apply(EWT_ext_pressed1300,1,
+                              function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
+EWT_ext_pressed1300_pred_df<-data.frame(Measured=meta(pressed1300_spec_MN_RWC_spec)$EWT,
+                                    pred_mean=EWT_ext_pressed1300_stat[,1],
+                                    pred_low=EWT_ext_pressed1300_stat[,2],
+                                    pred_high=EWT_ext_pressed1300_stat[,3],
+                                    FunctionalGroup=meta(pressed1300_spec_MN_RWC_spec)$FunctionalGroup)
+
 EWT_ind_val<-ggplot(data=EWT_ext_pressed_pred_df,
                     aes(x=pred_mean,y=Measured,color=FunctionalGroup))+
   geom_errorbarh(aes(y=Measured,xmin=pred_low,xmax=pred_high),
@@ -407,6 +490,21 @@ EWT_ind_val<-ggplot(data=EWT_ext_pressed_pred_df,
 pdf("Manuscript/EWT_corrected_ind_val_plot.pdf",height=7,width=7)
 EWT_ind_val & theme(legend.position = "bottom")
 dev.off()
+
+summary(lm(Measured~pred_mean,data=EWT_ext_pressed_pred_df))
+summary(lm(Measured~pred_mean,data=EWT_ext_pressed_pred_df[-which(EWT_ext_pressed_pred_df$FunctionalGroup=="conifer"),]))
+
+with(EWT_ext_pressed_pred_df,
+     RMSD(measured = Measured,predicted = pred_mean))
+with(EWT_ext_pressed_pred_df[-which(EWT_ext_pressed_pred_df$FunctionalGroup=="conifer"),],
+     RMSD(measured = Measured,predicted = pred_mean))
+
+with(EWT_ext_pressed_pred_df,
+     percentRMSD(measured = Measured,predicted = pred_mean,
+                 min=0.025,max=0.975))
+with(EWT_ext_pressed_pred_df[-which(EWT_ext_pressed_pred_df$FunctionalGroup=="conifer"),],
+     percentRMSD(measured = Measured,predicted = pred_mean,
+                 min=0.025,max=0.975))
 
 ## to dos:
 ## output the data for upload to EcoSIS
