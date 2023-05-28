@@ -466,11 +466,11 @@ EWT_ext_pressed1300<-apply.coefs(EWT_jack_coefs_pressed1300,
                                  val.spec = pressed_spec_MN_RWC_spec[,1300:2400])
 EWT_ext_pressed1300_stat<-t(apply(EWT_ext_pressed1300,1,
                               function(obs) c(mean(obs),quantile(obs,probs=c(0.025,0.975)))))
-EWT_ext_pressed1300_pred_df<-data.frame(Measured=meta(pressed1300_spec_MN_RWC_spec)$EWT,
+EWT_ext_pressed1300_pred_df<-data.frame(Measured=meta(pressed_spec_MN_RWC_spec)$EWT,
                                     pred_mean=EWT_ext_pressed1300_stat[,1],
                                     pred_low=EWT_ext_pressed1300_stat[,2],
                                     pred_high=EWT_ext_pressed1300_stat[,3],
-                                    FunctionalGroup=meta(pressed1300_spec_MN_RWC_spec)$FunctionalGroup)
+                                    FunctionalGroup=meta(pressed_spec_MN_RWC_spec)$FunctionalGroup)
 
 EWT_ind_val<-ggplot(data=EWT_ext_pressed_pred_df,
                     aes(x=pred_mean,y=Measured,color=FunctionalGroup))+
