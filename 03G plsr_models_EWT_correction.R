@@ -506,5 +506,20 @@ with(EWT_ext_pressed_pred_df[-which(EWT_ext_pressed_pred_df$FunctionalGroup=="co
      percentRMSD(measured = Measured,predicted = pred_mean,
                  min=0.025,max=0.975))
 
+summary(lm(Measured~pred_mean,data=EWT_ext_pressed1300_pred_df))
+summary(lm(Measured~pred_mean,data=EWT_ext_pressed1300_pred_df[-which(EWT_ext_pressed1300_pred_df$FunctionalGroup=="conifer"),]))
+
+with(EWT_ext_pressed1300_pred_df,
+     RMSD(measured = Measured,predicted = pred_mean))
+with(EWT_ext_pressed1300_pred_df[-which(EWT_ext_pressed1300_pred_df$FunctionalGroup=="conifer"),],
+     RMSD(measured = Measured,predicted = pred_mean))
+
+with(EWT_ext_pressed1300_pred_df,
+     percentRMSD(measured = Measured,predicted = pred_mean,
+                 min=0.025,max=0.975))
+with(EWT_ext_pressed1300_pred_df[-which(EWT_ext_pressed1300_pred_df$FunctionalGroup=="conifer"),],
+     percentRMSD(measured = Measured,predicted = pred_mean,
+                 min=0.025,max=0.975))
+
 ## to dos:
 ## output the data for upload to EcoSIS
