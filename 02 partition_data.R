@@ -23,9 +23,10 @@ pressed_meta<-meta(pressed_spec_all)
 ground_meta<-meta(ground_spec_all)
 
 ## archiving data!
-# write.csv(as.data.frame(fresh_spec_all),"ProcessedSpectralData/fresh_spec_avg.csv",row.names = F)
-# write.csv(as.data.frame(pressed_spec_all),"ProcessedSpectralData/pressed_spec_avg.csv",row.names = F)
-# write.csv(as.data.frame(ground_spec_all),"ProcessedSpectralData/ground_spec_avg.csv",row.names = F)
+## the [,-1] is to avoid duplicating the sample_id column
+# write.csv(as.data.frame(fresh_spec_all)[,-1],"ProcessedSpectralData/fresh_spec_avg.csv",row.names = F)
+# write.csv(as.data.frame(pressed_spec_all)[,-1],"ProcessedSpectralData/pressed_spec_avg.csv",row.names = F)
+# write.csv(as.data.frame(ground_spec_all)[,-1],"ProcessedSpectralData/ground_spec_avg.csv",row.names = F)
 
 ## the few lines below are just to help count numbers of samples
 ## per project, growth form, or species

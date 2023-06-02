@@ -30,6 +30,7 @@ ground_spec_all_raw<-aggregate(ground_spec_EL,by=meta(ground_spec_EL)$ID,
 ## if smoothing is desired
 ## but this may obscure some small absorption features
 ## so I didn't do it for the paper
+
 # ground_spec_all_vis<-t(apply(as.matrix(ground_spec_all_raw[,350:715]),1,sgolayfilt,p=3,n=21))
 # ground_spec_all_nir<-t(apply(as.matrix(ground_spec_all_raw[,716:1390]),1,sgolayfilt,p=3,n=35))
 # ground_spec_all_swir1<-t(apply(as.matrix(ground_spec_all_raw[,1391:1880]),1,sgolayfilt,p=3,n=35))
