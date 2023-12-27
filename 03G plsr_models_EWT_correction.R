@@ -364,6 +364,11 @@ write.coefs(obj=EWT_jack_coefs_ground,
 ###############################################
 ## plotting internal validation output
 
+EWT_jack_df_fresh<-readRDS("SavedResults/EWT_corrected_jack_df_fresh.rds")
+EWT_jack_df_pressed<-readRDS("SavedResults/EWT_corrected_jack_df_pressed.rds")
+EWT_jack_df_pressed1300<-readRDS("SavedResults/EWT_corrected_jack_df_pressed1300.rds")
+EWT_jack_df_ground<-readRDS("SavedResults/EWT_corrected_jack_df_ground.rds")
+
 focal_palette=palette(brewer.pal(8,name="Set2")[c(3,4,5,6,8,1,2)])
 
 all.EWT<-c(EWT_jack_df_pressed$Measured,
@@ -520,6 +525,3 @@ with(EWT_ext_pressed1300_pred_df,
 with(EWT_ext_pressed1300_pred_df[-which(EWT_ext_pressed1300_pred_df$FunctionalGroup=="conifer"),],
      percentRMSD(measured = Measured,predicted = pred_mean,
                  min=0.025,max=0.975))
-
-## to dos:
-## output the data for upload to EcoSIS
